@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thank You | PRAVAAH</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    /* ---------- BASE ---------- */
+    body {
+      font-family: 'Orbitron', sans-serif;
+      color: white;
+      background: linear-gradient(120deg, #2c1a55, #3e5d75, #022c43, #5b2a86);
+      background-size: 400% 400%;
+      animation: gradientMove 15s ease infinite;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* ---------- CONTAINER ---------- */
+    .main-container {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1rem;
+      box-sizing: border-box;
+    }
+
+    /* ---------- THANK YOU BOX ---------- */
+    .thankyou-box {
+      width: 90%;
+      max-width: 600px;
+      background: rgba(0, 0, 0, 0.75);
+      border: 1.5px solid rgba(0, 255, 255, 0.5);
+      border-radius: 20px;
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
+      backdrop-filter: blur(12px);
+      text-align: center;
+      padding: 3rem 2rem;
+      animation: fadeIn 1.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(25px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .thankyou-box i {
+      font-size: 3rem;
+      color: cyan;
+      text-shadow: 0 0 20px cyan;
+      margin-bottom: 1.2rem;
+      animation: pulse 2s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { text-shadow: 0 0 10px cyan, 0 0 25px rgba(0,255,255,0.3); }
+      to { text-shadow: 0 0 25px cyan, 0 0 50px rgba(0,255,255,0.7); }
+    }
+
+    .thankyou-box h1 {
+      font-size: 2rem;
+      color: cyan;
+      text-shadow: 0 0 15px cyan;
+      margin-bottom: 1rem;
+      letter-spacing: 1px;
+    }
+
+    .thankyou-box p {
+      color: #cfdfff;
+      font-size: 1rem;
+      line-height: 1.6rem;
+      margin-bottom: 2rem;
+    }
+
+    .back-btn {
+      background: linear-gradient(90deg, cyan, #00ffff);
+      color: black;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      padding: 14px 35px;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(0,255,255,0.5);
+      transition: 0.3s ease;
+      font-size: 1rem;
+    }
+
+    .back-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px cyan, 0 0 50px rgba(0,255,255,0.6);
+    }
+
+    /* ---------- FOOTER ---------- */
+    footer {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 1.8rem 1rem;
+      border-top: 1px solid rgba(0,255,255,0.3);
+      text-align: center;
+      color: #bbb;
+      font-size: 0.9rem;
+      backdrop-filter: blur(6px);
+    }
+
+    footer .footer-social {
+      margin: 1rem 0;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    footer .footer-social a {
+      color: cyan;
+      font-size: 1.4rem;
+      transition: all 0.3s ease;
+    }
+
+    footer .footer-social a:hover {
+      text-shadow: 0 0 10px cyan;
+      transform: scale(1.15);
+    }
+
+    .footer-line {
+      border: none;
+      height: 1px;
+      background: rgba(0,255,255,0.3);
+      margin: 1rem auto;
+      width: 80%;
+    }
+
+    /* ---------- MOBILE OPTIMIZATION ---------- */
+    @media (max-width: 768px) {
+      .main-container {
+        padding: 2rem 1rem;
+      }
+
+      .thankyou-box {
+        width: 92%;
+        padding: 2rem 1.5rem;
+        border-radius: 18px;
+        box-shadow: 0 0 20px rgba(0,255,255,0.3);
+      }
+
+      .thankyou-box i {
+        font-size: 2.5rem;
+      }
+
+      .thankyou-box h1 {
+        font-size: 1.7rem;
+      }
+
+      .thankyou-box p {
+        font-size: 0.9rem;
+        line-height: 1.5rem;
+      }
+
+      .back-btn {
+        width: 100%;
+        padding: 12px;
+        font-size: 0.95rem;
+      }
+
+      footer {
+        padding: 1.5rem 0.8rem;
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .thankyou-box {
+        padding: 1.8rem 1.2rem;
+        border-radius: 15px;
+      }
+
+      .thankyou-box h1 {
+        font-size: 1.5rem;
+      }
+
+      .thankyou-box p {
+        font-size: 0.85rem;
+      }
+
+      .back-btn {
+        font-size: 0.85rem;
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ✅ CENTERED CONTAINER -->
+  <div class="main-container">
+    <div class="thankyou-box">
+      <i class="fa-solid fa-circle-check"></i>
+      <h1>Thank You!</h1>
+      <p>
+        Thank you for showing interest in <strong>Pravaah 2026</strong>.<br>
+        Our team will contact you within two business days.
+      </p>
+      <button class="back-btn" onclick="window.location.href='home.html'">Back to Home</button>
+    </div>
+  </div>
+
+  <!-- 🌙 FOOTER -->
+  <footer>
+    <div class="footer-social">
+      <a href="#"><i class="fab fa-instagram"></i></a>
+      <a href="#"><i class="fab fa-linkedin-in"></i></a>
+      <a href="#"><i class="fab fa-youtube"></i></a>
+    </div>
+    <hr class="footer-line">
+    <p>@PRAVAAH'26 IIT BHUBANESWAR | MADE WITH 💜 BY WEB TEAM | All Rights Reserved</p>
+  </footer>
+
+</body>
+</html>

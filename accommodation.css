@@ -1,0 +1,288 @@
+/* accommodation.css */
+/* 🏨 PRAVAAH — Accommodation Page Styling */
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+
+body {
+  font-family: 'Orbitron', sans-serif;
+  background: linear-gradient(120deg, #2c1a55, #3e5d75, #022c43, #5b2a86);
+  background-size: 400% 400%;
+  animation: gradientMove 15s ease infinite;
+  color: white;
+  margin: 0;
+  padding-top: 80px;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 🏠 HERO SECTION */
+.accommodation-hero {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 80px 10%;
+  flex-wrap: wrap;
+  gap: 3rem;
+  text-align: left;
+}
+
+.accommodation-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 3rem;
+}
+
+.accommodation-content h1 {
+  font-size: 3rem;
+  color: cyan;
+  text-shadow: 0 0 15px rgba(0,255,255,0.6);
+}
+
+.accommodation-content p {
+  font-size: 1.1rem;
+  margin: 20px 0;
+  color: #ddd;
+  line-height: 1.6;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.hero-buttons button {
+  padding: 12px 30px;
+  border: 2px solid cyan;
+  border-radius: 30px;
+  background: transparent;
+  color: cyan;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.hero-buttons button:hover {
+  background: cyan;
+  color: black;
+  transform: scale(1.08);
+  box-shadow: 0 0 25px cyan;
+}
+
+.accommodation-content .image img {
+  width: 420px;
+  border-radius: 20px;
+  box-shadow: 0 0 25px rgba(0,255,255,0.4);
+}
+
+/* 🧾 ACCOMMODATION CARDS */
+.accommodation-cards {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  flex-wrap: nowrap;
+  gap: 40px;
+  padding: 60px 8%;
+}
+
+.card {
+  flex: 1 1 400px;
+  max-width: 420px;
+  height: 500px; /* ⬆️ Increased from 420px */
+  background: rgba(0, 0, 0, 0.65);
+  border-radius: 20px;
+  border: 1px solid cyan;
+  box-shadow: 0 0 25px rgba(0,255,255,0.3);
+  padding: 35px;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  text-align: justify;
+  box-sizing: border-box;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 0 35px rgba(0,255,255,0.6);
+}
+
+.card h2 {
+  color: cyan;
+  text-align: center;
+  font-size: 1.6rem;
+  margin-bottom: 15px;
+}
+
+.card p {
+  color: #ddd;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin: 8px 0;
+}
+
+/* 📋 GUIDELINES SECTION */
+.accommodation-guidelines {
+  text-align: center;
+  padding: 60px 8%;
+}
+
+.accommodation-guidelines h2 {
+  color: cyan;
+  font-size: 2rem;
+  text-shadow: 0 0 10px cyan;
+  margin-bottom: 40px;
+}
+
+.rules-container {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  flex-wrap: nowrap;
+  gap: 40px;
+  padding: 0 8%;
+}
+
+.rule-card {
+  flex: 1 1 400px;
+  max-width: 420px;
+  height: 500px; /* ⬆️ Increased from 420px */
+  background: rgba(0, 0, 0, 0.65);
+  border: 1px solid cyan;
+  border-radius: 20px;
+  box-shadow: 0 0 25px rgba(0,255,255,0.3);
+  padding: 35px;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  text-align: justify;
+  box-sizing: border-box;
+}
+
+.rule-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 0 35px rgba(0,255,255,0.6);
+}
+
+.rule-card i {
+  font-size: 2.2rem;
+  color: cyan;
+  margin-bottom: 10px;
+}
+
+.rule-card h3 {
+  color: cyan;
+  font-size: 1.5rem;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.rule-card ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  color: #ddd;
+  text-align: justify;
+}
+
+.rule-card li {
+  margin-bottom: 10px;
+  line-height: 1.6;
+  font-size: 1.05rem;
+  position: relative;
+  padding-left: 12px;
+}
+
+.rule-card li::before {
+  content: "•";
+  color: cyan;
+  position: absolute;
+  left: 0;
+}
+
+/* 🌐 RESPONSIVE DESIGN (MOBILE) */
+@media (max-width: 900px) {
+  .accommodation-hero {
+    flex-direction: column;
+    text-align: center;
+    padding: 50px 4% 40px;
+  }
+
+  .accommodation-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .accommodation-content h1 {
+    font-size: 2.2rem;
+    line-height: 1.2;
+    word-wrap: break-word;
+  }
+
+  .accommodation-content p {
+    font-size: 1rem;
+    margin: 10px auto;
+    line-height: 1.5;
+    word-wrap: break-word;
+  }
+
+  .accommodation-content .image img {
+    width: 90%;
+    max-width: 340px;
+    margin-top: 15px;
+  }
+
+  /* Buttons vertically stacked */
+  .hero-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .hero-buttons button {
+    width: 80%;
+    max-width: 260px;
+    font-size: 0.9rem;
+  }
+
+  /* Cards stacked vertically — uniform size */
+  .accommodation-cards,
+  .rules-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    padding: 30px 5%;
+  }
+
+  .card,
+  .rule-card {
+    width: 95%;
+    max-width: 600px;
+    height: 560px; /* ⬆️ Increased from 480px */
+    padding: 30px 22px;
+    font-size: 0.95rem;
+    text-align: justify;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .card h2,
+  .rule-card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+  }
+
+  .card p,
+  .rule-card li {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+}

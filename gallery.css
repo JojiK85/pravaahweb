@@ -1,0 +1,205 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+
+body {
+  font-family: 'Orbitron', sans-serif;
+  background: linear-gradient(120deg, #2c1a55, #3e5d75, #022c43, #5b2a86);
+  background-size: 400% 400%;
+  animation: gradientMove 15s ease infinite;
+  color: white;
+  margin: 0;
+  padding-top: 80px;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ---------- HEADER ---------- */
+.gallery-header {
+  text-align: center;
+  margin-bottom: 30px; /* 🔹 slightly increased gap below the text */
+  padding: 35px 10% 10px;
+}
+
+.gallery-header h1 {
+  font-size: 3rem;
+  color: cyan;
+  text-shadow: 0 0 15px cyan;
+}
+
+.gallery-header p {
+  color: #ccc;
+  font-size: 1.1rem;
+  margin-top: 10px;
+  line-height: 1.5;
+}
+
+/* ---------- GALLERY GRID ---------- */
+.gallery-container {
+  padding: 15px 7%; /* 🔹 added small top padding to create clean gap */
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 28px;
+  justify-items: center;
+}
+
+/* ---------- IMAGE CARD ---------- */
+.gallery-item {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid cyan;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0,255,255,0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.gallery-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 30px cyan;
+}
+
+.gallery-item:hover img {
+  transform: scale(1.1);
+}
+
+/* ---------- LIGHTBOX ---------- */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.lightbox img {
+  max-width: 90%;
+  max-height: 80%;
+  border: 2px solid cyan;
+  border-radius: 10px;
+  box-shadow: 0 0 25px cyan;
+}
+
+.lightbox-controls {
+  position: absolute;
+  top: 25px;
+  right: 40px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.close-btn, .download-btn {
+  background: transparent;
+  border: none;
+  color: cyan;
+  font-size: 1.8rem;
+  cursor: pointer;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.close-btn:hover, .download-btn:hover {
+  color: white;
+  transform: scale(1.2);
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 1200px) {
+  .gallery-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+@media (max-width: 900px) {
+  .gallery-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ---------- 📱 MOBILE VIEW ---------- */
+@media (max-width: 600px) {
+  /* Header adjustments */
+  .gallery-header {
+    padding: 25px 8% 0;
+    margin-bottom: 20px; /* 🔹 added small bottom gap between text and photos */
+  }
+
+  .gallery-header h1 {
+    font-size: 2.3rem;
+  }
+
+  .gallery-header p {
+    font-size: 1rem;
+    margin-bottom: 0;
+  }
+
+  /* Gallery grid layout */
+  .gallery-container {
+    padding: 10px 6%; /* 🔹 added clean small spacing below text */
+  }
+
+  .gallery-grid { 
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+
+  .gallery-item {
+    aspect-ratio: 5 / 4;
+    border-radius: 14px;
+    box-shadow: 0 0 25px rgba(0,255,255,0.4);
+  }
+
+  .gallery-item img {
+    object-fit: cover;
+  }
+}
+
+/* ---------- NAVBAR MOBILE FIX ---------- */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: cyan;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .menu-toggle { display: block; }
+
+  #menu {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    position: absolute;
+    top: 70px;
+    left: 0;
+    padding: 20px 0;
+    gap: 20px;
+    z-index: 1000;
+  }
+
+  #menu.active { display: flex; }
+
+  #menu li a {
+    font-size: 1rem;
+    color: #ddd;
+    text-decoration: none;
+  }
+
+  #menu li a:hover {
+    color: cyan;
+  }
+}
