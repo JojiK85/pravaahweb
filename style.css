@@ -70,7 +70,7 @@ nav {
   justify-content: space-between;
   align-items: center;
   padding: 15px 60px;
-  background: rgba(10, 15, 31, 0.90);   /* Slightly brighter */
+  background: linear-gradient(to right, #0b141a, #15232e);   /* Slightly brighter */
   border-bottom: 1px solid rgba(255,255,255,0.08);
   backdrop-filter: blur(6px);
   position: fixed;
@@ -1056,6 +1056,7 @@ footer {
     justify-content: center !important;
   }
 }
+
 
 
 
