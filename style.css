@@ -293,15 +293,15 @@ nav {
 
 .slider-track {
   display: flex;
-  gap: 30px;
   width: max-content;
-  animation: scrollSeamless 30s linear infinite;
+  animation: scrollLoop 25s linear infinite;
 }
 
-@keyframes scrollSeamless {
+@keyframes scrollLoop {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
+
 
 .highlights-carousel:hover .slider-track {
   animation-play-state: paused;
@@ -1130,6 +1130,7 @@ footer {
     margin-bottom: 2rem;
   }
 }
+
 
 
 
