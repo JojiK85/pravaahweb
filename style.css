@@ -34,7 +34,7 @@
 /* ---------- BACKGROUND (unchanged) ---------- */
 body {
   min-height: 100vh;
-  background: linear-gradient(120deg, #2c1a55, #3e5d75, #022c43, #5b2a86);
+   background: linear-gradient(120deg, #2c1a55, #3e5d75, #022c43, #5b2a86);
   background-size: 400% 400%;
   animation: gradientMove 15s ease infinite;
   color: var(--text);
@@ -824,6 +824,7 @@ footer {
     justify-content: center;
   }
 }
+
 
 
 
