@@ -1,172 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login | PRAVAAH</title>
-  <link rel="stylesheet" href="login.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PRAVAAH — Loading</title>
+
   <style>
-    .hidden { display: none; }
-  </style>
-</head>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #0A0F1F; /* Deep space */
+      overflow: hidden;
+    }
 
-<body>
-  <div class="login-container">
-    <div class="login-box">
-      <h1 id="formTitle">LOGIN TO PRAVAAH</h1>
+    /* ⭐ LOGO SIZE FOR LARGE SCREENS */
+    .logo {
+      width: 350px;     /* 🔥 MUCH BIGGER NOW */
+      opacity: 0;
+      animation: fadeIn 5s ease forwards;
+    }
 
-      <!-- 👇 Only visible in signup mode -->
-      <input type="text" id="name" placeholder="Full Name" class="hidden">
-      <input type="email" id="email" placeholder="Enter your email" required>
-      <input type="password" id="password" placeholder="Enter your password" required>
+    /* Fade animation */
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: scale(0.7); }
+      80% { opacity: 1; transform: scale(1.08); }
+      100% { opacity: 1; transform: scale(1); }
+    }
 
-      <button id="submitBtn" class="main-btn">LOGIN</button>
-
-      <div class="divider">OR</div>
-
-      <button id="googleSignIn" class="google-btn">
-        <i class="fab fa-google"></i> Continue with Google
-      </button>
-
-      <p class="toggle-text" id="toggleForm">
-        New user? <span>Create an account</span>
-      </p>
-    </div>
-  </div>
-
-  <!-- 🔹 Firebase SDK and Logic -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { 
-      getAuth, 
-      signInWithEmailAndPassword, 
-      createUserWithEmailAndPassword,
-      signInWithPopup, 
-      GoogleAuthProvider,
-      onAuthStateChanged,
-      updateProfile
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-
-    // 🔥 Firebase Config
-    const firebaseConfig = {
-      apiKey: "AIzaSyCbXKleOw4F46gFDXz2Wynl3YzPuHsVwh8",
-      authDomain: "pravaah-55b1d.firebaseapp.com",
-      projectId: "pravaah-55b1d",
-      storageBucket: "pravaah-55b1d.appspot.com",
-      messagingSenderId: "287687647267",
-      appId: "1:287687647267:web:7aecd603ee202779b89196"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-
-    // 🔗 Google Apps Script endpoint
-    const scriptURL =
-      "https://script.google.com/macros/s/AKfycbz7OcpYMy3gk5cQR4H4ljc_6MFJw5ocfkwGOOe1fT5e-6a7Gc1t7YNxZJNvcXuM-jMVbw/exec";
-
-    // 🧩 DOM Elements
-    const nameInput = document.getElementById('name');
-    const emailInput = document.getElementById('email');
-    const passInput = document.getElementById('password');
-    const submitBtn = document.getElementById('submitBtn');
-    const toggleForm = document.getElementById('toggleForm');
-    const formTitle = document.getElementById('formTitle');
-    const googleBtn = document.getElementById('googleSignIn');
-
-    let isLogin = true;
-
-    /* -------------------------
-       Toggle Login / Signup
-    ------------------------- */
-    toggleForm.addEventListener('click', () => {
-      isLogin = !isLogin;
-      formTitle.textContent = isLogin ? 'LOGIN TO PRAVAAH' : 'CREATE YOUR PRAVAAH ACCOUNT';
-      submitBtn.textContent = isLogin ? 'LOGIN' : 'SIGN UP';
-      toggleForm.innerHTML = isLogin 
-        ? 'New user? <span>Create an account</span>'
-        : 'Already have an account? <span>Login</span>';
-      nameInput.classList.toggle("hidden", isLogin); // Show name only for signup
-    });
-
-    /* -------------------------
-       Helper: Save profile to Sheets
-    ------------------------- */
-    async function ensureProfileExists(profile) {
-      const payload = JSON.stringify({
-        name: profile.name || "",
-        email: profile.email || "",
-        phone: "",
-        college: "",
-        photo: ""
-      });
-      try {
-        await fetch(scriptURL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: payload
-        });
-      } catch (err) {
-        console.error("⚠️ Could not save to Sheets:", err);
+    /* 📟 Tablets */
+    @media (max-width: 900px) {
+      .logo {
+        width: 300px;
       }
     }
 
-    /* -------------------------
-       Login / Signup Handler
-    ------------------------- */
-    submitBtn.addEventListener('click', async () => {
-      const email = emailInput.value.trim();
-      const password = passInput.value.trim();
-      const name = nameInput.value.trim();
-
-      if (!email || !password) return alert("Please fill all required fields.");
-
-      try {
-        if (isLogin) {
-          // ✅ LOGIN
-          const userCred = await signInWithEmailAndPassword(auth, email, password);
-          await ensureProfileExists({ email: userCred.user.email }); 
-        } else {
-          // ✅ SIGNUP
-          if (!name) return alert("Please enter your full name.");
-          const userCred = await createUserWithEmailAndPassword(auth, email, password);
-          await updateProfile(userCred.user, { displayName: name });
-          await ensureProfileExists({ name, email });
-        }
-
-        window.location.href = "home.html";
-      } catch (err) {
-        alert("⚠️ " + err.message);
+    /* 📱 Mobiles */
+    @media (max-width: 600px) {
+      .logo {
+        width: 200px;
       }
-    });
+    }
 
-    /* -------------------------
-       Google Sign-In
-    ------------------------- */
-    googleBtn.addEventListener('click', async () => {
-      try {
-        const result = await signInWithPopup(auth, provider);
-        const user = result.user;
-        await ensureProfileExists({
-          name: user.displayName,
-          email: user.email
-        });
-        window.location.href = "home.html";
-      } catch (err) {
-        alert("⚠️ " + err.message);
+    /* 📱 Extra small phones */
+    @media (max-width: 400px) {
+      .logo {
+        width: 160px;
       }
-    });
+    }
+  </style>
 
-    /* -------------------------
-       Auto redirect if already logged in
-    ------------------------- */
-    onAuthStateChanged(auth, (user) => {
-      if (user) window.location.href = "home.html";
-    });
+  <script>
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 2000);
   </script>
+</head>
+
+<body>
+  <img src="pravah-logo.png" class="logo" alt="PRAVAAH Logo">
 </body>
 </html>
-
-
