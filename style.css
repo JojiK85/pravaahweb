@@ -910,7 +910,7 @@ footer {
 @media (max-width: 650px) {
 
   .highlights {
-    margin-top: 5rem;
+    margin-top: 3rem;
   }
 
   .slide {
@@ -1038,6 +1038,7 @@ footer {
     justify-content: center !important;
   }
 }
+
 
 
 
