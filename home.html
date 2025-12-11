@@ -17,6 +17,18 @@
   <!-- Script -->
   <script type="module" src="script.js" defer></script>
 </head>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const track = document.querySelector(".slider-track");
+  const slides = Array.from(track.children);
+
+  // Duplicate each slide once → no empty gap ever
+  slides.forEach(slide => {
+    const clone = slide.cloneNode(true);
+    track.appendChild(clone);
+  });
+});
+</script>
 
 <body style="color:#F5F8FA; font-family:'Exo 2', sans-serif;">
 
