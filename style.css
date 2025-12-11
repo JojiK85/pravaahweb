@@ -1101,6 +1101,36 @@ footer {
   }
 }
 
+/* ============================
+   📱 INTRO SECTION — MOBILE FIX
+   ============================ */
+@media (max-width: 650px) {
+
+  .intro-section {
+    padding: 2rem 1rem 0.5rem;
+  }
+
+  .intro-heading {
+    font-size: 1.7rem !important;
+    letter-spacing: 2px;
+    margin-bottom: 1.2rem;
+  }
+
+  .theme-heading-glow {
+    font-size: 1.8rem !important;
+    letter-spacing: 2px;
+  }
+
+  .intro-text {
+    width: 95% !important;
+    padding: 1.4rem !important;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+  }
+}
+
 
 
 
