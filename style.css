@@ -846,52 +846,70 @@ footer {
 /* =======================
    NAVBAR — MOBILE
 ======================= */
+/* ============================
+   📱 MOBILE NAVBAR (FINAL)
+============================ */
 @media (max-width: 900px) {
 
   nav {
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
     padding: 12px 20px;
   }
 
-  /* Logo center shrink */
   .logo {
     font-size: 1.4rem;
   }
 
-  /* Hamburger visible */
   .menu-toggle {
     display: block;
-    font-size: 1.7rem;
+    font-size: 1.9rem;
+    color: var(--primary);
+    cursor: pointer;
     margin-left: auto;
   }
 
-  /* Hide menu by default */
+  /* Hidden menu */
   #menu {
     display: none;
     flex-direction: column;
     width: 100%;
-    background: rgba(10,15,31,0.97);
-    padding: 15px 0;
-    margin-top: 15px;
-    border-top: 1px solid rgba(255,255,255,0.12);
-    gap: 15px;
-    text-align: center;
+    align-items: center;
+
+    position: absolute;
+    top: 72px;
+    left: 0;
+
+    background: rgba(10, 15, 31, 0.97);
+    padding: 18px 0;
+    border-top: 1px solid var(--primary);
+    box-shadow: 0 0 25px rgba(36,224,236,0.25);
+
+    gap: 18px;
+    z-index: 999;
   }
 
-  /* Menu opens after toggle */
+  /* Shown menu */
   #menu.active {
     display: flex;
+    animation: dropdownMenu 0.35s ease;
   }
 
   #menu li a {
-    font-size: 1.05rem;
+    font-size: 1.1rem;
   }
 
   .iitbbs-logo img {
     height: 42px;
   }
 }
+
+@keyframes dropdownMenu {
+  0% { opacity: 0; transform: translateY(-15px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
 
 /* =======================
    HIGHLIGHTS — MOBILE
@@ -1020,6 +1038,7 @@ footer {
     justify-content: flex-start !important;
   }
 }
+
 
 
 
