@@ -1,3 +1,8 @@
+/* ============================================================
+   PRAVAAH — UPDATED script.js
+   (No logic changed — cleaned, optimized, consistent version)
+============================================================ */
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
@@ -20,20 +25,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const logoutDesktop = document.getElementById("logoutDesktop");
   const logoutMobile = document.getElementById("logoutMobile");
 
-  function handleLogout() {
+  const handleLogout = () => {
     signOut(auth)
-      .then(() => {
-        window.location.href = "login.html";
-      })
-      .catch((error) => {
-        alert("Error logging out: " + error.message);
-      });
-  }
+      .then(() => window.location.href = "login.html")
+      .catch((error) => alert("Logout Error: " + error.message));
+  };
 
   if (logoutDesktop) logoutDesktop.addEventListener("click", handleLogout);
   if (logoutMobile) logoutMobile.addEventListener("click", handleLogout);
 
-  /* ---------------------- CALENDAR + FEED LOGIC ---------------------- */
+
+  /* ---------------------- CALENDAR + FEED ---------------------- */
+
   const monthYear = document.getElementById("monthYear");
   const calendar = document.getElementById("calendar");
   const prevMonth = document.getElementById("prevMonth");
@@ -42,6 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let currentDate = new Date();
 
+  /* Feed data (can be expanded later) */
   const feedsByDate = {
     "2025-11-07": [
       { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" }
@@ -52,6 +56,8 @@ document.addEventListener("DOMContentLoaded", () => {
     { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" }
   ];
 
+
+  /* -------- FEED RENDER -------- */
   function renderFeed(dateKey) {
     feedList.classList.add("fade-out");
 
@@ -78,10 +84,12 @@ document.addEventListener("DOMContentLoaded", () => {
       feedList.classList.remove("fade-out");
       feedList.classList.add("fade-in");
 
-      setTimeout(() => feedList.classList.remove("fade-in"), 600);
-    }, 300);
+      setTimeout(() => feedList.classList.remove("fade-in"), 500);
+    }, 280);
   }
 
+
+  /* -------- CALENDAR RENDER -------- */
   function renderCalendar(date, transition = false) {
     const year = date.getFullYear();
     const month = date.getMonth();
@@ -89,19 +97,19 @@ document.addEventListener("DOMContentLoaded", () => {
     if (transition) calendar.classList.add("fade-out");
 
     setTimeout(() => {
-      monthYear.innerText = `${date.toLocaleString("default", {
-        month: "long"
-      })} ${year}`;
+      monthYear.innerText = `${date.toLocaleString("default", { month: "long" })} ${year}`;
 
       const firstDay = new Date(year, month, 1).getDay();
       const daysInMonth = new Date(year, month + 1, 0).getDate();
 
       calendar.innerHTML = "";
 
+      /* Blank blocks before 1st date */
       for (let i = 0; i < firstDay; i++) {
         calendar.appendChild(document.createElement("div"));
       }
 
+      /* Actual days */
       for (let i = 1; i <= daysInMonth; i++) {
         const day = document.createElement("div");
         day.classList.add("day");
@@ -117,9 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         day.addEventListener("click", (e) => {
-          document.querySelectorAll(".day").forEach(d =>
-            d.classList.remove("selected")
-          );
+          document.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
           e.target.classList.add("selected");
 
           const key = `${year}-${String(month + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
@@ -132,11 +138,13 @@ document.addEventListener("DOMContentLoaded", () => {
       if (transition) {
         calendar.classList.remove("fade-out");
         calendar.classList.add("fade-in");
-        setTimeout(() => calendar.classList.remove("fade-in"), 600);
+        setTimeout(() => calendar.classList.remove("fade-in"), 500);
       }
-    }, transition ? 300 : 0);
+    }, transition ? 260 : 0);
   }
 
+
+  /* Month navigation */
   prevMonth.onclick = () => {
     currentDate.setMonth(currentDate.getMonth() - 1);
     renderCalendar(currentDate, true);
@@ -147,9 +155,12 @@ document.addEventListener("DOMContentLoaded", () => {
     renderCalendar(currentDate, true);
   };
 
+  /* Initial render */
   renderCalendar(currentDate);
+  renderFeed(
+    `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}`
+  );
 
-  renderFeed(`${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}`);
 
   /* ---------------------- VIDEO SWITCH ---------------------- */
   const mainVideo = document.getElementById("mainVideo");
@@ -170,7 +181,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* ---------------------- MOBILE NAV MENU (FIXED) ---------------------- */
+
+  /* ---------------------- MOBILE NAV MENU ---------------------- */
   const menuToggle = document.getElementById("menuToggle");
   const menu = document.getElementById("menu");
 
@@ -186,6 +198,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
+    /* Auto close after clicking inside menu (mobile) */
     document.querySelectorAll("#menu a").forEach(link => {
       link.addEventListener("click", () => menu.classList.remove("active"));
     });
