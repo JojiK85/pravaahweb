@@ -829,6 +829,15 @@ footer {
   }
 }
 
+/* FIX: Make Font Awesome icons visible again */
+.footer-social-icons i,
+.fa,
+.fa-brands,
+.fa-solid {
+  font-family: "Font Awesome 6 Brands" !important;
+  font-weight: 900 !important;
+}
+
 
 
 
