@@ -763,9 +763,8 @@ footer {
   display: flex;
   justify-content: center;
   align-items: center;
-
-  font-size: 1.45rem;
-  color: #d0d0d0;
+   font-size: 1.6rem;
+  color: #bfc7d5;
 
   transition: 0.28s ease;
 }
@@ -825,6 +824,7 @@ footer {
     justify-content: center;
   }
 }
+
 
 
 
