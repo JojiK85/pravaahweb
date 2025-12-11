@@ -15,6 +15,14 @@
   box-sizing: border-box;
   font-family: 'Exo 2', sans-serif !important;
 }
+/* Fix Font Awesome being overridden */
+i.fa-solid,
+i.fa-regular,
+i.fa-brands,
+.fa {
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 900 !important;
+}
 
 :root {
   --primary: #24E0EC;                  /* Soft Neo Cyan */
@@ -1023,6 +1031,7 @@ footer {
     justify-content: flex-start !important;
   }
 }
+
 
 
 
