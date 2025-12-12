@@ -1,10 +1,3 @@
-/* =============================
-   PRAVAAH PASS MODULE (main.js)
-   - Fixed template literals
-   - Updated renderEventRow for visitor vs selectable
-   - Keeps visitor events non-selectable but styled
-   ============================= */
-
 const scriptURL = "https://script.google.com/macros/s/AKfycby4F5rBxS_-KLmP05Yqm-R7PmjIx9_7dMsa28D1xds3X2jWSMKini-AJ-1wgGR6EmvDlg/exec";
 
 const EVENTS = {
@@ -21,7 +14,6 @@ const PRICES = {
   starnite: 300
 };
 
-/* Firebase imports (if running as module - keep as you had earlier) */
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
@@ -40,7 +32,6 @@ if (!auth) {
   window.auth = auth;
 }
 
-/* DOM references */
 const passCards = document.querySelectorAll(".pass-card");
 const selectionArea = document.getElementById("selectionArea");
 const selectedPassTxt = document.getElementById("selectedPass");
@@ -64,7 +55,6 @@ const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
 const phoneRe = /^[0-9+\-\s]{7,15}$/;
 const RULEBOOK_URL = "rulebooks/sample.pdf";
 
-/* ------- local cache helpers ------- */
 function getCachedProfile() {
   try { return JSON.parse(localStorage.getItem("profileData") || "{}"); } catch { return {}; }
 }
@@ -74,19 +64,15 @@ function saveProfileCache(obj) {
 async function refreshProfileFromSheets(email) {
   if (!email) return;
   try {
-    const r = await fetch(`${scriptURL}?email=${encodeURIComponent(email)}&type=profile`);
+    const r = await fetch(${scriptURL}?email=${encodeURIComponent(email)}&type=profile);
     const d = await r.json();
     if (d && d.email) {
       saveProfileCache({ name: d.name || "", email: d.email || email, phone: d.phone || "", college: d.college || "" });
       cachedProfile = getCachedProfile();
     }
-  } catch (err) {
-    // silent fail
-    console.warn("Profile refresh failed", err);
-  }
+  } catch {}
 }
 
-/* auth state */
 if (auth && auth.onAuthStateChanged) {
   auth.onAuthStateChanged(u => {
     cachedProfile = getCachedProfile();
@@ -98,51 +84,28 @@ if (auth && auth.onAuthStateChanged) {
   });
 }
 
-/* escape helper */
 function escapeHtml(s) { 
-  return String(s || "")
+  return String(s)
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 }
 
-/* ===========================
-   renderEventRow (selectable vs visitor)
-   - selectable: Day & Fest (checkbox inside cyan pill)
-   - non-selectable: Visitor (no checkbox; looks like screenshot)
-   ============================ */
 function renderEventRow(name, opt = {}) {
   const day = opt.dayKey || "";
   const selectable = !!opt.selectable;
-  const safe = String(name).replace(/\s+/g, "").replace(/[^a-zA-Z0-9\-]/g, "");
-  const id = `${opt.idPrefix || "ev"}_${safe}`;
+  const safe = name.replace(/\s+/g, "").replace(/[^a-zA-Z0-9\-]/g, "");
+  const id = ${opt.idPrefix || "ev"}_${safe};
 
-  if (selectable) {
-    return `
-      <div class="event-row" data-day="${day}">
-        <div class="event-left selectable-mode">
-          <input type="checkbox" id="${id}" class="event-checkbox" data-day="${day}" value="${escapeHtml(name)}">
-          <label for="${id}" class="event-label">${escapeHtml(name)}</label>
-        </div>
-        <a href="${RULEBOOK_URL}" target="_blank">
-          <i class="fa-regular fa-file-pdf pdf-icon"></i>
-        </a>
-      </div>
-    `;
-  }
-
-  // visitor (non-selectable) — rendered as pillow label + PDF icon
   return `
-    <div class="event-row" data-day="${day}">
-      <div class="event-left visitor-mode">
-        <span class="event-label">${escapeHtml(name)}</span>
-      </div>
-      <a href="${RULEBOOK_URL}" target="_blank">
-        <i class="fa-regular fa-file-pdf pdf-icon"></i>
-      </a>
+  <div class="event-row" data-day="${day}">
+    <div class="event-left">
+      ${selectable ? <input type="checkbox" id="${id}" class="event-checkbox" data-day="${day}" value="${escapeHtml(name)}"> : ""}
+      <label for="${id}" class="event-label">${escapeHtml(name)}</label>
     </div>
-  `;
+    <a href="${RULEBOOK_URL}" target="_blank"><i class="fa-regular fa-file-pdf pdf-icon"></i></a>
+  </div>`;
 }
 
 /* ===========================
@@ -177,7 +140,7 @@ function renderSelectionArea() {
   if (!selectionArea) return;
 
   selectionArea.classList.remove("hidden");
-  selectedPassTxt.textContent = `Selected: ${currentPassType || ""}`;
+  selectedPassTxt.textContent = Selected: ${currentPassType};
   participantForm.innerHTML = "";
 
   /* ---------------- DAY PASS ---------------- */
@@ -298,18 +261,6 @@ function renderDayEvents(dayKey) {
     includeStarNite = tg.checked;
     calculateTotal();
   });
-
-  // make whole pill toggle checkbox when clicking (UX)
-  container.querySelectorAll(".event-left.selectable-mode").forEach(el => {
-    el.addEventListener("click", e => {
-      // avoid toggling when click the PDF icon
-      const cb = el.querySelector("input.event-checkbox");
-      if (cb) {
-        cb.checked = !cb.checked;
-        // no price change on selection, but we provide visual feedback
-      }
-    });
-  });
 }
 
 /* ===========================
@@ -362,7 +313,6 @@ function renderVisitorStarToggleIfNeeded() {
 =========================== */
 function renderFestEvents() {
   const container = document.getElementById("festEventsContainer");
-  if (!container) return;
 
   container.innerHTML = ["day0","day1","day2","day3"].map(d => `
     <div class="participant-card center-box">
@@ -381,14 +331,6 @@ function renderFestEvents() {
   if (tg) tg.addEventListener("change", () => {
     includeStarNite = tg.checked;
     calculateTotal();
-  });
-
-  // pill toggle behaviour for Fest events as well
-  container.querySelectorAll(".event-left.selectable-mode").forEach(el => {
-    el.addEventListener("click", e => {
-      const cb = el.querySelector("input.event-checkbox");
-      if (cb) cb.checked = !cb.checked;
-    });
   });
 }
 
@@ -486,8 +428,8 @@ function calculateTotal() {
 
 function updateTotal(t) {
   currentTotal = t;
-  if (totalAmountEl) totalAmountEl.textContent = `Total: ₹${t}`;
-  if (payBtn) payBtn.style.display = (t > 0 && participantsCount > 0) ? "inline-block" : "none";
+  totalAmountEl.textContent = Total: ₹${t};
+  payBtn.style.display = (t > 0 && participantsCount > 0) ? "inline-block" : "none";
 }
 
 /* ===========================
@@ -552,16 +494,11 @@ if (payBtn) {
       amount: currentTotal * 100,
       currency: "INR",
       name: "PRAVAAH 2026",
-      description: `${currentPassType} — Registration`,
+      description: ${currentPassType} — Registration,
       handler: async response => {
         payload.paymentId = response.razorpay_payment_id;
 
-        try {
-          navigator.sendBeacon(scriptURL, new Blob([JSON.stringify(payload)], { type: "application/json" }));
-        } catch (err) {
-          // fallback - send fetch quietly
-          try { await fetch(scriptURL, { method: "POST", body: JSON.stringify(payload), headers: { "Content-Type": "application/json" } }); } catch (e) {}
-        }
+        navigator.sendBeacon(scriptURL, new Blob([JSON.stringify(payload)], { type: "application/json" }));
 
         window.location.href = "payment_success.html";
       }
@@ -575,11 +512,9 @@ if (payBtn) {
   });
 }
 
-/* initial */
 setTimeout(() => {
   cachedProfile = getCachedProfile();
   calculateTotal();
 }, 120);
 
-/* export for debugging */
 window.PRAVAAH_passModule = { EVENTS, PRICES };
