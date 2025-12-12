@@ -170,9 +170,7 @@ body {
   transition: 0.25s ease;
 }
 
-.event-left input[type="checkbox"]:hover {
-  filter: drop-shadow(0 0 6px cyan);
-}
+
 
 .event-label {
   font-size: 1.1rem;
@@ -399,13 +397,5 @@ body {
 }
 
 
-.event-left input[type="checkbox"]:active {
-  background: transparent !important;
-  box-shadow: none !important;
-  filter: none !important;
-}
 
-.event-left input[type="checkbox"] {
-  -webkit-tap-highlight-color: transparent !important;
-}
 
