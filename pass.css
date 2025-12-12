@@ -117,7 +117,6 @@ body {
 
 /* -------- DAY & VISITOR BUTTONS -------- */
 .day-selector-row,
-.visitor-days-row,
 .visitor-days-col {
   display: flex;
   justify-content: center;
@@ -154,8 +153,8 @@ body {
 }
 
 /* ===========================================================
-   🔥 UPDATED PART — EVENT CHECKBOXES MATCH STARNITE TOGGLE
-   =========================================================== */
+   EVENT CHECKBOXES (MATCHES STAR NITE TOGGLE EXACTLY)
+=========================================================== */
 .event-left {
   display: flex;
   align-items: center;
@@ -166,8 +165,8 @@ body {
   width: 22px;
   height: 22px;
   cursor: pointer;
-  accent-color: cyan;      /* SAME AS STARNITE TOGGLE */
-  transform: scale(1.05);
+  accent-color: cyan;
+  transform: scale(1.15);
   transition: 0.25s ease;
 }
 
@@ -202,6 +201,7 @@ body {
   box-shadow: 0 0 12px rgba(0,255,255,0.25);
 }
 
+/* -------- PDF ICON -------- */
 .pdf-icon {
   color: cyan;
   font-size: 1.2rem;
@@ -213,9 +213,11 @@ body {
   text-shadow: 0 0 8px cyan;
 }
 
-/* -------- STARNITE TOGGLE -------- */
+/* ===========================================================
+   UNIFIED STAR NITE TOGGLE (ALL PASSES USE SAME STYLE)
+=========================================================== */
 .starnite-toggle-row {
-  margin-top: 15px;
+  margin-top: 20px;
   display: flex;
   justify-content: center;
 }
@@ -223,24 +225,25 @@ body {
 .starnite-toggle-row label {
   display: flex;
   align-items: center;
-  gap: 10px;
-  background: rgba(0,255,255,0.08);
-  padding: 10px 16px;
-  border-radius: 10px;
-  border: 1.2px solid cyan;
-  box-shadow: 0 0 10px rgba(0,255,255,0.25);
+  gap: 12px;
+  background: rgba(0, 255, 255, 0.10);
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 1.5px solid cyan;
+  box-shadow: 0 0 12px rgba(0,255,255,0.35);
   cursor: pointer;
   transition: .25s;
 }
 
-.starnite-toggle-row input {
-  transform: scale(1.25);
+.starnite-toggle-row input[type="checkbox"] {
+  transform: scale(1.35);
   accent-color: cyan;
+  cursor: pointer;
 }
 
 .starnite-toggle-row label:hover {
-  transform: scale(1.02);
-  box-shadow: 0 0 14px rgba(0,255,255,0.35);
+  transform: scale(1.03);
+  box-shadow: 0 0 16px rgba(0,255,255,0.45);
 }
 
 /* -------- PARTICIPANT FORM -------- */
