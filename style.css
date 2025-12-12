@@ -1376,6 +1376,52 @@ footer {
   box-shadow: none !important;
 }
 
+/* ---------------------------
+   PRAVAAH LOGO IN NAVBAR
+----------------------------*/
+.pravaah-logo img {
+  height: 52px;
+  object-fit: contain;
+  transition: 0.3s ease;
+}
+
+.pravaah-logo img:hover {
+  transform: scale(1.05);
+}
+
+/* Desktop Navbar Layout */
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;   /* SPACE BETWEEN 3 MAIN ITEMS */
+  padding: 15px 50px;
+}
+
+/* Mobile navbar layout */
+@media (max-width: 900px) {
+  nav {
+    padding: 10px 20px;
+  }
+
+  .iitbbs-logo img {
+    height: 42px;
+  }
+
+  .pravaah-logo img {
+    height: 42px;
+  }
+
+  .menu-toggle {
+    font-size: 1.9rem;
+  }
+
+  nav {
+    display: flex;
+    justify-content: space-between;  /* EVEN SPACING FOR 3 ITEMS */
+    align-items: center;
+  }
+}
+
 
 
 
