@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -214,8 +215,28 @@ document.addEventListener("DOMContentLoaded", () => {
   </footer>
 
   <!-- LIGHTBOX (Option 1 UI) -->
- <div id="lightbox" class="lightbox hidden"></div>
+  <div id="lightbox" class="lightbox hidden">
 
+    <div class="lightbox-top">
+      <span class="close-lightbox"><i class="fa-solid fa-xmark"></i></span>
+
+      <a id="downloadIcon" class="download-icon" download>
+        <i class="fa-solid fa-download"></i>
+      </a>
+    </div>
+
+    <div class="lb-arrow left"><i class="fa-solid fa-chevron-left"></i></div>
+
+    <img id="lightboxImg">
+
+    <div class="lightbox-info">
+      <h3 id="lightboxTitle"></h3>
+      <p id="lightboxDesc">Experience the Chronicles of Time — PRAVAAH 2K25.</p>
+    </div>
+
+    <div class="lb-arrow right"><i class="fa-solid fa-chevron-right"></i></div>
+
+</div>
 
 </body>
 </html>
