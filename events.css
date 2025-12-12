@@ -1,10 +1,27 @@
+/* ============================================================
+   PRAVAAH EVENTS PAGE — THEME MATCHED TO HOME PAGE
+   Fonts: Exo 2
+   Colors: Soft Neo Cyan (#24E0EC)
+   Effects: Blur, Smooth Glow, Sci-Fi UI
+============================================================ */
+
+/* ---------- ROOT COLORS (SAME AS HOME) ---------- */
+:root {
+  --primary: #24E0EC;
+  --primary-soft: rgba(36,224,236,0.22);
+  --primary-glow: rgba(36,224,236,0.55);
+  --text: #F4F9FC;
+}
+
 /* ---------- PAGE HEADING ---------- */
 .pg-heading {
   text-align: center;
   font-size: 3rem;
-  color: cyan;
+  color: var(--primary);
   margin: 3rem 0 2rem;
-  text-shadow: 0 0 8px rgba(0,255,255,0.6);
+  font-family: 'Oranienbaum';
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px var(--primary-soft);
 }
 
 /* ---------- CATEGORY SWITCH ---------- */
@@ -18,36 +35,35 @@
 }
 
 .category-switch button {
-  background: rgba(0, 0, 0, 0.25);
-  border: 2px solid cyan;
-  color: cyan;
+  background: rgba(0, 0, 0, 0.35);
+  border: 2px solid var(--primary);
+  color: var(--primary);
   padding: 14px 60px;
   border-radius: 50px;
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   font-weight: 600;
   text-transform: uppercase;
-  transition: 0.3s ease;
-  box-shadow: 0 0 10px rgba(0,255,255,0.25);
+  transition: 0.35s ease;
+  box-shadow: 0 0 12px var(--primary-soft);
 }
 
 .category-switch button.active {
-  background: rgba(0,255,255,0.15);
-  box-shadow: 0 0 18px rgba(0,255,255,0.45);
-  transform: scale(1.05);
+  background: rgba(36,224,236,0.18);
+  box-shadow: 0 0 20px var(--primary-glow);
+  transform: scale(1.06);
 }
 
 .category-switch button:hover {
-  background: rgba(0,255,255,0.1);
-  box-shadow: 0 0 25px rgba(0,255,255,0.4);
+  background: rgba(36,224,236,0.22);
+  box-shadow: 0 0 25px var(--primary-glow);
   transform: scale(1.07);
 }
 
-/* ---------- MOBILE CATEGORY ---------- */
+/* ---------- CATEGORY MOBILE ---------- */
 @media (max-width: 900px) {
   .category-switch {
     flex-direction: column;
     gap: 22px;
-    margin: 30px 0 40px;
     width: 100%;
   }
 
@@ -56,11 +72,11 @@
     max-width: 360px;
     min-height: 55px;
     padding: 12px 18px;
-    font-size: clamp(0.9rem, 3.5vw, 1.1rem);
+    font-size: 1rem;
   }
 
   .pg-heading {
-    font-size: 2.3rem;
+    font-size: 2.2rem;
   }
 }
 
@@ -71,7 +87,7 @@
   transform: translateY(20px);
   pointer-events: none;
   display: none;
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition: 0.6s ease;
 }
 
 .event-section.active {
@@ -90,7 +106,7 @@
   justify-items: center;
   opacity: 0;
   transform: translateY(30px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition: 0.6s ease;
 }
 
 .event-section.active .event-grid {
@@ -106,16 +122,16 @@
   height: 220px;
   border-radius: 18px;
   overflow: hidden;
-  border: 1px solid cyan;
+  border: 1px solid var(--primary);
   background: rgba(0,0,0,0.55);
-  box-shadow: 0 0 16px rgba(0,255,255,0.18);
+  box-shadow: 0 0 16px var(--primary-soft);
   cursor: pointer;
   opacity: 0;
   transform: scale(0.96);
   transition: 0.35s ease;
 }
 
-/* Fade-in animation */
+/* Fade-in sequence */
 .event-section.active .event-card {
   animation: cardFadeIn 0.55s ease forwards;
 }
@@ -126,16 +142,16 @@
 
 @keyframes cardFadeIn {
   from { opacity: 0; transform: translateY(30px) scale(0.95); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .event-card:hover {
-  transform: translateY(-8px) scale(1.03);
-  box-shadow: 0 0 22px rgba(0,255,255,0.6);
-  border-color: cyan;
+  transform: translateY(-8px) scale(1.04);
+  box-shadow: 0 0 28px var(--primary-glow);
+  border-color: var(--primary);
 }
 
-/* ---------- EVENT IMAGE ---------- */
+/* ---------- IMAGE ---------- */
 .event-img {
   width: 100%;
   height: 100%;
@@ -145,19 +161,18 @@
 
 .event-card:hover .event-img {
   filter: blur(3px) brightness(0.75);
-  transform: scale(1.06);
+  transform: scale(1.08);
 }
 
-/* ---------- OVERLAY (TEXT + GAP + BUTTONS) ---------- */
+/* ---------- OVERLAY ---------- */
 .overlay {
   position: absolute;
   inset: 0;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
+  justify-content: space-between;
+  padding: 22px;
   text-align: center;
-  padding: 20px;
   opacity: 0;
   backdrop-filter: blur(6px);
   background: rgba(0,0,0,0.55);
@@ -171,67 +186,58 @@
 }
 
 .overlay h3 {
+  color: var(--primary);
+  font-size: 1.25rem;
   margin-bottom: 6px;
-  font-size: 1.2rem;
-  color: cyan;
 }
 
 .overlay p {
+  color: var(--text);
   font-size: 0.9rem;
-  line-height: 1.3;
+  line-height: 1.35;
   margin-bottom: 20px;
 }
 
 /* ---------- BUTTON GROUP ---------- */
-/* Move button group to the bottom of overlay */
-.overlay {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;   /* pushes content top + buttons bottom */
-  padding-bottom: 25px;             /* nice spacing from bottom */
-}
-
-/* button group stays fixed at bottom */
 .btn-group {
-  margin-top: auto; /* pushes it down */
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
 }
 
-
-/* ---------- EVENT CARD BUTTONS (SMALL) ---------- */
+/* ---------- BUTTONS ---------- */
 .register-btn {
-  padding: 8px 20px;
-  border: 2px solid cyan;
-  border-radius: 25px;
+  padding: 7px 20px;
+  border: 2px solid var(--primary);
+  border-radius: 26px;
   background: transparent;
-  color: cyan;
+  color: var(--primary);
   font-size: 0.78rem;
   font-weight: 600;
-  cursor: pointer;
   transition: 0.25s ease;
   text-decoration: none;
 }
 
 .register-btn:hover {
-  background: cyan;
-  color: black;
+  background: var(--primary);
+  color: #001c20;
   transform: scale(1.05);
 }
 
 .btn.know-more {
-  padding: 7px 18px;
+  padding: 7px 16px;
   border-radius: 22px;
-  border: 1.8px solid rgba(0,255,255,0.6);
-  background: rgba(0,255,255,0.1);
-  color: cyan;
-  font-size: 0.75rem;
-  cursor: pointer;
+  border: 1.8px solid var(--primary);
+  background: rgba(36,224,236,0.12);
+  color: var(--primary);
   transition: 0.25s ease;
 }
 
 .btn.know-more:hover {
-  background: rgba(0,255,255,0.2);
+  background: rgba(36,224,236,0.22);
   transform: scale(1.05);
-  box-shadow: 0 0 14px rgba(0,255,255,0.5);
+  box-shadow: 0 0 14px var(--primary-soft);
 }
 
 /* ---------- EVENT TITLE ---------- */
@@ -242,19 +248,18 @@
   text-align: center;
   background: rgba(0,0,0,0.85);
   padding: 10px 0;
-  color: cyan;
+  color: var(--primary);
   font-size: 1rem;
   letter-spacing: 0.5px;
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition: 0.3s ease;
 }
 
-/* Hide bottom title on hover */
 .event-card:hover .event-title {
   opacity: 0;
   transform: translateY(10px);
 }
 
-/* ---------- RESPONSIVE ---------- */
+/* ---------- RESPONSIVE GRID ---------- */
 @media (max-width: 1100px) {
   .event-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -272,9 +277,9 @@
   }
 }
 
-/* ---------- FOOTER BUTTON FIX (KEEP ORIGINAL STYLE) ---------- */
+/* ---------- FOOTER REGISTER BUTTON MATCHED ---------- */
 footer .register-btn {
-  background: linear-gradient(90deg, #6a5acd, #00ffff) !important;
+  background: linear-gradient(90deg, var(--primary), #7A00FF) !important;
   border: none !important;
   padding: 12px 30px !important;
   border-radius: 30px !important;
@@ -282,11 +287,9 @@ footer .register-btn {
   font-size: 1.1rem !important;
   font-weight: 600 !important;
   text-decoration: none !important;
-  box-shadow: none !important;
 }
 
 footer .register-btn:hover {
   transform: scale(1.08);
-  box-shadow: 0 0 15px cyan;
+  box-shadow: 0 0 20px var(--primary-glow);
 }
-
