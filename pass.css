@@ -115,7 +115,7 @@ body {
   text-align: center;
 }
 
-/* -------- DAY SELECT BUTTONS -------- */
+/* -------- ALL DAY SELECT BUTTONS (Day Pass + Visitor Pass) -------- */
 .day-selector-row,
 .visitor-days-row,
 .visitor-days-col {
@@ -126,6 +126,7 @@ body {
   flex-wrap: wrap;
 }
 
+/* Make visitor-day-card identical to day-card */
 .day-card,
 .visitor-day-card {
   background: rgba(0,0,0,0.45);
@@ -157,43 +158,94 @@ body {
   transform: scale(1.04);
 }
 
-/* ---------- EVENT CHECKBOX (MATCHES STARNITE TOGGLE) ---------- */
-.event-left input[type="checkbox"] {
-  transform: scale(1.25);
-  accent-color: cyan;
-  cursor: pointer;
-  transition: 0.25s;
-}
+/* -------- EVENT STYLES (SELECTABLE + VISITOR) -------- */
 
-/* -------- EVENT ROW -------- */
+/* base event-row */
 .event-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: rgba(0,0,0,0.32);
-  padding: 14px 18px;
+  padding: 10px 14px;
   border-radius: 12px;
-  border: 1px solid rgba(0,255,255,0.32);
+  border: 1px solid rgba(0,255,255,0.25);
   margin: 10px 0;
-  width: 100%;
-  transition: .25s;
-  box-shadow: 0 0 8px rgba(0,255,255,0.12);
+  transition: .2s;
+  box-shadow: 0 0 6px rgba(0,255,255,0.10);
 }
 
+/* Hover */
 .event-row:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 12px rgba(0,255,255,0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 0 12px rgba(0,255,255,0.20);
 }
 
+/* VISITOR MODE: looks like your screenshot — no checkbox, full pill only for label area */
+.event-left.visitor-mode {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 12px 18px;
+  gap: 12px;
+  background: transparent; /* keep parent bg */
+  border-radius: 10px;
+  border: 1px solid rgba(0,255,255,0.06);
+  box-shadow: 0 0 0 rgba(0,0,0,0);
+}
+
+/* For the inner pill look of the visitor label (outer row keeps the darker background) */
+.event-left.visitor-mode .event-label {
+  display: inline-block;
+  width: 100%;
+  padding: 10px 18px;
+  background: rgba(0,0,0,0.45);
+  border-radius: 12px;
+  border: 1.5px solid rgba(0,255,255,0.12);
+  box-shadow: 0 0 8px rgba(0,255,255,0.08);
+  color: white;
+  font-size: 1.05rem;
+}
+
+/* SELECTABLE MODE (Day + Fest) — pill with checkbox inside (Starnite-style) */
+.event-left.selectable-mode {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(0,255,255,0.08);
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1.3px solid cyan;
+  box-shadow: 0 0 10px rgba(0,255,255,0.22);
+  cursor: pointer;
+  transition: .2s;
+}
+
+.event-left.selectable-mode:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 14px rgba(0,255,255,0.30);
+}
+
+/* Checkbox inside selectable pill */
+.event-left.selectable-mode input[type="checkbox"] {
+  transform: scale(1.2);
+  accent-color: cyan;
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+}
+
+/* event label common style */
 .event-label {
   font-size: 1.05rem;
   color: white;
 }
 
+/* PDF icon */
 .pdf-icon {
   color: cyan;
   font-size: 1.2rem;
-  transition: .25s;
+  transition: .2s;
+  margin-left: 14px;
 }
 
 .pdf-icon:hover {
@@ -276,7 +328,7 @@ body {
 }
 
 .custom-number-box input {
-  width: 60px;
+  width: 60px; /* Reduced width */
   height: 35px;
   text-align: center;
   border: none;
@@ -323,6 +375,8 @@ body {
   cursor: pointer;
   font-size: 1.1rem;
   transition: .25s;
+  margin-top: 10px;
+  box-shadow: 0 0 8px rgba(0,255,255,0.25);
 }
 
 .main-btn:hover {
@@ -335,5 +389,6 @@ body {
   .passes-box { padding: 25px; }
   .pass-card { width: 90%; }
   .participant-card { width: 95%; }
-  .event-row { padding: 12px; }
+  .event-row { padding: 8px 10px; }
+  .event-left.visitor-mode .event-label { padding: 8px 12px; font-size: 1rem; }
 }
