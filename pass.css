@@ -115,7 +115,7 @@ body {
   text-align: center;
 }
 
-/* -------- ALL DAY SELECT BUTTONS (Day Pass + Visitor Pass) -------- */
+/* -------- DAY SELECT BUTTONS -------- */
 .day-selector-row,
 .visitor-days-row,
 .visitor-days-col {
@@ -126,7 +126,6 @@ body {
   flex-wrap: wrap;
 }
 
-/* Make visitor-day-card identical to day-card */
 .day-card,
 .visitor-day-card {
   background: rgba(0,0,0,0.45);
@@ -138,10 +137,6 @@ body {
   transition: .25s;
   font-size: 1rem;
   box-shadow: 0 0 8px rgba(0,255,255,0.15);
-}
-
-.visitor-day-card input {
-  display: none;
 }
 
 .day-card:hover,
@@ -158,8 +153,7 @@ body {
   transform: scale(1.04);
 }
 
-/* -------- CLEAN MINIMAL CHECKBOXES (EVENTS) -------- */
-/* -------- EVENT CHECKBOX (EXACT SAME SIZE AS STARNITE TOGGLE) -------- */
+/* -------- EVENT CHECKBOX (MATCH STAR NITE STYLE, ORIGINAL SIZE) -------- */
 .event-left {
   display: flex;
   align-items: center;
@@ -168,19 +162,19 @@ body {
 
 .event-left input[type="checkbox"] {
   appearance: none;
-  width: 18px;       /* SAME SIZE FIXED */
-  height: 18px;      /* SAME SIZE FIXED */
+  width: 18px;
+  height: 18px;
   border: 2px solid cyan;
-  border-radius: 4px;  /* keep same as original */
+  border-radius: 4px;
   background: rgba(0,255,255,0.08);
   cursor: pointer;
   position: relative;
-  transition: 0.25s;
+  transition: .25s;
 }
 
 .event-left input[type="checkbox"]:hover {
-  box-shadow: 0 0 10px cyan;
   transform: scale(1.05);
+  box-shadow: 0 0 10px cyan;
 }
 
 .event-left input[type="checkbox"]:checked {
@@ -191,7 +185,7 @@ body {
 
 .event-left input[type="checkbox"]:checked::after {
   content: "";
-  width: 8px;       /* same proportion as Starnite fill */
+  width: 8px;
   height: 8px;
   background: black;
   position: absolute;
@@ -199,7 +193,6 @@ body {
   left: 4px;
   border-radius: 2px;
 }
-
 
 /* -------- EVENT ROW -------- */
 .event-row {
@@ -312,7 +305,7 @@ body {
 }
 
 .custom-number-box input {
-  width: 60px; /* Reduced width */
+  width: 60px;
   height: 35px;
   text-align: center;
   border: none;
