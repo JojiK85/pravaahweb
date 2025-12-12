@@ -1030,6 +1030,14 @@ footer {
   }
 }
 
+/* 📱 MOBILE FEED LIMIT — show max 4 items, scroll if overflow */
+@media (max-width: 650px) {
+  .feed-list {
+    max-height: calc(4 * 75px); /* visible height for 4 items */
+    overflow-y: auto !important; /* scroll if more than 4 */
+    overflow-x: hidden !important;
+  }
+}
 
 /* =======================
    AFTERMOVIE — MOBILE
@@ -1347,6 +1355,7 @@ footer {
     padding: 12px 16px;
   }
 }
+
 
 
 
