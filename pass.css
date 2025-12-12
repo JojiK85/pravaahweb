@@ -368,3 +368,7 @@ body {
   text-align: center;
 }
 
+
+.starnite-toggle-row label span {
+  white-space: nowrap;
+}
