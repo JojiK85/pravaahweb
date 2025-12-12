@@ -372,3 +372,13 @@ body {
 .starnite-toggle-row label span {
   white-space: nowrap;
 }
+
+.starnite-toggle-row label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px !important;       /* 🔥 force correct spacing */
+}
+
+.starnite-toggle-row input[type="checkbox"] {
+  margin: 0 !important;      /* 🔥 removes unwanted auto margin */
+}
