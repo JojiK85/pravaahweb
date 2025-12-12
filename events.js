@@ -1,25 +1,41 @@
-// 🌐 Navbar Toggle
+/* ============================================================
+   PRAVAAH — EVENTS PAGE SCRIPT (Optimized + Theme Consistent)
+   Handles:
+   ✔ Mobile Navbar Toggle
+   ✔ Category Switching (Tech / Cultural / Workshop)
+============================================================ */
+
+// ------------------------------------------------------------
+// 🌐 MOBILE NAVBAR TOGGLE
+// ------------------------------------------------------------
 const menuToggle = document.getElementById("menuToggle");
 const menu = document.getElementById("menu");
 
 if (menuToggle && menu) {
+  // Open / Close menu
   menuToggle.addEventListener("click", (e) => {
     e.stopPropagation();
     menu.classList.toggle("active");
   });
 
+  // Close when clicking outside
   document.addEventListener("click", (e) => {
     if (!menu.contains(e.target) && !menuToggle.contains(e.target)) {
       menu.classList.remove("active");
     }
   });
 
-  document.querySelectorAll("#menu a").forEach(link => {
+  // Close on clicking a link
+  menu.querySelectorAll("a").forEach(link => {
     link.addEventListener("click", () => menu.classList.remove("active"));
   });
 }
 
-// 🎭 Event Category Switch
+
+
+// ------------------------------------------------------------
+// 🎭 EVENT CATEGORY CONTROLS
+// ------------------------------------------------------------
 const techBtn = document.getElementById("techBtn");
 const cultBtn = document.getElementById("cultBtn");
 const workBtn = document.getElementById("workBtn");
@@ -28,7 +44,8 @@ const techSection = document.querySelector(".tech-events");
 const cultSection = document.querySelector(".cult-events");
 const workSection = document.querySelector(".work-events");
 
-// Helper to reset all
+
+// Reset all tabs + buttons
 function resetTabs() {
   techSection.classList.remove("active");
   cultSection.classList.remove("active");
@@ -39,23 +56,54 @@ function resetTabs() {
   workBtn.classList.remove("active");
 }
 
-// ---- Technopreneurship ----
+
+// ------------------------------------------------------------
+// 🧠 Technopreneurship
+// ------------------------------------------------------------
 techBtn.addEventListener("click", () => {
   resetTabs();
   techSection.classList.add("active");
   techBtn.classList.add("active");
+
+  // subtle animation
+  techSection.style.animation = "fadeIn 0.45s ease";
 });
 
-// ---- Cultural ----
+
+// ------------------------------------------------------------
+// 🎭 Cultural
+// ------------------------------------------------------------
 cultBtn.addEventListener("click", () => {
   resetTabs();
   cultSection.classList.add("active");
   cultBtn.classList.add("active");
+
+  cultSection.style.animation = "fadeIn 0.45s ease";
 });
 
-// ---- Workshops ----
+
+// ------------------------------------------------------------
+// 🛠 Workshops
+// ------------------------------------------------------------
 workBtn.addEventListener("click", () => {
   resetTabs();
   workSection.classList.add("active");
   workBtn.classList.add("active");
+
+  workSection.style.animation = "fadeIn 0.45s ease";
 });
+
+
+
+// ------------------------------------------------------------
+// ✨ Small Fade Animation (auto used above)
+// ------------------------------------------------------------
+document.head.insertAdjacentHTML(
+  "beforeend",
+  `<style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>`
+);
