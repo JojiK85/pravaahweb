@@ -16,13 +16,22 @@
   font-family: 'Exo 2', sans-serif !important;
 }
 /* Fix Font Awesome being overridden */
-i.fa-solid,
-i.fa-regular,
-i.fa-brands,
-.fa {
+/* Fix Font Awesome overriding */
+i.fa-solid {
   font-family: "Font Awesome 6 Free" !important;
-  font-weight: 900 !important;
+  font-weight: 900 !important; /* solid */
 }
+
+i.fa-regular {
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 400 !important; /* regular */
+}
+
+i.fa-brands {
+  font-family: "Font Awesome 6 Brands" !important;
+  font-weight: 400 !important; /* brands require weight 400 */
+}
+
 
 :root {
   --primary: #24E0EC;                  /* Soft Neo Cyan */
@@ -1355,6 +1364,7 @@ footer {
     padding: 12px 16px;
   }
 }
+
 
 
 
