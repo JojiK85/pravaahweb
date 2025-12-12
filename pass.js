@@ -1,3 +1,10 @@
+/* =============================
+   PRAVAAH PASS MODULE (main.js)
+   - Fixed template literals
+   - Updated renderEventRow for visitor vs selectable
+   - Keeps visitor events non-selectable but styled
+   ============================= */
+
 const scriptURL = "https://script.google.com/macros/s/AKfycby4F5rBxS_-KLmP05Yqm-R7PmjIx9_7dMsa28D1xds3X2jWSMKini-AJ-1wgGR6EmvDlg/exec";
 
 const EVENTS = {
@@ -14,10 +21,10 @@ const PRICES = {
   starnite: 300
 };
 
+/* Firebase imports (if running as module - keep as you had earlier) */
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-/* FIREBASE INIT */
 let auth = window.auth;
 if (!auth) {
   const firebaseConfig = {
@@ -33,7 +40,7 @@ if (!auth) {
   window.auth = auth;
 }
 
-/* DOM ELEMENTS */
+/* DOM references */
 const passCards = document.querySelectorAll(".pass-card");
 const selectionArea = document.getElementById("selectionArea");
 const selectedPassTxt = document.getElementById("selectedPass");
@@ -57,34 +64,29 @@ const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
 const phoneRe = /^[0-9+\-\s]{7,15}$/;
 const RULEBOOK_URL = "rulebooks/sample.pdf";
 
-/* CACHE */
+/* ------- local cache helpers ------- */
 function getCachedProfile() {
-  try { return JSON.parse(localStorage.getItem("profileData") || "{}"); }
-  catch { return {}; }
+  try { return JSON.parse(localStorage.getItem("profileData") || "{}"); } catch { return {}; }
 }
 function saveProfileCache(obj) {
-  try { localStorage.setItem("profileData", JSON.stringify(obj || {})); }
-  catch {}
+  try { localStorage.setItem("profileData", JSON.stringify(obj || {})); } catch {}
 }
-
-/* Get profile from Google Sheets */
 async function refreshProfileFromSheets(email) {
   if (!email) return;
   try {
     const r = await fetch(`${scriptURL}?email=${encodeURIComponent(email)}&type=profile`);
     const d = await r.json();
     if (d && d.email) {
-      saveProfileCache({
-        name: d.name || "",
-        email: d.email || email,
-        phone: d.phone || "",
-        college: d.college || ""
-      });
+      saveProfileCache({ name: d.name || "", email: d.email || email, phone: d.phone || "", college: d.college || "" });
       cachedProfile = getCachedProfile();
     }
-  } catch {}
+  } catch (err) {
+    // silent fail
+    console.warn("Profile refresh failed", err);
+  }
 }
 
+/* auth state */
 if (auth && auth.onAuthStateChanged) {
   auth.onAuthStateChanged(u => {
     cachedProfile = getCachedProfile();
@@ -96,34 +98,56 @@ if (auth && auth.onAuthStateChanged) {
   });
 }
 
-/* ESCAPE HTML */
-function escapeHtml(s) {
-  return String(s)
+/* escape helper */
+function escapeHtml(s) { 
+  return String(s || "")
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 }
 
-/* FIXED EVENT ROW (NO ERRORS) */
+/* ===========================
+   renderEventRow (selectable vs visitor)
+   - selectable: Day & Fest (checkbox inside cyan pill)
+   - non-selectable: Visitor (no checkbox; looks like screenshot)
+   ============================ */
 function renderEventRow(name, opt = {}) {
   const day = opt.dayKey || "";
   const selectable = !!opt.selectable;
-  const safe = name.replace(/\s+/g, "").replace(/[^a-zA-Z0-9\-]/g, "");
+  const safe = String(name).replace(/\s+/g, "").replace(/[^a-zA-Z0-9\-]/g, "");
   const id = `${opt.idPrefix || "ev"}_${safe}`;
 
+  if (selectable) {
+    return `
+      <div class="event-row" data-day="${day}">
+        <div class="event-left selectable-mode">
+          <input type="checkbox" id="${id}" class="event-checkbox" data-day="${day}" value="${escapeHtml(name)}">
+          <label for="${id}" class="event-label">${escapeHtml(name)}</label>
+        </div>
+        <a href="${RULEBOOK_URL}" target="_blank">
+          <i class="fa-regular fa-file-pdf pdf-icon"></i>
+        </a>
+      </div>
+    `;
+  }
+
+  // visitor (non-selectable) — rendered as pillow label + PDF icon
   return `
     <div class="event-row" data-day="${day}">
-      <div class="event-left">
-        ${selectable ? `<input type="checkbox" id="${id}" class="event-checkbox" data-day="${day}" value="${escapeHtml(name)}">` : ""}
-        <label for="${id}" class="event-label">${escapeHtml(name)}</label>
+      <div class="event-left visitor-mode">
+        <span class="event-label">${escapeHtml(name)}</span>
       </div>
-      <a href="${RULEBOOK_URL}" target="_blank"><i class="fa-regular fa-file-pdf pdf-icon"></i></a>
+      <a href="${RULEBOOK_URL}" target="_blank">
+        <i class="fa-regular fa-file-pdf pdf-icon"></i>
+      </a>
     </div>
   `;
 }
 
-/* PASS CARD SELECTION */
+/* ===========================
+    PASS CARD SELECTION
+=========================== */
 passCards.forEach(c => {
   c.addEventListener("click", () => {
     passCards.forEach(x => x.classList.remove("selected"));
@@ -146,12 +170,14 @@ passCards.forEach(c => {
   });
 });
 
-/* MAIN RENDER FUNCTION */
+/* ===========================
+    RENDER SELECTION UI
+=========================== */
 function renderSelectionArea() {
   if (!selectionArea) return;
 
   selectionArea.classList.remove("hidden");
-  selectedPassTxt.textContent = `Selected: ${currentPassType}`;
+  selectedPassTxt.textContent = `Selected: ${currentPassType || ""}`;
   participantForm.innerHTML = "";
 
   /* ---------------- DAY PASS ---------------- */
@@ -160,34 +186,30 @@ function renderSelectionArea() {
       <div class="participant-card center-box">
         <h4>Choose Day</h4>
         <div class="day-selector-row">
-          <button class="day-card" data-day="day0" type="button">DAY 0</button>
-          <button class="day-card" data-day="day1" type="button">DAY 1</button>
-          <button class="day-card" data-day="day2" type="button">DAY 2</button>
-          <button class="day-card" data-day="day3" type="button">DAY 3</button>
+          <button class="day-card" data-day="day0">DAY 0</button>
+          <button class="day-card" data-day="day1">DAY 1</button>
+          <button class="day-card" data-day="day2">DAY 2</button>
+          <button class="day-card" data-day="day3">DAY 3</button>
         </div>
       </div>
-
       <div id="dayEventsContainer"></div>
       <div id="participantsContainerPlaceholder"></div>
     `;
 
     document.querySelectorAll(".day-card").forEach(btn => {
-      btn.addEventListener("click", e => {
-        e.preventDefault(); // 🔥 FIX ADDED
-
+      btn.addEventListener("click", () => {
         document.querySelectorAll(".day-card").forEach(x => x.classList.remove("active"));
         btn.classList.add("active");
 
         currentDay = btn.dataset.day;
         includeStarNite = false;
-
         renderDayEvents(currentDay);
         calculateTotal();
       });
     });
   }
 
-  /* ---------------- VISITOR PASS ---------------- */
+  /* ---------------- VISITOR PASS (UPDATED) ---------------- */
   if (currentPassType === "Visitor Pass") {
     participantForm.innerHTML = `
       <div class="participant-card center-box">
@@ -205,10 +227,9 @@ function renderSelectionArea() {
     `;
 
     document.querySelectorAll(".visitor-day-card").forEach(btn => {
-      btn.addEventListener("click", e => {
-        e.preventDefault();
+      btn.addEventListener("click", () => {
+        let d = btn.dataset.day;
 
-        const d = btn.dataset.day;
         if (currentVisitorDays.includes(d)) {
           currentVisitorDays = currentVisitorDays.filter(x => x !== d);
           btn.classList.remove("active");
@@ -218,7 +239,6 @@ function renderSelectionArea() {
         }
 
         includeStarNite = false;
-
         renderVisitorEvents(currentVisitorDays);
         renderVisitorStarToggleIfNeeded();
         calculateTotal();
@@ -234,7 +254,6 @@ function renderSelectionArea() {
       <div id="festStarContainer"></div>
       <div id="participantsContainerPlaceholder"></div>
     `;
-
     renderFestEvents();
   }
 
@@ -252,7 +271,9 @@ function renderSelectionArea() {
   calculateTotal();
 }
 
-/* RENDER DAY PASS EVENTS */
+/* ===========================
+   DAY PASS EVENTS
+=========================== */
 function renderDayEvents(dayKey) {
   const container = document.getElementById("dayEventsContainer");
   if (!container) return;
@@ -262,15 +283,13 @@ function renderDayEvents(dayKey) {
   container.innerHTML = `
     <div class="participant-card center-box">
       <h4>${dayKey.toUpperCase()} Events</h4>
-
       <div class="events-list">
         ${evs.map(ev => renderEventRow(ev, { dayKey, selectable: true })).join("")}
       </div>
-
       ${dayKey === "day3" ? `
-      <div class="starnite-toggle-row">
-        <label><input type="checkbox" id="day3StarToggle"><span>Include Star Nite</span></label>
-      </div>` : ""}
+        <div class="starnite-toggle-row">
+          <label><input type="checkbox" id="day3StarToggle"><span>Include Star Nite</span></label>
+        </div>` : ""}
     </div>
   `;
 
@@ -279,9 +298,23 @@ function renderDayEvents(dayKey) {
     includeStarNite = tg.checked;
     calculateTotal();
   });
+
+  // make whole pill toggle checkbox when clicking (UX)
+  container.querySelectorAll(".event-left.selectable-mode").forEach(el => {
+    el.addEventListener("click", e => {
+      // avoid toggling when click the PDF icon
+      const cb = el.querySelector("input.event-checkbox");
+      if (cb) {
+        cb.checked = !cb.checked;
+        // no price change on selection, but we provide visual feedback
+      }
+    });
+  });
 }
 
-/* VISITOR EVENTS */
+/* ===========================
+   VISITOR PASS EVENTS
+=========================== */
 function renderVisitorEvents(days) {
   const container = document.getElementById("visitorEventsContainer");
   if (!container) return;
@@ -294,17 +327,14 @@ function renderVisitorEvents(days) {
   container.innerHTML = days.map(d => `
     <div class="participant-card center-box">
       <h4>${d.toUpperCase()} Events</h4>
-
       <div class="events-list">
-        ${(EVENTS[d] || []).map(ev =>
-          renderEventRow(ev, { dayKey: d, selectable: false })
-        ).join("")}
+        ${(EVENTS[d] || []).map(ev => renderEventRow(ev, { dayKey: d, selectable: false })).join("")}
       </div>
     </div>
   `).join("");
 }
 
-/* STAR NITE TOGGLE FOR VISITOR */
+/* Star toggle for visitor */
 function renderVisitorStarToggleIfNeeded() {
   const container = document.getElementById("visitorStarContainer");
   if (!container) return;
@@ -327,24 +357,23 @@ function renderVisitorStarToggleIfNeeded() {
   }
 }
 
-/* FEST EVENTS */
+/* ===========================
+   FEST EVENTS
+=========================== */
 function renderFestEvents() {
   const container = document.getElementById("festEventsContainer");
+  if (!container) return;
 
-  container.innerHTML = ["day0", "day1", "day2", "day3"].map(d => `
+  container.innerHTML = ["day0","day1","day2","day3"].map(d => `
     <div class="participant-card center-box">
       <h4>${d.toUpperCase()}</h4>
-
       <div class="events-list">
-        ${(EVENTS[d] || []).map(ev =>
-          renderEventRow(ev, { dayKey: d, selectable: true })
-        ).join("")}
+        ${(EVENTS[d] || []).map(ev => renderEventRow(ev, { dayKey: d, selectable: true })).join("")}
       </div>
-
       ${d === "day3" ? `
-      <div class="starnite-toggle-row">
-        <label><input type="checkbox" id="festStar"><span>Include Star Nite</span></label>
-      </div>` : ""}
+        <div class="starnite-toggle-row">
+          <label><input type="checkbox" id="festStar"><span>Include Star Nite</span></label>
+        </div>` : ""}
     </div>
   `).join("");
 
@@ -353,9 +382,19 @@ function renderFestEvents() {
     includeStarNite = tg.checked;
     calculateTotal();
   });
+
+  // pill toggle behaviour for Fest events as well
+  container.querySelectorAll(".event-left.selectable-mode").forEach(el => {
+    el.addEventListener("click", e => {
+      const cb = el.querySelector("input.event-checkbox");
+      if (cb) cb.checked = !cb.checked;
+    });
+  });
 }
 
-/* PARTICIPANT FORMS */
+/* ===========================
+   PARTICIPANTS FORM
+=========================== */
 function buildParticipantForms(count) {
   const placeholder = document.getElementById("participantsContainerPlaceholder");
   participantsCount = count;
@@ -386,7 +425,7 @@ function buildParticipantForms(count) {
   calculateTotal();
 }
 
-/* COUNTER */
+/* PARTICIPANT COUNTER */
 if (incBtn) {
   incBtn.addEventListener("click", () => {
     let v = parseInt(numInput.value) || 0;
@@ -394,6 +433,7 @@ if (incBtn) {
     buildParticipantForms(v);
   });
 }
+
 if (decBtn) {
   decBtn.addEventListener("click", () => {
     let v = parseInt(numInput.value) || 0;
@@ -401,6 +441,7 @@ if (decBtn) {
     buildParticipantForms(v);
   });
 }
+
 if (numInput) {
   numInput.addEventListener("input", () => {
     let v = parseInt(numInput.value) || 0;
@@ -411,7 +452,9 @@ if (numInput) {
   });
 }
 
-/* CALCULATE TOTAL */
+/* ===========================
+   CALCULATE TOTAL
+=========================== */
 function calculateTotal() {
   let t = 0;
 
@@ -443,11 +486,13 @@ function calculateTotal() {
 
 function updateTotal(t) {
   currentTotal = t;
-  totalAmountEl.textContent = `Total: ₹${t}`;
-  payBtn.style.display = (t > 0 && participantsCount > 0) ? "inline-block" : "none";
+  if (totalAmountEl) totalAmountEl.textContent = `Total: ₹${t}`;
+  if (payBtn) payBtn.style.display = (t > 0 && participantsCount > 0) ? "inline-block" : "none";
 }
 
-/* COLLECT EVENTS */
+/* ===========================
+   EVENT COLLECTION
+=========================== */
 function collectSelectedEvents() {
   const out = { day0: [], day1: [], day2: [], day3: [] };
 
@@ -458,7 +503,9 @@ function collectSelectedEvents() {
   return out;
 }
 
-/* PAYMENT */
+/* ===========================
+   PAYMENT HANDLER
+=========================== */
 if (payBtn) {
   payBtn.addEventListener("click", async e => {
     e.preventDefault();
@@ -509,7 +556,12 @@ if (payBtn) {
       handler: async response => {
         payload.paymentId = response.razorpay_payment_id;
 
-        navigator.sendBeacon(scriptURL, new Blob([JSON.stringify(payload)], { type: "application/json" }));
+        try {
+          navigator.sendBeacon(scriptURL, new Blob([JSON.stringify(payload)], { type: "application/json" }));
+        } catch (err) {
+          // fallback - send fetch quietly
+          try { await fetch(scriptURL, { method: "POST", body: JSON.stringify(payload), headers: { "Content-Type": "application/json" } }); } catch (e) {}
+        }
 
         window.location.href = "payment_success.html";
       }
@@ -523,10 +575,11 @@ if (payBtn) {
   });
 }
 
-/* INIT */
+/* initial */
 setTimeout(() => {
   cachedProfile = getCachedProfile();
   calculateTotal();
 }, 120);
 
+/* export for debugging */
 window.PRAVAAH_passModule = { EVENTS, PRICES };
