@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
+
   /* ---------------------- LOGOUT ---------------------- */
   const logoutDesktop = document.getElementById("logoutDesktop");
   const logoutMobile = document.getElementById("logoutMobile");
@@ -34,6 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
   logoutMobile?.addEventListener("click", handleLogout);
 
 
+
   /* ---------------------- CALENDAR + FEED ---------------------- */
 
   const monthYear = document.getElementById("monthYear");
@@ -44,7 +46,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let currentDate = new Date();
 
-  /* Feed data */
   const feedsByDate = {
     "2025-12-11": [
       { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
@@ -55,6 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const defaultFeed = [
     { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" }
   ];
+
 
 
   /* ---------------------- FEED RENDER ---------------------- */
@@ -91,7 +93,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
+
   /* ---------------------- CALENDAR RENDER ---------------------- */
+
   function renderCalendar(date, transition = false) {
     if (!calendar) return;
 
@@ -101,7 +105,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (transition) calendar.classList.add("fade-out");
 
     setTimeout(() => {
-      monthYear.textContent = `${date.toLocaleString("default", { month: "long" })} ${year}`;
+      monthYear.textContent =
+        `${date.toLocaleString("default", { month: "long" })} ${year}`;
 
       const firstDay = new Date(year, month, 1).getDay();
       const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -130,7 +135,8 @@ document.addEventListener("DOMContentLoaded", () => {
           document.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
           day.classList.add("selected");
 
-          const key = `${year}-${String(month + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
+          const key =
+            `${year}-${String(month + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
           renderFeed(key);
         });
 
@@ -142,9 +148,9 @@ document.addEventListener("DOMContentLoaded", () => {
         calendar.classList.add("fade-in");
         setTimeout(() => calendar.classList.remove("fade-in"), 450);
       }
-
     }, transition ? 250 : 0);
   }
+
 
   prevMonth?.addEventListener("click", () => {
     currentDate.setMonth(currentDate.getMonth() - 1);
@@ -157,12 +163,15 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   renderCalendar(currentDate);
+
   renderFeed(
     `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}`
   );
 
 
+
   /* ---------------------- VIDEO SWITCH ---------------------- */
+
   const mainVideo = document.getElementById("mainVideo");
   const aftermovieBtn = document.getElementById("aftermovieBtn");
   const themeBtn = document.getElementById("themeBtn");
@@ -180,7 +189,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 
+
   /* ---------------------- MOBILE NAV MENU ---------------------- */
+
   const menuToggle = document.getElementById("menuToggle");
   const menu = document.getElementById("menu");
 
@@ -202,19 +213,32 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
+
   /* ===========================================================
-     🔵 LIGHTBOX SYSTEM — FULL-SCREEN VIEWER
+     🔵 LIGHTBOX SYSTEM — FIXED & FINAL
   =========================================================== */
 
-  let galleryImages = Array.from(document.querySelectorAll(".slide img")).map((img, index) => ({
-    src: img.src,
-    title: img.parentElement.getAttribute("data-title"),
-    desc: "This is one of the premium highlights of PRAVAAH 2K25.",
-    index
-  }));
+  /* Get ORIGINAL slides only (no duplicates) */
+  const slides = document.querySelectorAll(".slide");
 
-  /* Create only ONE lightbox */
-  const lightboxHTML = `
+  let galleryImages = Array.from(slides).map((slide, index) => {
+    const img = slide.querySelector("img");
+
+    return {
+      src: img.src,
+      title: slide.getAttribute("data-title"),
+      desc: "Experience the Chronicles of Time — PRAVAAH 2K25.",
+      index
+    };
+  });
+
+  let currentIndex = 0;
+
+
+  /* ---------- Inject Lightbox HTML ---------- */
+  const lightbox = document.getElementById("lightbox");
+
+  lightbox.innerHTML = `
     <div class="lightbox-top">
       <span class="close-lightbox"><i class="fa-solid fa-xmark"></i></span>
       <a id="downloadIcon" class="download-icon" download>
@@ -224,36 +248,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
     <div class="lb-arrow left"><i class="fa-solid fa-chevron-left"></i></div>
 
-    <img id="lightboxImg" />
+    <img id="lightboxImg">
 
     <div class="lb-arrow right"><i class="fa-solid fa-chevron-right"></i></div>
 
     <div class="lightbox-info">
-        <h3 id="lightboxTitle"></h3>
-        <p id="lightboxDesc"></p>
+      <h3 id="lightboxTitle"></h3>
+      <p id="lightboxDesc"></p>
     </div>
   `;
-
-  const lightbox = document.getElementById("lightbox");
-  lightbox.innerHTML = lightboxHTML;
 
   const lbImg = document.getElementById("lightboxImg");
   const lbTitle = document.getElementById("lightboxTitle");
   const lbDesc = document.getElementById("lightboxDesc");
   const downloadIcon = document.getElementById("downloadIcon");
 
-  const closeBtn = lightbox.querySelector(".close-lightbox");
-  const leftArrow = lightbox.querySelector(".lb-arrow.left");
-  const rightArrow = lightbox.querySelector(".lb-arrow.right");
+  const closeBtn = document.querySelector(".close-lightbox");
+  const leftArrow = document.querySelector(".lb-arrow.left");
+  const rightArrow = document.querySelector(".lb-arrow.right");
 
-  let currentIndex = 0;
 
-  /* Smooth slide transition */
+
+  /* ---------- FUNCTIONS ---------- */
+
   function showSlide(index) {
     lbImg.style.opacity = 0;
 
     setTimeout(() => {
       const item = galleryImages[index];
+
       lbImg.src = item.src;
       lbTitle.textContent = item.title;
       lbDesc.textContent = item.desc;
@@ -271,17 +294,18 @@ document.addEventListener("DOMContentLoaded", () => {
     lightbox.classList.remove("hidden");
   }
 
+
+  /* ---------- EVENT LISTENERS ---------- */
+
   closeBtn.addEventListener("click", () => lightbox.classList.add("hidden"));
 
-  /* Only zoom-icon should trigger the lightbox */
   document.querySelectorAll(".zoom-icon").forEach((icon, i) => {
     icon.addEventListener("click", (e) => {
       e.stopPropagation();
-      openLightbox(i);
+      openLightbox(i);  // FIXED INDEXING
     });
   });
 
-  /* Left / Right arrow controls */
   leftArrow.addEventListener("click", () => {
     currentIndex = (currentIndex - 1 + galleryImages.length) % galleryImages.length;
     showSlide(currentIndex);
@@ -292,12 +316,13 @@ document.addEventListener("DOMContentLoaded", () => {
     showSlide(currentIndex);
   });
 
-  /* Close when clicking outside */
   lightbox.addEventListener("click", (e) => {
     if (e.target === lightbox) lightbox.classList.add("hidden");
   });
 
-  /* Swipe Support */
+
+  /* ---------- SWIPE SUPPORT ---------- */
+
   let startX = 0;
 
   lightbox.addEventListener("touchstart", (e) => {
