@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
 
-/* ---------------- GLOBAL ---------------- */
+/* -------- GLOBAL -------- */
 body {
   font-family: 'Orbitron', sans-serif;
   background: linear-gradient(120deg, #2c1a55, #3e5d75, #022c43, #5b2a86);
@@ -22,7 +22,7 @@ body {
   100% { background-position: 0% 50%; }
 }
 
-/* ---------------- PASSES BOX ---------------- */
+/* -------- PASSES SECTION -------- */
 .passes-section {
   width: 100%;
   display: flex;
@@ -32,10 +32,10 @@ body {
 }
 
 .passes-box {
-  background: rgba(0,0,0,0.72);
-  border: 1.5px solid rgba(0,255,255,0.35);
+  background: rgba(0, 0, 0, 0.72);
+  border: 1.5px solid rgba(0, 255, 255, 0.35);
   border-radius: 20px;
-  box-shadow: 0 0 6px rgba(0,255,255,0.18);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.15);
   padding: 40px;
   width: 90%;
   max-width: 1100px;
@@ -47,7 +47,7 @@ body {
   font-size: 2.3rem;
 }
 
-/* ---------------- PASS CARDS ---------------- */
+/* -------- PASS CARDS -------- */
 .passes-grid {
   display: flex;
   gap: 30px;
@@ -64,17 +64,18 @@ body {
   width: 300px;
   cursor: pointer;
   transition: .25s;
+  position: relative;
   box-shadow: 0 0 6px rgba(0,255,255,0.15);
 }
 
 .pass-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 0 10px rgba(0,255,255,0.25);
+  box-shadow: 0 0 12px rgba(0,255,255,0.25);
 }
 
 .pass-card.selected {
   border: 2px solid cyan;
-  box-shadow: 0 0 12px rgba(0,255,255,0.5);
+  box-shadow: 0 0 12px rgba(0,255,255,0.6);
   transform: scale(1.03);
 }
 
@@ -87,9 +88,12 @@ body {
   opacity: 0;
   transition: .25s;
 }
-.pass-card.selected .select-indicator { opacity: 1; }
 
-/* ---------------- SELECTION AREA ---------------- */
+.pass-card.selected .select-indicator {
+  opacity: 1;
+}
+
+/* -------- SELECTION AREA -------- */
 #selectionArea {
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(0,255,255,0.28);
@@ -98,7 +102,7 @@ body {
   margin-top: 30px;
   width: 100%;
   max-width: 900px;
-  box-shadow: 0 0 8px rgba(0,255,255,0.12);
+  box-shadow: 0 0 8px rgba(0,255,255,0.15);
 }
 
 .hidden { display: none; }
@@ -106,21 +110,23 @@ body {
 #selectedPass {
   color: cyan;
   font-size: 1.7rem;
-  text-shadow: 0 0 7px rgba(0,255,255,0.45);
+  text-shadow: 0 0 7px rgba(0,255,255,0.5);
   margin-bottom: 1rem;
   text-align: center;
 }
 
-/* ---------------- DAY SELECT BUTTONS ---------------- */
+/* -------- ALL DAY SELECT BUTTONS (Day Pass + Visitor Pass) -------- */
 .day-selector-row,
-.visitor-days-row {
+.visitor-days-row,
+.visitor-days-col {
   display: flex;
   justify-content: center;
   gap: 15px;
+  margin-bottom: 18px;
   flex-wrap: wrap;
-  margin-bottom: 20px;
 }
 
+/* Make visitor-day-card identical to day-card */
 .day-card,
 .visitor-day-card {
   background: rgba(0,0,0,0.45);
@@ -131,13 +137,16 @@ body {
   cursor: pointer;
   transition: .25s;
   font-size: 1rem;
-  box-shadow: 0 0 6px rgba(0,255,255,0.12);
-  user-select: none;
+  box-shadow: 0 0 8px rgba(0,255,255,0.15);
+}
+
+.visitor-day-card input {
+  display: none;
 }
 
 .day-card:hover,
 .visitor-day-card:hover {
-  box-shadow: 0 0 10px rgba(0,255,255,0.2);
+  box-shadow: 0 0 10px rgba(0,255,255,0.35);
   transform: translateY(-2px);
 }
 
@@ -145,102 +154,119 @@ body {
 .visitor-day-card.active {
   background: rgba(0,255,255,0.12);
   border: 2px solid cyan;
-  box-shadow: 0 0 12px rgba(0,255,255,0.3);
+  box-shadow: 0 0 12px rgba(0,255,255,0.45);
   transform: scale(1.04);
 }
 
-/* Hide original checkbox for visitor pass */
-.visitor-day-card input { display: none; }
+/* -------- CLEAN MINIMAL CHECKBOXES (EVENTS) -------- */
+.event-left input[type="checkbox"] {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid cyan;
+  border-radius: 4px;
+  cursor: pointer;
+  background: transparent;
+  position: relative;
+  transition: 0.2s;
+}
 
-/* ---------------- EVENT TOGGLE (LIKE STARNITE) ---------------- */
-.event-toggle {
+.event-left input[type="checkbox"]:checked {
+  background: cyan;
+  border-color: cyan;
+}
+
+.event-left input[type="checkbox"]:checked::after {
+  content: "✔";
+  color: black;
+  font-size: 14px;
+  position: absolute;
+  top: -1px;
+  left: 2px;
+}
+
+/* -------- EVENT ROW -------- */
+.event-row {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  align-items: center;
   background: rgba(0,0,0,0.32);
   padding: 14px 18px;
   border-radius: 12px;
-  border: 1px solid rgba(0,255,255,0.28);
+  border: 1px solid rgba(0,255,255,0.32);
   margin: 10px 0;
   width: 100%;
-  box-shadow: 0 0 6px rgba(0,255,255,0.12);
   transition: .25s;
+  box-shadow: 0 0 8px rgba(0,255,255,0.12);
 }
-.event-toggle:hover {
+
+.event-row:hover {
   transform: translateY(-2px);
-  box-shadow: 0 0 10px rgba(0,255,255,0.25);
+  box-shadow: 0 0 12px rgba(0,255,255,0.25);
 }
 
-.event-toggle input[type="checkbox"].visitor-toggle-input { display: none; }
-
-.event-toggle .switch {
-  position: relative;
-  width: 60px;
-  height: 26px;
-  background: rgba(0,0,0,0.55);
-  border-radius: 20px;
-  border: 1px solid rgba(0,255,255,0.22);
-  box-shadow: inset 0 0 6px rgba(0,255,255,0.12);
-  cursor: pointer;
-  transition: .22s;
-}
-
-.event-toggle .switch .knob {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 22px;
-  height: 22px;
-  background: #fff;
-  border-radius: 50%;
-  transition: .22s;
-  box-shadow: 0 0 4px rgba(255,255,255,0.4);
-}
-
-/* Checked state */
-.event-toggle input[type="checkbox"].visitor-toggle-input:checked + .switch {
-  background: rgba(0,255,255,0.12);
-  border-color: cyan;
-}
-.event-toggle input[type="checkbox"].visitor-toggle-input:checked + .switch .knob {
-  left: 35px;
-  box-shadow: 0 0 10px cyan;
-}
-
-/* Event label */
-.event-toggle .event-label {
+.event-label {
   font-size: 1.05rem;
   color: white;
 }
 
-/* ---------------- PDF ICON ---------------- */
 .pdf-icon {
   color: cyan;
   font-size: 1.2rem;
   transition: .25s;
 }
+
 .pdf-icon:hover {
   color: white;
-  text-shadow: 0 0 6px cyan;
+  text-shadow: 0 0 8px cyan;
 }
 
-/* ---------------- PARTICIPANT CARD ---------------- */
+/* -------- STARNITE TOGGLE -------- */
+.starnite-toggle-row {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.starnite-toggle-row label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0,255,255,0.08);
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1.2px solid cyan;
+  box-shadow: 0 0 10px rgba(0,255,255,0.25);
+  cursor: pointer;
+  transition: .25s;
+}
+
+.starnite-toggle-row input {
+  transform: scale(1.25);
+  accent-color: cyan;
+}
+
+.starnite-toggle-row label:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 14px rgba(0,255,255,0.35);
+}
+
+/* -------- PARTICIPANT FORM -------- */
 .participant-card {
   background: rgba(0,0,0,0.30);
-  border: 1px solid rgba(0,255,255,0.28);
+  border: 1px solid rgba(0,255,255,0.35);
   border-radius: 12px;
   padding: 20px;
   margin: 12px auto;
   width: 90%;
   max-width: 480px;
+  box-shadow: 0 0 8px rgba(0,255,255,0.15);
   text-align: center;
-  box-shadow: 0 0 6px rgba(0,255,255,0.15);
 }
 
 .participant-card input {
   width: 90%;
-  padding: 11px;
+  padding: 12px;
   margin: 6px 0;
   background: rgba(255,255,255,0.07);
   border: none;
@@ -249,56 +275,61 @@ body {
   text-align: center;
   font-size: 1rem;
 }
+
 .participant-card input:focus {
   outline: none;
-  box-shadow: 0 0 10px rgba(0,255,255,0.35);
+  box-shadow: 0 0 10px cyan;
 }
 
-/* ---------------- COUNTER ---------------- */
+/* -------- COUNTER -------- */
 .custom-number-box {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  background: rgba(0,0,0,0.45);
-  border: 1.2px solid rgba(0,255,255,0.28);
-  border-radius: 10px;
-  padding: 6px 10px;
-  box-shadow: 0 0 6px rgba(0,255,255,0.12);
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1.3px solid rgba(0,255,255,0.35);
+  border-radius: 12px;
+  box-shadow: 0 0 8px rgba(0,255,255,0.12);
+  padding: 8px 12px;
+  margin-bottom: 15px;
 }
 
 .custom-number-box input {
-  width: 50px;
-  height: 32px;
+  width: 60px; /* Reduced width */
+  height: 35px;
+  text-align: center;
   border: none;
   outline: none;
-  text-align: center;
-  background: transparent;
   color: cyan;
   font-size: 1rem;
+  background: transparent;
+  font-weight: 600;
 }
 
 .num-btn {
-  width: 32px;
-  height: 32px;
-  border: none;
   background: cyan;
+  border: none;
   color: black;
-  border-radius: 10px;
   font-size: 1.2rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: .22s;
-}
-.num-btn:hover {
-  transform: scale(1.05);
+  transition: .25s;
 }
 
-/* ---------------- TOTAL + PAYMENT ---------------- */
+.num-btn:hover {
+  transform: scale(1.05);
+  background: #00ffff;
+}
+
+/* -------- TOTAL + PAYMENT -------- */
 .total-section {
   margin-top: 1.5rem;
   color: cyan;
+  text-shadow: 0 0 6px rgba(0,255,255,0.4);
   font-size: 1.35rem;
-  text-shadow: 0 0 6px rgba(0,255,255,0.35);
   text-align: center;
 }
 
@@ -306,20 +337,25 @@ body {
   background: cyan;
   border: none;
   padding: 12px 30px;
-  border-radius: 12px;
   color: black;
   font-weight: 700;
+  border-radius: 12px;
   cursor: pointer;
+  font-size: 1.1rem;
   transition: .25s;
+  margin-top: 10px;
+  box-shadow: 0 0 8px rgba(0,255,255,0.25);
 }
+
 .main-btn:hover {
   transform: scale(1.06);
   background: #00ffff;
 }
 
-/* ---------------- RESPONSIVE ---------------- */
+/* -------- RESPONSIVE -------- */
 @media (max-width: 900px) {
   .passes-box { padding: 25px; }
   .pass-card { width: 90%; }
   .participant-card { width: 95%; }
+  .event-row { padding: 12px; }
 }
