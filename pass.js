@@ -92,19 +92,32 @@ function escapeHtml(s) {
     .replace(/"/g, "&quot;");
 }
 
+/* ===========================================
+   FINAL FIXED renderEventRow() (YOUR REQUEST)
+   Checkbox FIRST → Event Name → PDF Icon
+   Checkbox styled like Starnite toggle
+=========================================== */
 function renderEventRow(name, opt = {}) {
   const day = opt.dayKey || "";
   const selectable = !!opt.selectable;
-  const safe = name.replace(/\s+/g, "_").replace(/[^a-zA-Z0-9_\-]/g, "");
+  const safe = name.replace(/\s+/g, "").replace(/[^a-zA-Z0-9\-]/g, "");
   const id = `${opt.idPrefix || "ev"}_${safe}`;
 
   return `
   <div class="event-row" data-day="${day}">
-    <div class="event-left">
-      ${selectable ? `<input type="checkbox" id="${id}" class="event-checkbox" data-day="${day}" value="${escapeHtml(name)}">` : ""}
-      <label for="${id}" class="event-label">${escapeHtml(name)}</label>
-    </div>
-    <a href="${RULEBOOK_URL}" target="_blank"><i class="fa-regular fa-file-pdf pdf-icon"></i></a>
+      
+      <label class="event-toggle">
+         ${selectable ? `
+           <input type="checkbox" id="${id}" class="event-checkbox" 
+                  data-day="${day}" value="${escapeHtml(name)}">
+         ` : ""}
+         <span class="event-label">${escapeHtml(name)}</span>
+      </label>
+
+      <a href="${RULEBOOK_URL}" target="_blank">
+        <i class="fa-regular fa-file-pdf pdf-icon"></i>
+      </a>
+
   </div>`;
 }
 
@@ -172,7 +185,7 @@ function renderSelectionArea() {
     });
   }
 
-  /* ---------------- VISITOR PASS (UPDATED) ---------------- */
+  /* ---------------- VISITOR PASS ---------------- */
   if (currentPassType === "Visitor Pass") {
     participantForm.innerHTML = `
       <div class="participant-card center-box">
