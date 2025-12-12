@@ -1152,6 +1152,7 @@ footer {
   z-index: 9999;
 }
 
+
 .hidden { display: none !important; }
 
 /* MAIN IMAGE */
@@ -1332,12 +1333,16 @@ footer {
 
 .lightbox-top {
   position: absolute;
-  top: 22px;
-  right: 28px;
+  top: 20px;
+  right: 20px;
   display: flex;
   align-items: center;
   gap: 18px;
+
+  /* Ensure icons stay side-by-side always */
+  z-index: 999999;
 }
+
 
 /* Close Icon */
 .close-lightbox {
@@ -1370,6 +1375,45 @@ footer {
 }
 
 
+
+@media (max-width: 650px) {
+  .lightbox img {
+    width: 92%;
+    max-height: 45vh;         /* keeps it visible */
+  }
+
+  .lightbox-info {
+    width: 92%;
+    margin-top: 10px;
+  }
+
+  .lb-arrow i {
+    font-size: 22px;
+  }
+
+  .lb-arrow {
+    padding: 8px;
+    border-width: 1.5px;
+  }
+
+  .lb-arrow.left { left: 6px; }
+  .lb-arrow.right { right: 6px; }
+
+  /* Icons shift too much on mobile → fix */
+  .lightbox-top {
+    top: 12px;
+    right: 12px;
+    gap: 12px;
+  }
+
+  .close-lightbox {
+    font-size: 32px;
+  }
+
+  .download-icon {
+    font-size: 28px;
+  }
+}
 
 
 
