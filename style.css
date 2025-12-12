@@ -1170,24 +1170,6 @@ footer {
   to   { transform: scale(1); opacity: 1; }
 }
 
-/* CLOSE BUTTON */
-.close-lightbox {
-  position: absolute;
-  top: 20px;
-  right: 28px;
-  font-size: 40px;
-  font-weight: bold;
-  color: #00F6FF;
-  cursor: pointer;
-  text-shadow: 0 0 12px #00F6FF;
-  transition: 0.2s;
-}
-
-.close-lightbox:hover {
-  color: white;
-  text-shadow: 0 0 18px #00F6FF;
-}
-
 /* ARROW BUTTONS */
 /* Desktop Arrows */
 .lb-arrow {
@@ -1365,6 +1347,7 @@ footer {
     padding: 12px 16px;
   }
 }
+
 
 
 
