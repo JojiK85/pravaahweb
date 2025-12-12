@@ -115,9 +115,10 @@ body {
   text-align: center;
 }
 
-/* -------- DAY SELECTORS -------- */
+/* -------- ALL DAY SELECT BUTTONS (Day Pass + Visitor Pass) -------- */
 .day-selector-row,
-.visitor-days-row {
+.visitor-days-row,
+.visitor-days-col {
   display: flex;
   justify-content: center;
   gap: 15px;
@@ -125,6 +126,7 @@ body {
   flex-wrap: wrap;
 }
 
+/* Make visitor-day-card identical to day-card */
 .day-card,
 .visitor-day-card {
   background: rgba(0,0,0,0.45);
@@ -135,15 +137,11 @@ body {
   cursor: pointer;
   transition: .25s;
   font-size: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 10px;
   box-shadow: 0 0 8px rgba(0,255,255,0.15);
 }
 
 .visitor-day-card input {
-  transform: scale(1.2);
-  accent-color: cyan;
+  display: none;
 }
 
 .day-card:hover,
@@ -153,11 +151,38 @@ body {
 }
 
 .day-card.active,
-.visitor-day-card input:checked + span {
+.visitor-day-card.active {
   background: rgba(0,255,255,0.12);
   border: 2px solid cyan;
   box-shadow: 0 0 12px rgba(0,255,255,0.45);
   transform: scale(1.04);
+}
+
+/* -------- CLEAN MINIMAL CHECKBOXES (EVENTS) -------- */
+.event-left input[type="checkbox"] {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid cyan;
+  border-radius: 4px;
+  cursor: pointer;
+  background: transparent;
+  position: relative;
+  transition: 0.2s;
+}
+
+.event-left input[type="checkbox"]:checked {
+  background: cyan;
+  border-color: cyan;
+}
+
+.event-left input[type="checkbox"]:checked::after {
+  content: "✔";
+  color: black;
+  font-size: 14px;
+  position: absolute;
+  top: -1px;
+  left: 2px;
 }
 
 /* -------- EVENT ROW -------- */
@@ -271,13 +296,13 @@ body {
 }
 
 .custom-number-box input {
-  width: 80px;
-  height: 40px;
+  width: 60px; /* Reduced width */
+  height: 35px;
   text-align: center;
   border: none;
   outline: none;
   color: cyan;
-  font-size: 1.1rem;
+  font-size: 1rem;
   background: transparent;
   font-weight: 600;
 }
@@ -286,19 +311,17 @@ body {
   background: cyan;
   border: none;
   color: black;
-  font-size: 1.3rem;
-  width: 40px;
-  height: 40px;
+  font-size: 1.2rem;
+  width: 36px;
+  height: 36px;
   border-radius: 10px;
   cursor: pointer;
   transition: .25s;
-  box-shadow: 0 0 6px rgba(0,255,255,0.25);
 }
 
 .num-btn:hover {
   transform: scale(1.05);
   background: #00ffff;
-  box-shadow: 0 0 10px rgba(0,255,255,0.35);
 }
 
 /* -------- TOTAL + PAYMENT -------- */
@@ -327,7 +350,6 @@ body {
 .main-btn:hover {
   transform: scale(1.06);
   background: #00ffff;
-  box-shadow: 0 0 12px rgba(0,255,255,0.35);
 }
 
 /* -------- RESPONSIVE -------- */
