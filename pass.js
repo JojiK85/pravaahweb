@@ -587,7 +587,7 @@ payBtn.addEventListener("click", async () => {
     localStorage.removeItem("failedForm");
 
     try {
-      await fetch(scriptURL, {
+        fetch(scriptURL, {
         method: "POST",
         mode: "no-cors",
         body: JSON.stringify(payload),
@@ -618,6 +618,7 @@ rzp.on("payment.failed", function () {
 rzp.open();
 
 });
+
 
 
 
