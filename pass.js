@@ -535,53 +535,10 @@ function collectSelectedEvents() {
 /* =======================================
       PAYMENT HANDLER
 ======================================= */
+/* =======================================
+      PAYMENT HANDLER (FINAL FIXED)
+======================================= */
 payBtn.addEventListener("click", async () => {
-  if (paying) return;
-  paying = true;
-
-  participantsCount = parseInt(numInput.value) || 0;
-
-  if (participantsCount <= 0) {
-    alert("Please add at least 1 participant.");
-    paying = false;
-    return;
-  }
-
-  // Only select REAL participant cards
-  const cards = [...document.querySelectorAll("#participantsContainerPlaceholder .participant-card")];
-
-  const participants = cards.map((c) => {
-    return {
-      name: c.querySelector(".pname")?.value.trim() || "",
-      email: c.querySelector(".pemail")?.value.trim() || "",
-      phone: c.querySelector(".pphone")?.value.trim() || "",
-      college: c.querySelector(".pcollege")?.value.trim() || ""
-    };
-  });
-
-  // Validation
-  for (let p of participants) {
-    if (!p.name || !p.email || !p.phone || !p.college) {
-      alert("Fill all participant fields.");
-      paying = false;
-      return;
-    }
-  }
-
-  const payload = {
-    registeredEmail: participants[0].email,
-    passType: currentPassType,
-    totalAmount: currentTotal,
-    participants,
-    daySelected: currentDay,
-    visitorDays: currentVisitorDays,
-    starnite: includeStarNite,
-    events: collectSelectedEvents(),
-  };
-
-  saveFailedCache();
-
-  payBtn.addEventListener("click", async () => {
   if (paying) return;
   paying = true;
 
@@ -595,10 +552,10 @@ payBtn.addEventListener("click", async () => {
   const cards = [...document.querySelectorAll("#participantsContainerPlaceholder .participant-card")];
 
   const participants = cards.map((c) => ({
-    name: c.querySelector(".pname").value.trim(),
-    email: c.querySelector(".pemail").value.trim(),
-    phone: c.querySelector(".pphone").value.trim(),
-    college: c.querySelector(".pcollege").value.trim()
+    name: c.querySelector(".pname")?.value.trim() || "",
+    email: c.querySelector(".pemail")?.value.trim() || "",
+    phone: c.querySelector(".pphone")?.value.trim() || "",
+    college: c.querySelector(".pcollege")?.value.trim() || ""
   }));
 
   for (let p of participants) {
@@ -654,7 +611,6 @@ payBtn.addEventListener("click", async () => {
     }
   });
 
-  /* ✅ PAYMENT FAILED EVENT — CORRECT PLACE */
   rzp.on("payment.failed", function (response) {
     console.error("Payment Failed:", response.error);
     paying = false;
@@ -663,6 +619,7 @@ payBtn.addEventListener("click", async () => {
 
   rzp.open();
 });
+
 
 /* =======================================
       INITIAL LOAD
@@ -682,6 +639,7 @@ setTimeout(() => {
     buildParticipantForms(f.participantsCount);
   }
 }, 150);
+
 
 
 
