@@ -443,6 +443,10 @@ body {
   margin-bottom: 25px;   /* Extra gap below */
 }
 
+.passes-grid {
+  margin-top: 35px; /* Increase space between subtitle and pass cards */
+}
+
 
 
 
