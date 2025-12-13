@@ -1,6 +1,5 @@
 /*******************************
- *  PRAVAAH 2026 — FINAL SCRIPT.JS
- *  (Complete working version)
+ *  PRAVAAH 2026 — FINAL SCRIPT.JS (UPDATED)
  *******************************/
 
 const scriptURL =
@@ -74,7 +73,7 @@ let paying = false;
 const RULEBOOK_URL = "rulebooks/sample.pdf";
 
 /* =======================================
-      LOCAL CACHE FOR FAILED FORM
+      FAILED CACHE HANDLING
 ======================================= */
 function saveFailedCache() {
   const data = {
@@ -107,7 +106,7 @@ function clearFailedCache() {
 }
 
 /* =======================================
-      PROFILE CACHE (Sheets + Firebase)
+      PROFILE CACHE
 ======================================= */
 function getCachedProfile() {
   try {
@@ -138,12 +137,7 @@ async function refreshProfileFromSheets(email) {
   }
 }
 
-/* Load profile when user logs in */
-if (auth && auth.onAuthStateChanged) {
-  auth.onAuthStateChanged((u) => {
-    if (u?.email) refreshProfileFromSheets(u.email);
-  });
-}
+auth?.onAuthStateChanged((u) => u?.email && refreshProfileFromSheets(u.email));
 
 /* =======================================
       EVENT ROW TEMPLATE
@@ -157,6 +151,7 @@ function renderEventRow(name, opt = {}) {
         ${opt.selectable ? `<input type="checkbox" id="${id}" class="event-checkbox" data-day="${opt.dayKey}" value="${name}">` : ""}
         <label for="${id}" class="event-label">${name}</label>
       </div>
+
       <a href="${RULEBOOK_URL}" target="_blank">
         <i class="fa-regular fa-file-pdf pdf-icon"></i>
       </a>
@@ -165,20 +160,14 @@ function renderEventRow(name, opt = {}) {
 }
 
 /* =======================================
-      PASS CARD CLICK HANDLER
+      PASS CARD CLICK
 ======================================= */
 passCards.forEach((c) => {
   c.addEventListener("click", () => {
     passCards.forEach((x) => x.classList.remove("selected"));
     c.classList.add("selected");
 
-    let t = c.dataset.type;
-    if (/day/i.test(t)) t = "Day Pass";
-    else if (/visitor/i.test(t)) t = "Visitor Pass";
-    else if (/fest/i.test(t)) t = "Fest Pass";
-    else if (/star/i.test(t)) t = "Starnite Pass";
-
-    currentPassType = t;
+    currentPassType = c.dataset.type;
     currentDay = null;
     currentVisitorDays = [];
     includeStarNite = false;
@@ -212,15 +201,16 @@ function renderSelectionArea() {
   selectedPassTxt.textContent = `Selected: ${currentPassType}`;
   participantForm.innerHTML = "";
 
+  /* ---- DAY PASS ---- */
   if (currentPassType === "Day Pass") {
     participantForm.innerHTML = `
       <div class="participant-card">
         <h4>Choose Day</h4>
         <div class="day-selector-row">
-          <button class="day-card" data-day="day0">DAY 0</button>
-          <button class="day-card" data-day="day1">DAY 1</button>
-          <button class="day-card" data-day="day2">DAY 2</button>
-          <button class="day-card" data-day="day3">DAY 3</button>
+          <button type="button" class="day-card" data-day="day0">DAY 0</button>
+          <button type="button" class="day-card" data-day="day1">DAY 1</button>
+          <button type="button" class="day-card" data-day="day2">DAY 2</button>
+          <button type="button" class="day-card" data-day="day3">DAY 3</button>
         </div>
       </div>
 
@@ -242,6 +232,7 @@ function renderSelectionArea() {
     );
   }
 
+  /* ---- VISITOR PASS ---- */
   if (currentPassType === "Visitor Pass") {
     participantForm.innerHTML = `
       <div class="participant-card">
@@ -278,6 +269,7 @@ function renderSelectionArea() {
     );
   }
 
+  /* ---- FEST PASS ---- */
   if (currentPassType === "Fest Pass") {
     participantForm.innerHTML = `
       <div class="participant-card"><h4>Fest Pass (All Days)</h4></div>
@@ -288,6 +280,7 @@ function renderSelectionArea() {
     renderFestEvents();
   }
 
+  /* ---- STARNITE PASS ---- */
   if (currentPassType === "Starnite Pass") {
     participantForm.innerHTML = `
       <div class="participant-card">
@@ -302,7 +295,7 @@ function renderSelectionArea() {
 }
 
 /* =======================================
-      RENDER DAY PASS EVENTS
+      RENDER DAY EVENTS
 ======================================= */
 function renderDayEvents(day) {
   const evs = EVENTS[day] || [];
@@ -346,7 +339,7 @@ function renderVisitorEvents(days) {
     .join("");
 }
 
-/* --- Visitor Star Nite Toggle --- */
+/* ---- Visitor Star-Nite ---- */
 function renderVisitorStarToggleIfNeeded() {
   const c = document.getElementById("visitorStarContainer");
 
@@ -390,7 +383,7 @@ function renderFestEvents() {
 }
 
 /* =======================================
-      PARTICIPANT FORM GENERATION
+      PARTICIPANT FORM BUILDER
 ======================================= */
 function buildParticipantForms(count) {
   const c = document.getElementById("participantsContainerPlaceholder");
@@ -413,8 +406,7 @@ function buildParticipantForms(count) {
       i === 1 &&
       profile.name &&
       profile.email &&
-      fail.name === undefined && // NOT overriding failed cache
-      profile.name.trim().toLowerCase() === (profile.name || "").trim().toLowerCase();
+      fail.name === undefined;
 
     const div = document.createElement("div");
     div.className = "participant-card";
@@ -428,12 +420,8 @@ function buildParticipantForms(count) {
       <input class="pcollege" placeholder="College" value="${autoFill ? profile.college : fail.college || ""}">
     `;
 
-    /* Remove autofill if user types different name */
     div.querySelector(".pname").addEventListener("input", (e) => {
-      if (
-        profile.name &&
-        e.target.value.trim().toLowerCase() !== profile.name.trim().toLowerCase()
-      ) {
+      if (profile.name && e.target.value.trim().toLowerCase() !== profile.name.trim().toLowerCase()) {
         div.querySelector(".pemail").value = "";
         div.querySelector(".pphone").value = "";
         div.querySelector(".pcollege").value = "";
@@ -471,7 +459,6 @@ numInput.addEventListener("input", () => {
 
 /* =======================================
       PRICE CALCULATION
-      Total = base price × number of participants 
 ======================================= */
 function calculateTotal() {
   let base = 0;
@@ -498,16 +485,10 @@ function calculateTotal() {
     });
   }
 
-  if (currentPassType === "Fest Pass") {
-    base = includeStarNite ? PRICES.fest.star : PRICES.fest.normal;
-  }
+  if (currentPassType === "Fest Pass") base = includeStarNite ? PRICES.fest.star : PRICES.fest.normal;
+  if (currentPassType === "Starnite Pass") base = PRICES.starnite;
 
-  if (currentPassType === "Starnite Pass") {
-    base = PRICES.starnite;
-  }
-
-  const total = base * participantsCount;
-  updateTotal(total);
+  updateTotal(base * participantsCount);
 }
 
 function updateTotal(amount) {
@@ -530,7 +511,7 @@ function collectSelectedEvents() {
 }
 
 /* =======================================
-      PAYMENT HANDLER
+      PAYMENT
 ======================================= */
 payBtn.addEventListener("click", async () => {
   if (paying) return;
@@ -561,7 +542,7 @@ payBtn.addEventListener("click", async () => {
     daySelected: currentDay,
     visitorDays: currentVisitorDays,
     starnite: includeStarNite,
-    events: collectSelectedEvents(),
+    events: collectSelectedEvents()
   };
 
   saveFailedCache();
