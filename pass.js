@@ -587,22 +587,29 @@ payBtn.addEventListener("click", async () => {
     description: `${currentPassType} — Registration`,
 
     handler: async function (response) {
-      payload.paymentId = response.razorpay_payment_id;
-      clearFailedCache();
+  payload.paymentId = response.razorpay_payment_id;
 
-      try {
-        await fetch(scriptURL, {
-          method: "POST",
-          body: JSON.stringify(payload),
-          headers: { "Content-Type": "application/json" }
-        });
-      } catch (e) {
-        console.error("Sheet save failed", e);
-      }
+  /* ✅ CLEAR CACHE IMMEDIATELY */
+  localStorage.removeItem("failedForm");
 
-      window.location.replace("payment_success.html");
-    },
+  /* ✅ FORCE STORAGE FLUSH */
+  await new Promise(resolve => setTimeout(resolve, 0));
 
+  try {
+    await fetch(scriptURL, {
+      method: "POST",
+      body: JSON.stringify(payload),
+      headers: { "Content-Type": "application/json" }
+    });
+  } catch (e) {
+    console.error("Sheet save failed", e);
+  }
+
+  /* ✅ CLEAR AGAIN (DOUBLE SAFETY) */
+  localStorage.removeItem("failedForm");
+
+  window.location.replace("payment_success.html");
+},
     modal: {
       ondismiss: function () {
         paying = false;
@@ -639,6 +646,7 @@ setTimeout(() => {
     buildParticipantForms(f.participantsCount);
   }
 }, 150);
+
 
 
 
