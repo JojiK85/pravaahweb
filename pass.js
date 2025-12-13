@@ -580,51 +580,50 @@ payBtn.addEventListener("click", async () => {
   saveFailedCache();
 
   const rzp = new Razorpay({
-    key: "rzp_test_Re1mOkmIGroT2c",
-    amount: currentTotal * 100,
-    currency: "INR",
-    name: "PRAVAAH 2026",
-    description: `${currentPassType} — Registration`,
+  key: "rzp_test_Re1mOkmIGroT2c",
+  amount: currentTotal * 100,
+  currency: "INR",
+  name: "PRAVAAH 2026",
+  description: `${currentPassType} — Registration`,
 
-    handler: async function (response) {
-  payload.paymentId = response.razorpay_payment_id;
+  handler: async function (response) {
+    payload.paymentId = response.razorpay_payment_id;
 
-  /* ✅ CLEAR CACHE IMMEDIATELY */
-  localStorage.removeItem("failedForm");
+    /* ✅ CLEAR CACHE DEFINITIVELY */
+    localStorage.removeItem("failedForm");
 
-  /* ✅ FORCE STORAGE FLUSH */
-  await new Promise(resolve => setTimeout(resolve, 0));
-
-  try {
-    await fetch(scriptURL, {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: { "Content-Type": "application/json" }
-    });
-  } catch (e) {
-    console.error("Sheet save failed", e);
-  }
-
-  /* ✅ CLEAR AGAIN (DOUBLE SAFETY) */
-  localStorage.removeItem("failedForm");
-
-  window.location.replace("payment_success.html");
-},
-    modal: {
-      ondismiss: function () {
-        paying = false;
-        window.location.replace("payment_failure.html");
-      }
+    try {
+      await fetch(scriptURL, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: { "Content-Type": "application/json" }
+      });
+    } catch (e) {
+      console.error("Sheet save failed", e);
     }
-  });
 
-  rzp.on("payment.failed", function (response) {
-    console.error("Payment Failed:", response.error);
-    paying = false;
-    window.location.replace("payment_failure.html");
-  });
+    window.location.replace("payment_success.html");
+  },
 
-  rzp.open();
+  modal: {
+    ondismiss: function () {
+      /* ❌ Payment cancelled → SAVE FORM */
+      saveFailedCache();
+      paying = false;
+      window.location.replace("payment_failure.html");
+    }
+  }
+});
+
+/* ❌ Payment failed → SAVE FORM */
+rzp.on("payment.failed", function () {
+  saveFailedCache();
+  paying = false;
+  window.location.replace("payment_failure.html");
+});
+
+rzp.open();
+
 });
 
 
@@ -646,6 +645,7 @@ setTimeout(() => {
     buildParticipantForms(f.participantsCount);
   }
 }, 150);
+
 
 
 
