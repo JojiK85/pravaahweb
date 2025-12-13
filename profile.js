@@ -383,7 +383,7 @@ style.innerHTML = `
   transform: translateX(-50%) translateY(20px);
   background: rgba(0, 0, 0, 0.85); color: white;
   padding: 12px 25px; border-radius: 25px;
-  font-family: 'Orbitron', sans-serif; font-size: 0.95rem;
+  font-family: 'Exo 2', sans-serif;font-size: 0.95rem;
   opacity: 0; pointer-events: none; transition: all 0.4s ease;
   z-index: 9999; border: 1px solid cyan; box-shadow: 0 0 15px rgba(0,255,255,0.5);
 }
@@ -393,6 +393,7 @@ style.innerHTML = `
 .toast.info    { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+
 
 
 
