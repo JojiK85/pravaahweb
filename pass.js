@@ -4,7 +4,8 @@
  *******************************/
 
 const scriptURL =
-  "https://script.google.com/macros/s/AKfycby4F5rBxS_-KLmP05Yqm-R7PmjIx9_7dMsa28D1xds3X2jWSMKini-AJ-1wgGR6EmvDlg/exec";
+  "https://script.google.com/macros/s/AKfycbz-lWIkGMQJVxH7Pi7NwkOF1ln201a3wkVPJ3D-SNgMV4XuBlfOPxVrUoJLUCsG2aVBhQ/exec";
+
 
 /* =======================================
       EVENTS & PRICES
@@ -512,14 +513,15 @@ function updateTotal(amount) {
       EVENT COLLECTION
 ======================================= */
 function collectSelectedEvents() {
-  const out = { day0: [], day1: [], day2: [], day3: [] };
+  const out = [];
 
   document.querySelectorAll(".event-checkbox:checked").forEach((c) => {
-    out[c.dataset.day].push(c.value);
+    out.push(`${c.dataset.day.toUpperCase()}: ${c.value}`);
   });
 
   return out;
 }
+
 
 /* =======================================
       PAYMENT HANDLER
@@ -611,5 +613,6 @@ rzp.on("payment.failed", function () {
 rzp.open();
 
 });
+
 
 
