@@ -539,15 +539,27 @@ payBtn.addEventListener("click", async () => {
   if (paying) return;
   paying = true;
 
-  const cards = [...document.querySelectorAll(".participant-card")];
+  participantsCount = parseInt(numInput.value) || 0;
 
-  const participants = cards.map((c) => ({
-    name: c.querySelector(".pname").value.trim(),
-    email: c.querySelector(".pemail").value.trim(),
-    phone: c.querySelector(".pphone").value.trim(),
-    college: c.querySelector(".pcollege").value.trim()
-  }));
+  if (participantsCount <= 0) {
+    alert("Please add at least 1 participant.");
+    paying = false;
+    return;
+  }
 
+  // Only select REAL participant cards
+  const cards = [...document.querySelectorAll("#participantsContainerPlaceholder .participant-card")];
+
+  const participants = cards.map((c) => {
+    return {
+      name: c.querySelector(".pname")?.value.trim() || "",
+      email: c.querySelector(".pemail")?.value.trim() || "",
+      phone: c.querySelector(".pphone")?.value.trim() || "",
+      college: c.querySelector(".pcollege")?.value.trim() || ""
+    };
+  });
+
+  // Validation
   for (let p of participants) {
     if (!p.name || !p.email || !p.phone || !p.college) {
       alert("Fill all participant fields.");
@@ -576,7 +588,6 @@ payBtn.addEventListener("click", async () => {
     name: "PRAVAAH 2026",
     handler: async (res) => {
       payload.paymentId = res.razorpay_payment_id;
-
       clearFailedCache();
 
       await fetch(scriptURL, {
@@ -591,8 +602,9 @@ payBtn.addEventListener("click", async () => {
 
   try {
     rzp.open();
-  } catch {
-    alert("Payment failed to start.");
+  } catch (err) {
+    console.error("Razorpay Error:", err);
+    alert("Payment could not be started.");
     paying = false;
   }
 });
@@ -615,4 +627,5 @@ setTimeout(() => {
     buildParticipantForms(f.participantsCount);
   }
 }, 150);
+
 
