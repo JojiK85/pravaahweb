@@ -5,111 +5,169 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Profile | PRAVAAH</title>
 
-  <!-- ✅ EXO 2 (Same as Home) -->
+  <!-- ✅ EXO 2 — SAME AS HOME -->
   <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
   <!-- CSS -->
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="profile.css" />
 
-  <!-- Script -->
+  <!-- Profile Script -->
   <script type="module" src="profile.js" defer></script>
 </head>
 
 <body>
 
-<!-- NAVBAR (UNCHANGED STRUCTURE, HOME STYLE APPLIES) -->
-<nav>
-  <a href="https://www.iitbbs.ac.in/" class="iitbbs-logo" target="_blank">
-    <img src="iitbbs-logo.png">
-  </a>
+  <!-- 🔹 NAVBAR -->
+  <nav>
+    <a href="https://www.iitbbs.ac.in/" target="_blank" class="iitbbs-logo">
+      <img src="iitbbs-logo.png" alt="IIT Bhubaneswar Logo">
+    </a>
 
-  <div class="logo">PRAVAAH</div>
+    <div class="logo">PRAVAAH</div>
 
-  <div class="menu-toggle" id="menuToggle">
-    <i class="fa-solid fa-bars"></i>
-  </div>
-
-  <ul id="menu">
-    <li><a href="home.html">Home</a></li>
-    <li><a href="events.html">Events</a></li>
-    <li><a href="registrationPravaah.html">Register</a></li>
-    <li><a href="accommodation.html">Accommodation</a></li>
-    <li><a href="photogallery.html">Gallery</a></li>
-    <li><a href="sponsors.html">Sponsors</a></li>
-    <li><a href="contact_us.html">Contact Us</a></li>
-    <li><a href="profile.html" class="active">Profile</a></li>
-    <li class="mobile-only"><a id="logoutMobile">Logout</a></li>
-  </ul>
-
-  <button class="logout-btn" id="logoutDesktop">Logout</button>
-</nav>
-
-<!-- PROFILE SECTION (UNCHANGED CONTENT) -->
-<section class="profile-section">
-  <div class="profile-container is-view" id="profileContainer">
-    <!-- your existing profile HTML exactly as you sent -->
-  </div>
-</section>
-
-<!-- ✅ FOOTER — EXACT SAME AS HOME -->
-<footer>
-  <div class="footer-container">
-
-    <div class="footer-left">
-      <img src="pravah-logo.png" class="footer-logo">
-      <a href="registrationPravaah.html" class="register-btn">Register Now</a>
+    <div class="menu-toggle" id="menuToggle">
+      <i class="fa-solid fa-bars"></i>
     </div>
 
-    <div class="footer-column">
-      <h3>Quick Links</h3>
-      <ul>
-        <li><a href="#">Events Portal</a></li>
-        <li><a href="#">CA Portal</a></li>
-        <li><a href="#">Join the Community</a></li>
-      </ul>
-    </div>
+    <ul id="menu">
+      <li><a href="home.html">Home</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="registrationPravaah.html">Register</a></li>
+      <li><a href="accommodation.html">Accommodation</a></li>
+      <li><a href="photogallery.html">Gallery</a></li>
+      <li><a href="sponsors.html">Sponsors</a></li>
+      <li><a href="contact_us.html">Contact Us</a></li>
+      <li><a href="profile.html" class="active">Profile</a></li>
+      <li class="mobile-only"><a id="logoutMobile">Logout</a></li>
+    </ul>
 
-    <div class="footer-column">
-      <h3>Explore More</h3>
-      <ul>
-        <li><a href="#">Star Attractions</a></li>
-        <li><a href="#">Hall of Fame</a></li>
-        <li><a href="#">Brochure</a></li>
-      </ul>
-    </div>
+    <button id="logoutDesktop" class="logout-btn">Logout</button>
+  </nav>
 
-    <div class="footer-column">
-      <h3>Reach Out to Us</h3>
-      <ul>
-        <li><a href="contact_us.html">Contact Us</a></li>
-      </ul>
+  <!-- 👤 PROFILE SECTION -->
+  <section class="profile-section">
+    <div class="profile-container is-view" id="profileContainer">
 
-      <div class="footer-social-icons">
-        <a href="#"><i class="fa-brands fa-instagram"></i></a>
-        <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
-        <a href="#"><i class="fa-brands fa-youtube"></i></a>
+      <div class="profile-header">
+
+        <!-- 🖼️ PHOTO AREA -->
+        <div class="profile-photo" id="photoArea">
+          <div class="photo-wrapper">
+            <img id="userPhoto" src="default-avatar.png" alt="Profile Photo" />
+            <div class="photo-overlay">
+              <i class="fa-solid fa-camera"></i>
+            </div>
+            <button id="editPen" class="edit-pen" title="Edit profile">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+          </div>
+
+          <input type="file" id="uploadPhoto" accept="image/*" hidden />
+
+          <div class="upload-options hidden" id="uploadOptions">
+            <button id="deviceUploadBtn" class="upload-btn">
+              <i class="fa-solid fa-desktop"></i> Upload from Device
+            </button>
+            <button id="driveUploadBtn" class="upload-btn drive-btn">
+              <i class="fa-brands fa-google-drive"></i> Upload from Drive
+            </button>
+          </div>
+        </div>
+
+        <!-- 🧾 USER DETAILS -->
+        <div class="profile-info">
+          <p><strong>Name:</strong> <span id="userName">Loading...</span></p>
+          <p><strong>Email:</strong> <span id="userEmail">Loading...</span></p>
+
+          <p>
+            <strong>Phone:</strong>
+            <span class="field-text" id="userPhoneText">—</span>
+            <input id="userPhone" class="editable-input" type="tel"
+              inputmode="numeric" pattern="[0-9]*" maxlength="15"
+              placeholder="Enter phone" />
+          </p>
+
+          <p>
+            <strong>College:</strong>
+            <span class="field-text" id="userCollegeText">—</span>
+            <textarea id="userCollege"
+              class="editable-input auto-grow"
+              rows="1"
+              placeholder="Enter college"></textarea>
+          </p>
+
+          <div class="edit-actions" id="editActions">
+            <button id="saveProfileBtn" class="save-btn">Save</button>
+            <button id="cancelEditBtn" class="save-btn secondary">Cancel</button>
+          </div>
+        </div>
       </div>
+
+      <!-- 🎟️ PASSES -->
+      <h2>🎟️ My Passes</h2>
+      <div id="passesList" class="passes-list">⏳ Loading passes...</div>
+    </div>
+  </section>
+
+  <!-- ✅ FOOTER — SAME AS HOME -->
+  <footer>
+    <div class="footer-container">
+
+      <div class="footer-left">
+        <img src="pravah-logo.png" class="footer-logo">
+        <a href="registrationPravaah.html" class="register-btn">Register Now</a>
+      </div>
+
+      <div class="footer-column">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="#">Events Portal</a></li>
+          <li><a href="#">CA Portal</a></li>
+          <li><a href="#">Join the Community</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <h3>Explore More</h3>
+        <ul>
+          <li><a href="#">Star Attractions</a></li>
+          <li><a href="#">Hall of Fame</a></li>
+          <li><a href="#">Brochure</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <h3>Reach Out to Us</h3>
+        <ul>
+          <li><a href="contact_us.html">Contact Us</a></li>
+        </ul>
+
+        <div class="footer-social-icons">
+          <a href="#"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+          <a href="#"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+      </div>
+
     </div>
 
-  </div>
+    <div class="footer-line"></div>
 
-  <div class="footer-line"></div>
+    <div class="footer-bottom">
+      <p><span>@PRAVAAH'26 IIT BHUBANESWAR</span> | MADE WITH 💜 BY WEB TEAM | All Rights Reserved</p>
+    </div>
+  </footer>
 
-  <div class="footer-bottom">
-    <p><span>@PRAVAAH'26 IIT BHUBANESWAR</span> | MADE WITH 💜 BY WEB TEAM | All Rights Reserved</p>
-  </div>
-</footer>
-
-<!-- MOBILE MENU -->
-<script>
-document.getElementById("menuToggle").addEventListener("click", () => {
-  document.getElementById("menu").classList.toggle("active");
-});
-</script>
+  <!-- 📱 NAVBAR TOGGLE -->
+  <script>
+    document.getElementById("menuToggle").addEventListener("click", () => {
+      document.getElementById("menu").classList.toggle("active");
+    });
+  </script>
 
 </body>
 </html>
