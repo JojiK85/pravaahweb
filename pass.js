@@ -581,49 +581,89 @@ payBtn.addEventListener("click", async () => {
 
   saveFailedCache();
 
-  const rzp = new Razorpay({
-  key: "rzp_test_Re1mOkmIGroT2c",
-  amount: currentTotal * 100,
-  currency: "INR",
-  name: "PRAVAAH 2026",
-  description: `${currentPassType} — Registration`,
+  payBtn.addEventListener("click", async () => {
+  if (paying) return;
+  paying = true;
 
-  handler: async function (response) {
-    payload.paymentId = response.razorpay_payment_id;
+  participantsCount = parseInt(numInput.value) || 0;
+  if (participantsCount <= 0) {
+    alert("Please add at least 1 participant.");
+    paying = false;
+    return;
+  }
 
-    clearFailedCache();
+  const cards = [...document.querySelectorAll("#participantsContainerPlaceholder .participant-card")];
 
-    try {
-      await fetch(scriptURL, {
-        method: "POST",
-        body: JSON.stringify(payload),
-        headers: { "Content-Type": "application/json" }
-      });
-    } catch (e) {
-      console.error("Sheet save failed", e);
-    }
+  const participants = cards.map((c) => ({
+    name: c.querySelector(".pname").value.trim(),
+    email: c.querySelector(".pemail").value.trim(),
+    phone: c.querySelector(".pphone").value.trim(),
+    college: c.querySelector(".pcollege").value.trim()
+  }));
 
-    // ✅ FORCE REDIRECT AFTER SUCCESS
-    window.location.replace("payment_success.html");
-  },
-
-  modal: {
-    ondismiss: function () {
-      // ❌ Payment cancelled / closed
+  for (let p of participants) {
+    if (!p.name || !p.email || !p.phone || !p.college) {
+      alert("Fill all participant fields.");
       paying = false;
-      window.location.replace("payment_failure.html");
+      return;
     }
   }
+
+  const payload = {
+    registeredEmail: participants[0].email,
+    passType: currentPassType,
+    totalAmount: currentTotal,
+    participants,
+    daySelected: currentDay,
+    visitorDays: currentVisitorDays,
+    starnite: includeStarNite,
+    events: collectSelectedEvents()
+  };
+
+  saveFailedCache();
+
+  const rzp = new Razorpay({
+    key: "rzp_test_Re1mOkmIGroT2c",
+    amount: currentTotal * 100,
+    currency: "INR",
+    name: "PRAVAAH 2026",
+    description: `${currentPassType} — Registration`,
+
+    handler: async function (response) {
+      payload.paymentId = response.razorpay_payment_id;
+      clearFailedCache();
+
+      try {
+        await fetch(scriptURL, {
+          method: "POST",
+          body: JSON.stringify(payload),
+          headers: { "Content-Type": "application/json" }
+        });
+      } catch (e) {
+        console.error("Sheet save failed", e);
+      }
+
+      window.location.replace("payment_success.html");
+    },
+
+    modal: {
+      ondismiss: function () {
+        paying = false;
+        window.location.replace("payment_failure.html");
+      }
+    }
+  });
+
+  /* ✅ PAYMENT FAILED EVENT — CORRECT PLACE */
+  rzp.on("payment.failed", function (response) {
+    console.error("Payment Failed:", response.error);
+    paying = false;
+    window.location.replace("payment_failure.html");
+  });
+
+  rzp.open();
 });
 
-/* ❌ PAYMENT FAILURE EVENT */
-rzp.on("payment.failed", function (response) {
-  console.error("Payment Failed:", response.error);
-  paying = false;
-  window.location.replace("payment_failure.html");
-});
-
-    rzp.open();
 /* =======================================
       INITIAL LOAD
 ======================================= */
@@ -642,6 +682,7 @@ setTimeout(() => {
     buildParticipantForms(f.participantsCount);
   }
 }, 150);
+
 
 
 
