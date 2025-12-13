@@ -398,9 +398,8 @@ function renderFestEvents() {
       PARTICIPANT FORM GENERATION
 ======================================= */
 function buildParticipantForms(count) {
-  const c = document.getElementById("participantsContainerPlaceholder");
-
   participantsCount = count;
+  const c = document.getElementById("participantsContainerPlaceholder");
   c.innerHTML = "";
 
   if (count <= 0) {
@@ -412,14 +411,7 @@ function buildParticipantForms(count) {
   const failed = loadFailedCache();
 
   for (let i = 1; i <= count; i++) {
-    let fail = failed.participants?.[i - 1] || {};
-
-    let autoFill =
-      i === 1 &&
-      profile.name &&
-      profile.email &&
-      fail.name === undefined &&
-      profile.name.trim().toLowerCase() === profile.name.trim().toLowerCase();
+    const fail = failed.participants?.[i - 1] || {};
 
     const div = document.createElement("div");
     div.className = "participant-card";
@@ -427,20 +419,30 @@ function buildParticipantForms(count) {
     div.innerHTML = `
       <h4>Participant ${i}</h4>
 
-      <input class="pname" placeholder="Full name" value="${autoFill ? profile.name : fail.name || ""}">
-      <input class="pemail" placeholder="Email" value="${autoFill ? profile.email : fail.email || ""}">
-      <input class="pphone" placeholder="Phone" value="${autoFill ? profile.phone : fail.phone || ""}">
-      <input class="pcollege" placeholder="College" value="${autoFill ? profile.college : fail.college || ""}">
+      <input class="pname" placeholder="Full name" value="${fail.name || ""}">
+      <input class="pemail" placeholder="Email" value="${fail.email || ""}">
+      <input class="pphone" placeholder="Phone" value="${fail.phone || ""}">
+      <input class="pcollege" placeholder="College" value="${fail.college || ""}">
     `;
 
-    div.querySelector(".pname").addEventListener("input", (e) => {
+    const nameInput = div.querySelector(".pname");
+    const emailInput = div.querySelector(".pemail");
+    const phoneInput = div.querySelector(".pphone");
+    const collegeInput = div.querySelector(".pcollege");
+
+    /* ✅ SMART AUTOFILL — WORKS FOR ALL PARTICIPANTS */
+    nameInput.addEventListener("input", () => {
       if (
         profile.name &&
-        e.target.value.trim().toLowerCase() !== profile.name.trim().toLowerCase()
+        nameInput.value.trim().toLowerCase() === profile.name.trim().toLowerCase()
       ) {
-        div.querySelector(".pemail").value = "";
-        div.querySelector(".pphone").value = "";
-        div.querySelector(".pcollege").value = "";
+        emailInput.value = profile.email || "";
+        phoneInput.value = profile.phone || "";
+        collegeInput.value = profile.college || "";
+      } else {
+        emailInput.value = "";
+        phoneInput.value = "";
+        collegeInput.value = "";
       }
     });
 
@@ -449,6 +451,7 @@ function buildParticipantForms(count) {
 
   calculateTotal();
 }
+
 
 /* =======================================
       PARTICIPANT COUNTER
@@ -645,6 +648,7 @@ setTimeout(() => {
     buildParticipantForms(f.participantsCount);
   }
 }, 150);
+
 
 
 
