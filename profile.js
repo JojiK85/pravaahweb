@@ -3,8 +3,8 @@
 ========================================================== */
 
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
 
 /* ---------- Firebase ---------- */
 const firebaseConfig = {
@@ -17,10 +17,11 @@ const firebaseConfig = {
 };
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const auth = getAuth(app);
-const storage = getStorage(app);
 
 /* ---------- Backend Script URL ---------- */
-const scriptURL = "https://script.google.com/macros/s/AKfycbxq-IkyZ9Jr23G4Z9RKUYm65iviYSX-RMw7BxElg41Y-u3a1pTclAk6UpN_yMD6qn6xHQ/exec";
+const scriptURL =
+  "https://script.google.com/macros/s/AKfycbxy7u4jBBPfRpfyybHXlu7ZO0Gke9D6fowYD4wROw9VuWg3pEP4f-MH3a7LXV9TQ4He/exec";
+
 
 /* ---------- Toast ---------- */
 function showToast(message, type = "info") {
@@ -232,46 +233,54 @@ onAuthStateChanged(auth, async (user) => {
 
   /* Device Upload Handler — FINAL FIXED VERSION */
   uploadPhotoInput.addEventListener("change", async (e) => {
-    if (!isEditing) return showToast("Tap ✏️ to edit!", "info");
+  if (!isEditing) return showToast("Tap ✏️ to edit!", "info");
 
-    uploadOptions.classList.add("hidden");
-    uploadOptions.style.display = "none";
+  uploadOptions.classList.add("hidden");
+  uploadOptions.style.display = "none";
 
-    if (!e.target.files || e.target.files.length === 0) {
-      showToast("No file selected.", "info");
-      return;
-    }
+  if (!e.target.files || e.target.files.length === 0) {
+    showToast("No file selected.", "info");
+    return;
+  }
 
-    const file = e.target.files[0];
+  const file = e.target.files[0];
 
-    const reader = new FileReader();
-    reader.onload = (ev) => (userPhoto.src = ev.target.result);
-    reader.readAsDataURL(file);
+  const reader = new FileReader();
+  reader.onload = async () => {
+    userPhoto.src = reader.result;
+    showToast("Uploading photo...", "info");
+
+    const base64 = reader.result.split(",")[1];
 
     try {
-      showToast("Uploading...", "info");
-
-      const storageRef = ref(storage, `profilePhotos/${auth.currentUser.uid}`);
-      await uploadBytes(storageRef, file);
-      const url = await getDownloadURL(storageRef);
-
-      await updateProfile(auth.currentUser, { photoURL: url });
-      userPhoto.src = url;
-
-      await saveProfileToSheet({
-        name: auth.currentUser.displayName,
-        email: auth.currentUser.email,
-        phone: userPhoneInput.value,
-        college: userCollegeInput.value,
-        photo: url
+      const res = await fetch(scriptURL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          type: "photoUpload",
+          email: auth.currentUser.email,
+          mimetype: file.type,
+          file: base64
+        })
       });
 
-      showToast("Photo updated!", "success");
+      const out = await res.json();
+
+      if (out.ok) {
+        userPhoto.src = out.photo; // Google Drive image
+        showToast("Photo updated!", "success");
+      } else {
+        showToast("Upload failed!", "error");
+      }
     } catch (err) {
       console.error(err);
       showToast("Upload failed!", "error");
     }
-  });
+  };
+
+  reader.readAsDataURL(file);
+});
+
 
   /* Drive Upload */
   driveUploadBtn.addEventListener("click", async () => {
@@ -333,3 +342,4 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+
