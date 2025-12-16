@@ -84,6 +84,7 @@
   justify-content: center;
   flex-wrap: wrap;
   gap: 26px;
+  margin-bottom: 3.5rem;
 }
 
 .dashboard-actions button {
@@ -115,6 +116,107 @@
 }
 
 /* ============================================================
+   🔐 ROLE MANAGEMENT SECTION (DASHBOARD ONLY)
+============================================================ */
+
+.role-section {
+  background: rgba(0,0,0,0.55);
+  border: 1px solid var(--primary-soft);
+  border-radius: 20px;
+  padding: 26px 22px;
+  margin-bottom: 3.5rem;
+  box-shadow: 0 0 22px rgba(0,0,0,0.45);
+  backdrop-filter: blur(8px);
+}
+
+.role-section.hidden {
+  display: none;
+}
+
+.role-section h2 {
+  text-align: center;
+  color: var(--primary);
+  margin-bottom: 22px;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px var(--primary-soft);
+}
+
+.role-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+.role-form input,
+.role-form select {
+  min-width: 220px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--primary-soft);
+  background: rgba(0,0,0,0.6);
+  color: var(--text);
+  outline: none;
+}
+
+.role-form input::placeholder {
+  color: var(--muted);
+}
+
+.role-form button {
+  padding: 12px 20px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(135deg, var(--gold), var(--primary));
+  color: #000;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 0 18px rgba(255,215,0,0.4);
+  transition: all 0.3s ease;
+}
+
+.role-form button:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 30px var(--gold);
+}
+
+.role-note {
+  margin-top: 14px;
+  font-size: 0.85rem;
+  text-align: center;
+  color: var(--muted);
+}
+
+/* ============================================================
+   📶 OFFLINE SCAN QUEUE
+============================================================ */
+
+.offline-section {
+  background: rgba(0,0,0,0.55);
+  border: 1px dashed var(--primary-soft);
+  border-radius: 18px;
+  padding: 22px;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.offline-section h2 {
+  color: var(--primary);
+  margin-bottom: 12px;
+  text-shadow: 0 0 8px var(--primary-soft);
+}
+
+.offline-section p {
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.offline-section b {
+  color: var(--gold);
+  font-size: 1.2rem;
+}
+
+/* ============================================================
    RESPONSIVE BREAKPOINTS
 ============================================================ */
 
@@ -142,5 +244,15 @@
   .dashboard-actions button {
     width: 100%;
     min-width: unset;
+  }
+
+  .role-form {
+    flex-direction: column;
+  }
+
+  .role-form input,
+  .role-form select,
+  .role-form button {
+    width: 100%;
   }
 }
