@@ -1,5 +1,5 @@
 /* ============================================================
-   PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL)
+   PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL + ROLE MATRIX)
    Firebase Auth + Apps Script Backend
 ============================================================ */
 
@@ -31,9 +31,9 @@ const API =
 const adminEmailEl = document.getElementById("adminEmail");
 const adminRoleEl  = document.getElementById("adminRole");
 
-const statReg  = document.getElementById("statReg");
-const statAcc  = document.getElementById("statAcc");
-const statScan = document.getElementById("statScan");
+const statReg   = document.getElementById("statReg");    // total registrations
+const statAcc   = document.getElementById("statAcc");    // accommodation
+const statScan  = document.getElementById("statScan");   // in-campus count
 
 const roleSection = document.getElementById("roleManagement");
 const roleEmail   = document.getElementById("roleEmail");
@@ -41,10 +41,12 @@ const roleSelect  = document.getElementById("roleSelect");
 const roleSaveBtn = document.getElementById("assignRoleBtn");
 
 const offlineCountEl = document.getElementById("offlineCount");
+const eventFilterEl  = document.getElementById("eventFilter");
 
 /* ================= STATE ================= */
 let CURRENT_ROLE = "";
-let IS_PRIMARY = false;
+let IS_PRIMARY   = false;
+let CURRENT_EVENT = "";
 
 /* ================= AUTH + ROLE CHECK ================= */
 onAuthStateChanged(auth, async (user) => {
@@ -74,7 +76,9 @@ onAuthStateChanged(auth, async (user) => {
     adminEmailEl.textContent = user.email;
     adminRoleEl.textContent  = roleObj.role;
 
+    enforceRoleVisibility();
     configureRoleUI();
+    loadEventList();
     loadDashboardStats();
     updateOfflineCount();
 
@@ -85,15 +89,56 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
+/* ================= ROLE VISIBILITY ================= */
+function enforceRoleVisibility() {
+  // Admins must NOT see total registrations & in-campus count
+  if (CURRENT_ROLE === "Admin") {
+    statReg.closest(".dash-card")?.classList.add("hidden");
+    statScan.closest(".dash-card")?.classList.add("hidden");
+  }
+}
+
+/* ================= EVENT FILTER ================= */
+async function loadEventList() {
+  try {
+    const res = await fetch(`${API}?type=eventList`);
+    const events = await res.json();
+
+    eventFilterEl.innerHTML = `<option value="">All Events</option>`;
+    events.forEach(ev => {
+      eventFilterEl.add(new Option(ev, ev));
+    });
+
+    eventFilterEl.addEventListener("change", () => {
+      CURRENT_EVENT = eventFilterEl.value;
+      loadDashboardStats();
+    });
+
+  } catch {
+    eventFilterEl.innerHTML =
+      `<option value="">Events unavailable</option>`;
+  }
+}
+
 /* ================= DASHBOARD STATS ================= */
 async function loadDashboardStats() {
   try {
-    const res = await fetch(`${API}?type=dashboardStats`);
+    const url =
+      `${API}?type=dashboardStats&event=${encodeURIComponent(CURRENT_EVENT || "")}`;
+
+    const res = await fetch(url);
     const data = await res.json();
 
-    statReg.textContent  = data.registrations ?? "--";
-    statAcc.textContent  = data.accommodation ?? "--";
-    statScan.textContent = data.scansToday ?? "--";
+    // Event-based registration (visible to all admins)
+    statReg.textContent = data.eventRegistrations ?? "--";
+
+    // Accommodation count (all admins)
+    statAcc.textContent = data.accommodation ?? "--";
+
+    // In-campus count (only SuperAdmin+)
+    if (CURRENT_ROLE !== "Admin") {
+      statScan.textContent = data.inCampus ?? "--";
+    }
 
   } catch {
     statReg.textContent  = "--";
@@ -104,7 +149,6 @@ async function loadDashboardStats() {
 
 /* ================= ROLE MANAGEMENT ================= */
 function configureRoleUI() {
-  // Admins NEVER see role management
   if (CURRENT_ROLE === "Admin") {
     roleSection.classList.add("hidden");
     return;
@@ -112,8 +156,6 @@ function configureRoleUI() {
 
   roleSection.classList.remove("hidden");
   roleSelect.innerHTML = "";
-
-  // 🧠 ROLE VISIBILITY MATRIX ENFORCED
 
   if (CURRENT_ROLE === "SuperAdmin") {
     roleSelect.add(new Option("Admin", "Admin"));
@@ -142,40 +184,31 @@ roleSaveBtn?.addEventListener("click", async () => {
     return;
   }
 
-  const payload = {
-    type: "setRole",
-    targetEmail: email,
-    newRole,
-    performedByRole: CURRENT_ROLE,
-    isPrimaryTransfer: newRole === "TRANSFER_PRIMARY"
-  };
-
   try {
     const res = await fetch(API, {
       method: "POST",
-      body: JSON.stringify(payload)
+      body: JSON.stringify({
+        type: "setRole",
+        targetEmail: email,
+        newRole,
+        isPrimaryTransfer: newRole === "TRANSFER_PRIMARY"
+      })
     });
 
     const result = await res.json();
     alert(result.message || "Role updated");
 
-    // 🔁 Primary transfer rule
-    if (newRole === "TRANSFER_PRIMARY") {
-      alert("Primary transferred. You are now SuperAccount.");
-      location.reload();
-    }
+    if (newRole === "TRANSFER_PRIMARY") location.reload();
 
-  } catch (err) {
-    console.error(err);
+  } catch {
     alert("Role update failed");
   }
 });
 
-/* ================= SINGLE SCAN BUTTON ================= */
-/* Goes to Apps Script scan.html */
-window.goScan = function () {
+/* ================= SINGLE SCAN ================= */
+window.openScanner = function () {
   window.location.href =
-    `${API}?mode=admin&scanner=dashboard`;
+    `${API}?mode=admin&page=scan&scanner=dashboard`;
 };
 
 /* ================= OFFLINE SCAN QUEUE ================= */
