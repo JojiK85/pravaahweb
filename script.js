@@ -1,9 +1,10 @@
 /* ============================================================
    PRAVAAH — FINAL UPDATED script.js (Optimized & Clean)
 ============================================================ */
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getAuth, signOut, onAuthStateChanged } from
+  "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -344,6 +345,32 @@ document.addEventListener("DOMContentLoaded", () => {
     if (startX - endX > 60) rightArrow.click();
     if (endX - startX > 60) leftArrow.click();
   });
+  /* ===========================================================
+     🔐 DASHBOARD VISIBILITY — ADMINS ONLY
+  =========================================================== */
+
+  const DASHBOARD_API =
+    "https://script.google.com/macros/s/AKfycbxTtdt1HmTIP0i5WOeXMLRWLKA1k4RpD153EmgU-Ow6CPRGOISzjOVLplKFDm-gUaggmg/exec";
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) return;
+
+    try {
+      const res = await fetch(
+        `${DASHBOARD_API}?type=role&email=${encodeURIComponent(user.email)}`
+      );
+      const roleObj = await res.json();
+
+      // ✅ SHOW DASHBOARD ONLY FOR ADMINS+
+      if (["Admin", "SuperAdmin", "SuperAccount"].includes(roleObj.role)) {
+        document.getElementById("dashboardNav")
+          ?.classList.remove("hidden");
+      }
+    } catch (err) {
+      console.error("Dashboard role check failed", err);
+    }
+  });
 
 });
+
 
