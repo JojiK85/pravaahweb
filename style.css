@@ -1375,47 +1375,6 @@ footer {
   text-decoration: none !important;
   box-shadow: none !important;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+.hidden {
+  display: none !important;
+}
