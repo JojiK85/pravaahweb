@@ -61,58 +61,90 @@
     </p>
   </section>
 
-  <!-- 🔽 EVENT FILTER -->
-  <section class="dashboard-filter">
-    <select id="eventDropdown">
-      <option value="ALL">All Events</option>
+  <!-- 🗓️ DAY WISE FILTER (SUPERADMIN+) -->
+  <section id="dayFilter" class="dashboard-filter hidden">
+    <select id="dayDropdown">
+      <option value="ALL">All Days</option>
+      <option value="day0">Day 0</option>
+      <option value="day1">Day 1</option>
+      <option value="day2">Day 2</option>
+      <option value="day3">Day 3</option>
     </select>
   </section>
 
   <!-- 📊 STATS -->
   <section class="dashboard-cards">
 
-    <!-- TOTAL REGISTRATIONS (HIDDEN FOR ADMIN) -->
-    <div class="dash-card" id="cardTotalReg">
+    <!-- INSIDE CAMPUS (DAY BASED) -->
+    <div class="dash-card">
+      <i class="fa-solid fa-building"></i>
+      <h3>Inside Campus</h3>
+      <p id="statInCampus">—</p>
+    </div>
+
+    <!-- TOTAL REGISTRATIONS (SUPERADMIN+) -->
+    <div class="dash-card hidden" id="cardTotalReg">
       <i class="fa-solid fa-users"></i>
       <h3>Total Registrations</h3>
       <p id="statTotalReg">—</p>
     </div>
 
-    <!-- EVENT BASED REGISTRATIONS -->
+    <!-- EVENT REGISTRATIONS -->
     <div class="dash-card">
       <i class="fa-solid fa-calendar-check"></i>
       <h3>Event Registrations</h3>
       <p id="statEventReg">—</p>
     </div>
 
-    <!-- ACCOMMODATION (OVERALL) -->
+    <!-- ACCOMMODATION -->
     <div class="dash-card">
       <i class="fa-solid fa-bed"></i>
       <h3>Accommodation</h3>
       <p id="statAccommodation">—</p>
     </div>
 
-    <!-- IN CAMPUS (GATE LOGS) -->
-    <div class="dash-card" id="cardInCampus">
-      <i class="fa-solid fa-building"></i>
-      <h3>Inside Campus</h3>
-      <p id="statInCampus">—</p>
+    <!-- SCANS TODAY -->
+    <div class="dash-card">
+      <i class="fa-solid fa-qrcode"></i>
+      <h3>Scans Today</h3>
+      <p id="statScan">—</p>
+    </div>
+
+    <!-- 💰 MONEY (SUPERACCOUNT ONLY) -->
+    <div class="dash-card hidden" id="cardMoney">
+      <i class="fa-solid fa-indian-rupee-sign"></i>
+      <h3>Total Amount Collected</h3>
+      <p id="statMoney">—</p>
     </div>
 
   </section>
 
-  <!-- ✅ SINGLE SCAN BUTTON -->
-  <section class="dashboard-actions">
+  <!-- 🔽 EVENT DROPDOWN -->
+  <section class="dashboard-filter">
+    <select id="eventDropdown">
+      <option value="ALL">All Events</option>
+    </select>
+    <p style="text-align:center;font-size:0.85rem;opacity:0.7">
+      Selecting an event opens its sheet
+    </p>
+  </section>
+
+  <!-- ✅ SCAN -->
+  <section class="dashboard-actions single-scan">
     <button onclick="openScanner()">
       <i class="fa-solid fa-qrcode"></i> Open Scanner
     </button>
   </section>
 
-  <!-- 🔐 ROLE MANAGEMENT (SUPERACCOUNT ONLY – CONTROLLED BY JS) -->
+  <!-- 📶 OFFLINE SCAN QUEUE -->
+  <section class="offline-section">
+    <h2><i class="fa-solid fa-cloud-slash"></i> Offline Scan Queue</h2>
+    <p>Pending scans: <b id="offlineCount">0</b></p>
+  </section>
+
+  <!-- 🔐 ROLE MANAGEMENT (SUPERACCOUNT ONLY) -->
   <section id="roleSection" class="role-section hidden">
-    <h2>
-      <i class="fa-solid fa-user-shield"></i> Role Management
-    </h2>
+    <h2><i class="fa-solid fa-user-shield"></i> Role Management</h2>
 
     <div class="role-form">
       <input type="email" id="roleEmail" placeholder="User Email" />
@@ -121,21 +153,7 @@
     </div>
 
     <p class="role-note">
-      ⚠️ Transferring primary will downgrade the current primary to
-      <b>SuperAccount</b>.
-    </p>
-  </section>
-
-  <!-- 📶 OFFLINE SCAN QUEUE -->
-  <section class="offline-section">
-    <h2>
-      <i class="fa-solid fa-cloud-slash"></i> Offline Scan Queue
-    </h2>
-    <p>
-      Offline scans are stored locally and auto-synced when internet is restored.
-    </p>
-    <p>
-      Pending scans: <b id="offlineCount">0</b>
+      ⚠️ Only one Primary SuperAccount exists at any time.
     </p>
   </section>
 
@@ -168,14 +186,12 @@
     </div>
 
     <div class="footer-column">
-      <h3>Reach Out to Us</h3>
+      <h3>Reach Out</h3>
       <ul>
         <li><a href="contact_us.html">Contact Us</a></li>
       </ul>
     </div>
   </div>
-
-  <div class="footer-line"></div>
 
   <div class="footer-bottom">
     <p>@PRAVAAH'26 IIT BHUBANESWAR | MADE WITH 💜 BY WEB TEAM</p>
@@ -197,7 +213,6 @@
     }
   });
 
-  /* ✅ SINGLE ENTRY TO APPS SCRIPT SCAN */
   function openScanner() {
     const SCAN_URL =
       "https://script.google.com/macros/s/AKfycbxTtdt1HmTIP0i5WOeXMLRWLKA1k4RpD153EmgU-Ow6CPRGOISzjOVLplKFDm-gUaggmg/exec";
