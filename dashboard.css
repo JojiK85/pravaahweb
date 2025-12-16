@@ -1,0 +1,146 @@
+/* ============================================================
+   PRAVAAH — ADMIN DASHBOARD STYLES
+   Compatible with global style.css
+============================================================ */
+
+/* ---------- DASHBOARD WRAPPER ---------- */
+.dashboard-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  margin: 120px auto 80px;
+  padding: 0 20px;
+}
+
+/* ---------- HEADER ---------- */
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.dashboard-header h1 {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  color: var(--primary);
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+  text-shadow: 0 0 12px var(--primary-soft);
+}
+
+.dashboard-header p {
+  font-size: 1rem;
+  color: var(--muted);
+}
+
+.dashboard-header span {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* ---------- STAT CARDS ---------- */
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  margin-bottom: 3.5rem;
+}
+
+.dash-card {
+  background: rgba(0,0,0,0.55);
+  border-radius: 18px;
+  padding: 30px 20px;
+  text-align: center;
+  border: 1px solid var(--primary-soft);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.dash-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 0 30px var(--primary-soft);
+}
+
+.dash-card i {
+  font-size: 2.4rem;
+  color: var(--primary);
+  margin-bottom: 14px;
+  text-shadow: 0 0 10px var(--primary-soft);
+}
+
+.dash-card h3 {
+  font-size: 1.15rem;
+  margin-bottom: 10px;
+  color: var(--text);
+}
+
+.dash-card p {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+/* ---------- ACTION BUTTONS ---------- */
+.dashboard-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 26px;
+}
+
+.dashboard-actions button {
+  min-width: 230px;
+  padding: 14px 24px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(135deg, var(--violet), var(--primary));
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  box-shadow: 0 0 16px rgba(36,224,236,0.25);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dashboard-actions button i {
+  font-size: 1.2rem;
+}
+
+.dashboard-actions button:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 28px var(--primary-soft);
+}
+
+/* ============================================================
+   RESPONSIVE BREAKPOINTS
+============================================================ */
+
+/* Tablets */
+@media (max-width: 1000px) {
+  .dashboard-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobiles */
+@media (max-width: 650px) {
+  .dashboard-wrapper {
+    margin-top: 100px;
+  }
+
+  .dashboard-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .dash-card p {
+    font-size: 1.8rem;
+  }
+
+  .dashboard-actions button {
+    width: 100%;
+    min-width: unset;
+  }
+}
