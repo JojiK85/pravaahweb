@@ -10,8 +10,10 @@
   <link rel="stylesheet" href="dashboard.css" />
 
   <!-- ICONS -->
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
 </head>
 
 <body>
@@ -19,7 +21,7 @@
 <!-- 🔹 NAVBAR -->
 <nav>
   <a href="https://www.iitbbs.ac.in/" target="_blank" class="iitbbs-logo">
-    <img src="iitbbs-logo.png" alt="IIT Bhubaneswar Logo">
+    <img src="iitbbs-logo.png" alt="IIT Bhubaneswar Logo" />
   </a>
 
   <div class="logo">PRAVAAH</div>
@@ -35,11 +37,13 @@
     <li><a href="contact_us.html">Contact Us</a></li>
     <li><a href="profile.html">Profile</a></li>
 
-    <li id="dashboardNav" class="active">
+    <li class="active">
       <a href="dashboard.html">Dashboard</a>
     </li>
 
-    <li class="mobile-only"><a id="logoutMobile">Logout</a></li>
+    <li class="mobile-only">
+      <a id="logoutMobile">Logout</a>
+    </li>
   </ul>
 
   <button id="logoutDesktop" class="logout-btn">Logout</button>
@@ -57,25 +61,44 @@
     </p>
   </section>
 
-  <!-- STATS -->
+  <!-- 🔽 EVENT FILTER -->
+  <section class="dashboard-filter">
+    <select id="eventDropdown">
+      <option value="ALL">All Events</option>
+    </select>
+  </section>
+
+  <!-- 📊 STATS -->
   <section class="dashboard-cards">
-    <div class="dash-card">
+
+    <!-- TOTAL REGISTRATIONS (HIDDEN FOR ADMIN) -->
+    <div class="dash-card" id="cardTotalReg">
       <i class="fa-solid fa-users"></i>
       <h3>Total Registrations</h3>
-      <p id="statReg">—</p>
+      <p id="statTotalReg">—</p>
     </div>
 
+    <!-- EVENT BASED REGISTRATIONS -->
+    <div class="dash-card">
+      <i class="fa-solid fa-calendar-check"></i>
+      <h3>Event Registrations</h3>
+      <p id="statEventReg">—</p>
+    </div>
+
+    <!-- ACCOMMODATION (OVERALL) -->
     <div class="dash-card">
       <i class="fa-solid fa-bed"></i>
       <h3>Accommodation</h3>
-      <p id="statAcc">—</p>
+      <p id="statAccommodation">—</p>
     </div>
 
-    <div class="dash-card">
-      <i class="fa-solid fa-qrcode"></i>
-      <h3>Scans Today</h3>
-      <p id="statScan">—</p>
+    <!-- IN CAMPUS (GATE LOGS) -->
+    <div class="dash-card" id="cardInCampus">
+      <i class="fa-solid fa-building"></i>
+      <h3>Inside Campus</h3>
+      <p id="statInCampus">—</p>
     </div>
+
   </section>
 
   <!-- ✅ SINGLE SCAN BUTTON -->
@@ -85,14 +108,16 @@
     </button>
   </section>
 
-  <!-- 🔐 ROLE MANAGEMENT (DASHBOARD ONLY) -->
-  <section id="roleManagement" class="role-section hidden">
-    <h2><i class="fa-solid fa-user-shield"></i> Role Management</h2>
+  <!-- 🔐 ROLE MANAGEMENT (SUPERACCOUNT ONLY – CONTROLLED BY JS) -->
+  <section id="roleSection" class="role-section hidden">
+    <h2>
+      <i class="fa-solid fa-user-shield"></i> Role Management
+    </h2>
 
     <div class="role-form">
       <input type="email" id="roleEmail" placeholder="User Email" />
       <select id="roleSelect"></select>
-      <button id="assignRoleBtn">Assign / Update Role</button>
+      <button id="saveRoleBtn">Assign / Update Role</button>
     </div>
 
     <p class="role-note">
@@ -103,9 +128,11 @@
 
   <!-- 📶 OFFLINE SCAN QUEUE -->
   <section class="offline-section">
-    <h2><i class="fa-solid fa-cloud-slash"></i> Offline Scan Queue</h2>
+    <h2>
+      <i class="fa-solid fa-cloud-slash"></i> Offline Scan Queue
+    </h2>
     <p>
-      Offline scans are saved locally and auto-synced once internet is restored.
+      Offline scans are stored locally and auto-synced when internet is restored.
     </p>
     <p>
       Pending scans: <b id="offlineCount">0</b>
@@ -118,7 +145,7 @@
 <footer>
   <div class="footer-container">
     <div class="footer-left">
-      <img src="pravah-logo.png" class="footer-logo">
+      <img src="pravah-logo.png" class="footer-logo" />
       <a href="registrationPravaah.html" class="register-btn">Register Now</a>
     </div>
 
@@ -155,7 +182,7 @@
   </div>
 </footer>
 
-<!-- 📱 MOBILE MENU + SCAN ROUTE -->
+<!-- 📱 MOBILE MENU -->
 <script>
   const menuToggle = document.getElementById("menuToggle");
   const menu = document.getElementById("menu");
