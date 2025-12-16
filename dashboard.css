@@ -14,7 +14,7 @@
 /* ---------- HEADER ---------- */
 .dashboard-header {
   text-align: center;
-  margin-bottom: 2.8rem;
+  margin-bottom: 2.5rem;
 }
 
 .dashboard-header h1 {
@@ -36,13 +36,13 @@
 }
 
 /* ============================================================
-   🔽 EVENT FILTER
+   🗓️ DAY / EVENT FILTERS
 ============================================================ */
 
 .dashboard-filter {
   display: flex;
   justify-content: center;
-  margin-bottom: 2.8rem;
+  margin-bottom: 2.5rem;
 }
 
 .dashboard-filter select {
@@ -59,7 +59,10 @@
   box-shadow: 0 0 14px rgba(36,224,236,0.18);
 }
 
-/* ---------- STAT CARDS ---------- */
+/* ============================================================
+   📊 STAT CARDS
+============================================================ */
+
 .dashboard-cards {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -102,8 +105,19 @@
   color: var(--gold);
 }
 
+/* 💰 MONEY CARD EMPHASIS (SUPERACCOUNT ONLY) */
+#cardMoney {
+  border: 1.5px solid var(--gold);
+  box-shadow: 0 0 28px rgba(255,215,0,0.35);
+}
+
+#cardMoney i {
+  color: var(--gold);
+  text-shadow: 0 0 12px var(--gold);
+}
+
 /* ============================================================
-   ACTION BUTTONS
+   🔘 SCAN ACTION
 ============================================================ */
 
 .dashboard-actions {
@@ -241,14 +255,12 @@
    RESPONSIVE BREAKPOINTS
 ============================================================ */
 
-/* Tablets */
 @media (max-width: 1000px) {
   .dashboard-cards {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* Mobiles */
 @media (max-width: 650px) {
   .dashboard-wrapper {
     margin-top: 100px;
@@ -262,10 +274,7 @@
     font-size: 1.8rem;
   }
 
-  .dashboard-actions button {
-    width: 100%;
-  }
-
+  .dashboard-actions button,
   .dashboard-filter select {
     width: 100%;
   }
