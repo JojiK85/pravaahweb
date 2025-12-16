@@ -65,6 +65,7 @@ async function saveProfileToSheet(profile) {
   } else {
     await fetch(scriptURL, {
       method: "POST",
+       mode: "no-cors",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: payload
     });
@@ -293,6 +294,7 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+
 
 
 
