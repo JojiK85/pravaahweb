@@ -1,6 +1,6 @@
 /* ============================================================
-   PRAVAAH — ADMIN DASHBOARD LOGIC
-   Uses Firebase Auth + Apps Script Backend
+   PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL)
+   Firebase Auth + Apps Script Backend
 ============================================================ */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -10,7 +10,7 @@ import {
   signOut
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-/* ---------------- FIREBASE CONFIG ---------------- */
+/* ================= FIREBASE ================= */
 const firebaseConfig = {
   apiKey: "AIzaSyCbXKleOw4F46gFDXz2Wynl3YzPuHsVwh8",
   authDomain: "pravaah-55b1d.firebaseapp.com",
@@ -23,20 +23,29 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-/* ---------------- BACKEND API ---------------- */
+/* ================= BACKEND ================= */
 const API =
   "https://script.google.com/macros/s/AKfycbxTtdt1HmTIP0i5WOeXMLRWLKA1k4RpD153EmgU-Ow6CPRGOISzjOVLplKFDm-gUaggmg/exec";
 
-/* ---------------- DOM ---------------- */
-const totalUsersEl   = document.getElementById("totalUsers");
-const totalPassesEl  = document.getElementById("totalPasses");
-const totalScansEl   = document.getElementById("totalScans");
+/* ================= DOM ================= */
+const adminEmailEl = document.getElementById("adminEmail");
+const adminRoleEl  = document.getElementById("adminRole");
 
-const btnGate   = document.getElementById("goGate");
-const btnEvent  = document.getElementById("goEvent");
-const btnRoles  = document.getElementById("goRoles");
+const statReg  = document.getElementById("statReg");
+const statAcc  = document.getElementById("statAcc");
+const statScan = document.getElementById("statScan");
 
-/* ---------------- AUTH + ROLE CHECK ---------------- */
+const roleSection = document.getElementById("roleSection");
+const roleEmail   = document.getElementById("roleEmail");
+const roleSelect  = document.getElementById("roleSelect");
+const roleSaveBtn = document.getElementById("saveRoleBtn");
+
+const offlineCountEl = document.getElementById("offlineCount");
+
+/* ================= AUTH + ROLE ================= */
+let CURRENT_ROLE = "";
+let IS_PRIMARY = false;
+
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "login.html";
@@ -44,71 +53,138 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   try {
-    const roleRes = await fetch(
+    const res = await fetch(
       `${API}?type=role&email=${encodeURIComponent(user.email)}`
     );
-    const roleObj = await roleRes.json();
+    const roleObj = await res.json();
 
-    if (!["Admin", "SuperAdmin", "SuperAccount"].includes(roleObj.role)) {
+    if (!["Admin", "SuperAdmin", "SuperAccount", "PrimarySuperAccount"]
+        .includes(roleObj.role)) {
       alert("Access denied");
       window.location.href = "home.html";
       return;
     }
 
-    // 🔐 Only Primary sees role management
-    if (!roleObj.isPrimary && btnRoles) {
-      btnRoles.style.display = "none";
-    }
+    CURRENT_ROLE = roleObj.role;
+    IS_PRIMARY   = roleObj.isPrimary === true;
 
+    adminEmailEl.textContent = user.email;
+    adminRoleEl.textContent  = roleObj.role;
+
+    configureRoleUI();
     loadDashboardStats();
+    updateOfflineCount();
 
   } catch (err) {
-    console.error("Role verification failed", err);
-    alert("Unable to verify admin role");
+    console.error(err);
+    alert("Role verification failed");
     window.location.href = "home.html";
   }
 });
 
-/* ---------------- LOAD STATS ---------------- */
+/* ================= DASHBOARD STATS ================= */
 async function loadDashboardStats() {
   try {
     const res = await fetch(`${API}?type=dashboardStats`);
     const data = await res.json();
 
-    totalUsersEl.textContent  = data.users  ?? "--";
-    totalPassesEl.textContent = data.passes ?? "--";
-    totalScansEl.textContent  = data.scans  ?? "--";
+    statReg.textContent  = data.registrations ?? "--";
+    statAcc.textContent  = data.accommodation ?? "--";
+    statScan.textContent = data.scansToday ?? "--";
 
-  } catch (err) {
-    console.error("Dashboard stats error", err);
-    totalUsersEl.textContent  = "--";
-    totalPassesEl.textContent = "--";
-    totalScansEl.textContent  = "--";
+  } catch {
+    statReg.textContent  = "--";
+    statAcc.textContent  = "--";
+    statScan.textContent = "--";
   }
 }
 
-/* ---------------- NAV ACTIONS ---------------- */
-btnGate?.addEventListener("click", () => {
-  window.location.href = "gate.html";
+/* ================= ROLE MANAGEMENT ================= */
+function configureRoleUI() {
+  // Admins never see role management
+  if (CURRENT_ROLE === "Admin") {
+    roleSection.classList.add("hidden");
+    return;
+  }
+
+  roleSection.classList.remove("hidden");
+
+  // Allowed promotions based on hierarchy
+  roleSelect.innerHTML = "";
+
+  if (CURRENT_ROLE === "SuperAdmin") {
+    roleSelect.add(new Option("Admin", "Admin"));
+  }
+
+  if (CURRENT_ROLE === "SuperAccount") {
+    roleSelect.add(new Option("Admin", "Admin"));
+    roleSelect.add(new Option("SuperAdmin", "SuperAdmin"));
+  }
+
+  if (CURRENT_ROLE === "PrimarySuperAccount") {
+    roleSelect.add(new Option("Admin", "Admin"));
+    roleSelect.add(new Option("SuperAdmin", "SuperAdmin"));
+    roleSelect.add(new Option("SuperAccount", "SuperAccount"));
+    roleSelect.add(new Option("Transfer Primary", "TRANSFER_PRIMARY"));
+  }
+}
+
+/* ----- SAVE ROLE ----- */
+roleSaveBtn?.addEventListener("click", async () => {
+  const email = roleEmail.value.trim().toLowerCase();
+  const newRole = roleSelect.value;
+
+  if (!email || !newRole) {
+    alert("Enter email and role");
+    return;
+  }
+
+  const payload = {
+    type: "setRole",
+    targetEmail: email,
+    newRole,
+    performedByRole: CURRENT_ROLE,
+    isPrimaryTransfer: newRole === "TRANSFER_PRIMARY"
+  };
+
+  try {
+    const res = await fetch(API, {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+
+    const result = await res.json();
+
+    alert(result.message || "Role updated");
+
+    // Primary transfer rule
+    if (newRole === "TRANSFER_PRIMARY") {
+      alert("You are now SuperAccount only.");
+      location.reload();
+    }
+
+  } catch (err) {
+    alert("Role update failed");
+  }
 });
 
-btnEvent?.addEventListener("click", () => {
-  window.location.href = "event.html";
-});
+/* ================= SCAN LAUNCHER ================= */
+/* Goes to Apps Script scan.html */
+window.goScan = function () {
+  window.location.href = `${API}?mode=admin&page=scan&scanner=dashboard`;
+};
 
-btnRoles?.addEventListener("click", () => {
-  window.location.href = "roles.html";
-});
+/* ================= OFFLINE SCAN QUEUE ================= */
+function updateOfflineCount() {
+  const queue = JSON.parse(localStorage.getItem("offlineScans") || "[]");
+  offlineCountEl.textContent = queue.length;
+}
 
-/* ---------------- LOGOUT ---------------- */
+/* ================= LOGOUT ================= */
 document.getElementById("logoutDesktop")?.addEventListener("click", logout);
 document.getElementById("logoutMobile")?.addEventListener("click", logout);
 
 async function logout() {
-  try {
-    await signOut(auth);
-    window.location.href = "login.html";
-  } catch (err) {
-    alert("Logout failed");
-  }
+  await signOut(auth);
+  window.location.href = "login.html";
 }
