@@ -87,6 +87,11 @@
   margin-bottom: 3.5rem;
 }
 
+/* Single scan button (final architecture) */
+.dashboard-actions.single-scan {
+  justify-content: center;
+}
+
 .dashboard-actions button {
   min-width: 230px;
   padding: 14px 24px;
@@ -129,8 +134,8 @@
   backdrop-filter: blur(8px);
 }
 
-.role-section.hidden {
-  display: none;
+.hidden {
+  display: none !important;
 }
 
 .role-section h2 {
