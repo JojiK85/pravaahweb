@@ -86,9 +86,12 @@ function ensureFieldSpan(input, id) {
 
 /* ---------- Fetch Passes ---------- */
 async function fetchUserPasses(email) {
-  const res = await fetch(`${scriptURL}?email=${encodeURIComponent(email)}`);
+  const res = await fetch(
+    `${scriptURL}?type=passes&email=${encodeURIComponent(email)}`
+  );
   return await res.json();
 }
+
 
 /* ---------- Render Passes + QR ---------- */
 function renderPasses(passes, container, userEmail) {
@@ -293,4 +296,5 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+
 
