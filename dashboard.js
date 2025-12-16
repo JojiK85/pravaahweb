@@ -1,6 +1,6 @@
 /* ============================================================
-   PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL + ROLE MATRIX)
-   Firebase Auth + Apps Script Backend
+   PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL)
+   Role Matrix + Day/Event Filters
 ============================================================ */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -31,29 +31,40 @@ const API =
 const adminEmailEl = document.getElementById("adminEmail");
 const adminRoleEl  = document.getElementById("adminRole");
 
-const statReg   = document.getElementById("statReg");    // total registrations
-const statAcc   = document.getElementById("statAcc");    // accommodation
-const statScan  = document.getElementById("statScan");   // in-campus count
+/* Cards */
+const cardTotalReg   = document.getElementById("cardTotalReg");
+const cardInCampus   = document.getElementById("cardInCampus");
+const cardMoney      = document.getElementById("cardMoney");
 
-const roleSection = document.getElementById("roleManagement");
+/* Stats */
+const statTotalReg     = document.getElementById("statTotalReg");
+const statEventReg     = document.getElementById("statEventReg");
+const statAccommodation= document.getElementById("statAccommodation");
+const statInCampus     = document.getElementById("statInCampus");
+const statMoney        = document.getElementById("statMoney");
+
+/* Filters */
+const dayFilterEl   = document.getElementById("dayFilter");
+const eventFilterEl = document.getElementById("eventDropdown");
+
+/* Role */
+const roleSection = document.getElementById("roleSection");
 const roleEmail   = document.getElementById("roleEmail");
 const roleSelect  = document.getElementById("roleSelect");
-const roleSaveBtn = document.getElementById("assignRoleBtn");
+const roleSaveBtn = document.getElementById("saveRoleBtn");
 
+/* Offline */
 const offlineCountEl = document.getElementById("offlineCount");
-const eventFilterEl  = document.getElementById("eventFilter");
 
 /* ================= STATE ================= */
 let CURRENT_ROLE = "";
 let IS_PRIMARY   = false;
-let CURRENT_EVENT = "";
+let CURRENT_DAY  = "";
+let CURRENT_EVENT= "";
 
-/* ================= AUTH + ROLE CHECK ================= */
+/* ================= AUTH ================= */
 onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    window.location.href = "login.html";
-    return;
-  }
+  if (!user) return location.href = "login.html";
 
   try {
     const res = await fetch(
@@ -61,45 +72,69 @@ onAuthStateChanged(auth, async (user) => {
     );
     const roleObj = await res.json();
 
-    if (
-      !["Admin", "SuperAdmin", "SuperAccount", "PrimarySuperAccount"]
-        .includes(roleObj.role)
-    ) {
-      alert("Access denied");
-      window.location.href = "home.html";
-      return;
-    }
-
     CURRENT_ROLE = roleObj.role;
     IS_PRIMARY   = roleObj.isPrimary === true;
 
+    if (!["Admin","SuperAdmin","SuperAccount","PrimarySuperAccount"]
+      .includes(CURRENT_ROLE)) {
+      alert("Access denied");
+      return location.href = "home.html";
+    }
+
     adminEmailEl.textContent = user.email;
-    adminRoleEl.textContent  = roleObj.role;
+    adminRoleEl.textContent  = CURRENT_ROLE;
 
     enforceRoleVisibility();
     configureRoleUI();
-    loadEventList();
+    loadDayFilter();
+    loadEventFilter();
     loadDashboardStats();
     updateOfflineCount();
 
   } catch (err) {
     console.error(err);
     alert("Role verification failed");
-    window.location.href = "home.html";
+    location.href = "home.html";
   }
 });
 
 /* ================= ROLE VISIBILITY ================= */
 function enforceRoleVisibility() {
-  // Admins must NOT see total registrations & in-campus count
+
+  /* ADMIN */
   if (CURRENT_ROLE === "Admin") {
-    statReg.closest(".dash-card")?.classList.add("hidden");
-    statScan.closest(".dash-card")?.classList.add("hidden");
+    cardTotalReg?.classList.add("hidden");
+    cardInCampus?.classList.add("hidden");
+    cardMoney?.classList.add("hidden");
+    dayFilterEl?.classList.add("hidden");
+  }
+
+  /* SUPERADMIN */
+  if (CURRENT_ROLE === "SuperAdmin") {
+    cardMoney?.classList.add("hidden");
   }
 }
 
+/* ================= DAY FILTER ================= */
+function loadDayFilter() {
+  if (!dayFilterEl || CURRENT_ROLE === "Admin") return;
+
+  dayFilterEl.innerHTML = `
+    <option value="">All Days</option>
+    <option value="day0">Day 0</option>
+    <option value="day1">Day 1</option>
+    <option value="day2">Day 2</option>
+    <option value="day3">Day 3</option>
+  `;
+
+  dayFilterEl.addEventListener("change", () => {
+    CURRENT_DAY = dayFilterEl.value;
+    loadDashboardStats();
+  });
+}
+
 /* ================= EVENT FILTER ================= */
-async function loadEventList() {
+async function loadEventFilter() {
   try {
     const res = await fetch(`${API}?type=eventList`);
     const events = await res.json();
@@ -123,27 +158,26 @@ async function loadEventList() {
 /* ================= DASHBOARD STATS ================= */
 async function loadDashboardStats() {
   try {
-    const url =
-      `${API}?type=dashboardStats&event=${encodeURIComponent(CURRENT_EVENT || "")}`;
+    const qs = new URLSearchParams({
+      type: "dashboardStats",
+      day: CURRENT_DAY,
+      event: CURRENT_EVENT,
+      role: CURRENT_ROLE
+    });
 
-    const res = await fetch(url);
+    const res = await fetch(`${API}?${qs.toString()}`);
     const data = await res.json();
 
-    // Event-based registration (visible to all admins)
-    statReg.textContent = data.eventRegistrations ?? "--";
+    statTotalReg.textContent      = data.totalRegistrations ?? "--";
+    statEventReg.textContent      = data.eventRegistrations ?? "--";
+    statAccommodation.textContent = data.accommodation ?? "--";
+    statInCampus.textContent      = data.inCampus ?? "--";
 
-    // Accommodation count (all admins)
-    statAcc.textContent = data.accommodation ?? "--";
+    if (statMoney)
+      statMoney.textContent = data.totalAmount ?? "--";
 
-    // In-campus count (only SuperAdmin+)
-    if (CURRENT_ROLE !== "Admin") {
-      statScan.textContent = data.inCampus ?? "--";
-    }
-
-  } catch {
-    statReg.textContent  = "--";
-    statAcc.textContent  = "--";
-    statScan.textContent = "--";
+  } catch (err) {
+    console.error(err);
   }
 }
 
@@ -174,47 +208,38 @@ function configureRoleUI() {
   }
 }
 
-/* ----- SAVE ROLE ----- */
+/* SAVE ROLE */
 roleSaveBtn?.addEventListener("click", async () => {
-  const email = roleEmail.value.trim().toLowerCase();
-  const newRole = roleSelect.value;
+  if (!roleEmail.value || !roleSelect.value) return alert("Missing fields");
 
-  if (!email || !newRole) {
-    alert("Enter email and select role");
-    return;
-  }
+  const payload = {
+    type: "setRole",
+    targetEmail: roleEmail.value.trim().toLowerCase(),
+    newRole: roleSelect.value,
+    isPrimaryTransfer: roleSelect.value === "TRANSFER_PRIMARY"
+  };
 
-  try {
-    const res = await fetch(API, {
-      method: "POST",
-      body: JSON.stringify({
-        type: "setRole",
-        targetEmail: email,
-        newRole,
-        isPrimaryTransfer: newRole === "TRANSFER_PRIMARY"
-      })
-    });
+  const res = await fetch(API, {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
 
-    const result = await res.json();
-    alert(result.message || "Role updated");
+  const r = await res.json();
+  alert(r.message || "Role updated");
 
-    if (newRole === "TRANSFER_PRIMARY") location.reload();
-
-  } catch {
-    alert("Role update failed");
-  }
+  if (payload.isPrimaryTransfer) location.reload();
 });
 
-/* ================= SINGLE SCAN ================= */
-window.openScanner = function () {
+/* ================= SCAN ================= */
+window.openScanner = () => {
   window.location.href =
     `${API}?mode=admin&page=scan&scanner=dashboard`;
 };
 
-/* ================= OFFLINE SCAN QUEUE ================= */
+/* ================= OFFLINE ================= */
 function updateOfflineCount() {
-  const queue = JSON.parse(localStorage.getItem("offlineScans") || "[]");
-  offlineCountEl.textContent = queue.length;
+  const q = JSON.parse(localStorage.getItem("offlineScans") || "[]");
+  offlineCountEl.textContent = q.length;
 }
 
 /* ================= LOGOUT ================= */
@@ -223,5 +248,5 @@ document.getElementById("logoutMobile")?.addEventListener("click", logout);
 
 async function logout() {
   await signOut(auth);
-  window.location.href = "login.html";
+  location.href = "login.html";
 }
