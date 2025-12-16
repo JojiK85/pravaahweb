@@ -410,5 +410,36 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
 
   footer { margin-top: 32px; }
 }
+/* ===============================
+   FIX: Prevent vertical text
+   Keep QR on right, text normal
+=============================== */
+
+.pass-item {
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+}
+
+/* LEFT TEXT BLOCK */
+.pass-item > div:first-child,
+.pass-details {
+  flex: 1;
+  min-width: 0;
+
+  writing-mode: horizontal-tb !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+/* Ensure paragraphs NEVER stack vertically */
+.pass-item p,
+.pass-item h3 {
+  writing-mode: horizontal-tb !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  letter-spacing: normal !important;
+}
+
 
 
