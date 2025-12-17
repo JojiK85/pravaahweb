@@ -14,6 +14,9 @@
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
   />
+
+  <!-- ✅ QR CODE LIB (REQUIRED FOR SCANNABLE QR) -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 </head>
 
 <body>
@@ -109,27 +112,10 @@
 
   <!-- 🎟️ PASS-WISE UNIQUE COUNTS -->
   <section class="dashboard-cards">
-
-    <div class="dash-card">
-      <h3>Day Pass</h3>
-      <p id="countDayPass">—</p>
-    </div>
-
-    <div class="dash-card">
-      <h3>Fest Pass</h3>
-      <p id="countFestPass">—</p>
-    </div>
-
-    <div class="dash-card">
-      <h3>StarNite Pass</h3>
-      <p id="countStarPass">—</p>
-    </div>
-
-    <div class="dash-card">
-      <h3>Visitor Pass</h3>
-      <p id="countVisitorPass">—</p>
-    </div>
-
+    <div class="dash-card"><h3>Day Pass</h3><p id="countDayPass">—</p></div>
+    <div class="dash-card"><h3>Fest Pass</h3><p id="countFestPass">—</p></div>
+    <div class="dash-card"><h3>StarNite Pass</h3><p id="countStarPass">—</p></div>
+    <div class="dash-card"><h3>Visitor Pass</h3><p id="countVisitorPass">—</p></div>
   </section>
 
   <!-- 🔍 SEARCH -->
@@ -150,6 +136,7 @@
       </button>
     </div>
 
+    <!-- 🔹 RESULTS TABLE (QR WILL BE RENDERED HERE) -->
     <div id="searchResults" style="margin-top:18px;overflow-x:auto;"></div>
   </section>
 
@@ -237,6 +224,7 @@
   }
 </script>
 
+<!-- 🔹 DASHBOARD LOGIC -->
 <script type="module" src="dashboard.js"></script>
 
 </body>
