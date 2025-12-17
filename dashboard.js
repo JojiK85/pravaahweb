@@ -152,13 +152,25 @@ function setupPrimaryWarning() {
 
 /* ================= FILTERS ================= */
 function loadDayFilter() {
-  if (!dayDropdown || CURRENT_ROLE === "Admin") return;
+  const dayFilterSection = document.getElementById("dayFilter");
+
+  if (!dayDropdown) return;
+
+  // Admin → NO day filter
+  if (CURRENT_ROLE === "Admin") {
+    dayFilterSection.classList.add("hidden");
+    return;
+  }
+
+  // SuperAdmin / SuperAccount → SHOW
+  dayFilterSection.classList.remove("hidden");
 
   dayDropdown.addEventListener("change", () => {
-    CURRENT_DAY = dayDropdown.value;
+    CURRENT_DAY = dayDropdown.value === "ALL" ? "" : dayDropdown.value;
     loadDashboardStats();
   });
 }
+
 
 async function loadEventFilter() {
   try {
