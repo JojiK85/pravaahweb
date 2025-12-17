@@ -58,9 +58,7 @@
     </p>
   </section>
 
-  <!-- =================================================
-       1️⃣ EVENT REGISTRATIONS & ACCOMMODATION
-  ================================================= -->
+  <!-- ================= OVERVIEW ================= -->
   <section class="dashboard-section">
     <h2>Overview</h2>
 
@@ -77,9 +75,7 @@
     </div>
   </section>
 
-  <!-- =================================================
-       2️⃣ DAY FILTER (ONLY FOR CAMPUS & ACCOMMODATION)
-  ================================================= -->
+  <!-- ================= DAY FILTER ================= -->
   <section class="dashboard-section">
     <h2>Day Filter</h2>
 
@@ -91,14 +87,11 @@
     </select>
   </section>
 
-  <!-- =================================================
-       3️⃣ INSIDE CAMPUS & ACCOMMODATION
-  ================================================= -->
+  <!-- ================= CAMPUS & ACCOMMODATION ================= -->
   <section class="dashboard-section">
     <h2>Inside Campus & Accommodation</h2>
 
     <div class="dashboard-cards">
-
       <div class="dash-card">
         <h3>Inside Campus</h3>
         <p>
@@ -106,9 +99,10 @@
           Max (Day): <b id="campusMaxDay">—</b><br />
           Max Unique (All Days): <b id="campusMaxAll">—</b>
         </p>
+
         <button id="openGateLogsSheet">
           <i class="fa-solid fa-arrow-up-right-from-square"></i>
-          Open Gate Logs
+          Gate Logs
         </button>
       </div>
 
@@ -120,14 +114,10 @@
           Max Unique (All Days): <b id="accMaxAll">—</b>
         </p>
       </div>
-
     </div>
   </section>
 
-  <!-- =================================================
-       4️⃣ TOTAL REGISTRATIONS & SCANS
-       (Total registrations hidden for Admin)
-  ================================================= -->
+  <!-- ================= REGISTRATIONS & SCANS ================= -->
   <section class="dashboard-section">
     <h2>Registrations & Activity</h2>
 
@@ -135,9 +125,10 @@
       <div class="dash-card hidden" id="cardTotalReg">
         <h3>Total Registrations</h3>
         <p id="statTotalReg">—</p>
+
         <button id="openPassesSheet">
           <i class="fa-solid fa-arrow-up-right-from-square"></i>
-          Open Passes Sheet
+          Passes Sheet
         </button>
       </div>
 
@@ -148,9 +139,7 @@
     </div>
   </section>
 
-  <!-- =================================================
-       5️⃣ PASS FILTER (HIDDEN FOR ADMINS)
-  ================================================= -->
+  <!-- ================= PASS FILTER ================= -->
   <section id="passFilterSection" class="dashboard-section hidden">
     <h2>Pass Filter</h2>
 
@@ -162,9 +151,7 @@
     </select>
   </section>
 
-  <!-- =================================================
-       6️⃣ PASS-WISE UNIQUE COUNTS (HIDDEN FOR ADMINS)
-  ================================================= -->
+  <!-- ================= PASS COUNTS ================= -->
   <section id="passCardsSection" class="dashboard-section hidden">
     <h2>Pass-wise Unique Count</h2>
 
@@ -176,62 +163,47 @@
     </div>
   </section>
 
-  <!-- =================================================
-       7️⃣ TOTAL MONEY (SUPERACCOUNT ONLY)
-  ================================================= -->
+  <!-- ================= MONEY ================= -->
   <section id="moneySection" class="dashboard-section hidden">
     <h2>Total Revenue</h2>
-
     <div class="dash-card">
       <h3>Total Amount</h3>
       <p id="statMoney">—</p>
     </div>
   </section>
 
-  <!-- =================================================
-       8️⃣ EVENT REGISTRATION FILTER
-  ================================================= -->
+  <!-- ================= EVENT FILTER ================= -->
   <section class="dashboard-section">
     <h2>Event Registration Filter</h2>
 
     <select id="eventDropdown">
-      <option value="ALL">All Events</option>
+      <option value="">All Events</option>
     </select>
 
     <div class="dashboard-actions">
       <button id="openEventRegSheet">
-        <i class="fa-solid fa-file-lines"></i>
-        Registration Sheet
+        <i class="fa-solid fa-file-lines"></i> Registration Sheet
       </button>
-
       <button id="openEventEntrySheet">
-        <i class="fa-solid fa-door-open"></i>
-        Entry Sheet
+        <i class="fa-solid fa-door-open"></i> Entry Sheet
       </button>
     </div>
   </section>
 
-  <!-- =================================================
-       9️⃣ SEARCH
-  ================================================= -->
+  <!-- ================= SEARCH ================= -->
   <section class="dashboard-section">
     <h2>Search Participant / Pass</h2>
 
-    <input
-      type="text"
-      id="searchInput"
-      placeholder="Name / Email / Phone / Payment ID"
-    />
+    <input type="text" id="searchInput"
+      placeholder="Name / Email / Phone / Payment ID" />
     <button id="searchBtn">
       <i class="fa-solid fa-search"></i> Search
     </button>
 
-    <div id="searchResults" style="margin-top:16px;overflow-x:auto;"></div>
+    <div id="searchResults"></div>
   </section>
 
-  <!-- =================================================
-       🔟 SCANNER
-  ================================================= -->
+  <!-- ================= SCANNER ================= -->
   <section class="dashboard-section">
     <h2>Scanner</h2>
     <button onclick="openScanner()">
@@ -239,17 +211,13 @@
     </button>
   </section>
 
-  <!-- =================================================
-       1️⃣1️⃣ OFFLINE QUEUE
-  ================================================= -->
+  <!-- ================= OFFLINE ================= -->
   <section class="dashboard-section">
     <h2>Offline Scan Queue</h2>
     <p>Pending scans: <b id="offlineCount">0</b></p>
   </section>
 
-  <!-- =================================================
-       1️⃣2️⃣ ROLE MANAGEMENT (SUPERACCOUNT ONLY)
-  ================================================= -->
+  <!-- ================= ROLE ================= -->
   <section id="roleSection" class="dashboard-section hidden">
     <h2>Role Management</h2>
 
@@ -263,6 +231,7 @@
   </section>
 
 </main>
+
 
 <!-- FOOTER -->
 <footer>
