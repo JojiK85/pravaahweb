@@ -1,5 +1,5 @@
 /* ============================================================
-   PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL, FIXED)
+   PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL, ALIGNED)
 ============================================================ */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -33,7 +33,6 @@ const cardTotalReg = document.getElementById("cardTotalReg");
 const cardMoney = document.getElementById("cardMoney");
 
 const statTotalReg = document.getElementById("statTotalReg");
-const statEventReg = document.getElementById("statEventReg");
 const statScan = document.getElementById("statScan");
 const statMoney = document.getElementById("statMoney");
 
@@ -51,7 +50,6 @@ const eventDropdown = document.getElementById("eventDropdown");
 const eventCountEl = document.getElementById("eventCount");
 const openEventRegSheet = document.getElementById("openEventRegSheet");
 const openEventEntrySheet = document.getElementById("openEventEntrySheet");
-const openPassesSheet = document.getElementById("openPassesSheet");
 
 const searchInput = document.getElementById("searchInput");
 const searchBtn = document.getElementById("searchBtn");
@@ -95,11 +93,9 @@ onAuthStateChanged(auth, async (user) => {
       : CURRENT_ROLE;
 
   applyRoleVisibility();
-  configureRoleUI();
   setupPrimaryWarning();
   setupDayFilter();
   setupEventFilter();
-  setupPassesSheet();
   loadDashboardStats();
   updateOfflineCount();
 });
@@ -116,38 +112,11 @@ function applyRoleVisibility() {
     cardMoney?.classList.add("hidden");
     roleSection?.classList.add("hidden");
   }
-
-  if (CURRENT_ROLE === "SuperAccount" && IS_PRIMARY) {
-    cardTotalReg?.classList.remove("hidden");
-    cardMoney?.classList.remove("hidden");
-    roleSection?.classList.remove("hidden");
-  }
-}
-
-/* ================= ROLE UI ================= */
-function configureRoleUI() {
-  roleSelect.innerHTML = "";
-
-  if (CURRENT_ROLE === "SuperAdmin") {
-    roleSelect.add(new Option("Admin", "Admin"));
-  }
-
-  if (CURRENT_ROLE === "SuperAccount" && !IS_PRIMARY) {
-    roleSelect.add(new Option("Admin", "Admin"));
-    roleSelect.add(new Option("SuperAdmin", "SuperAdmin"));
-  }
-
-  if (CURRENT_ROLE === "SuperAccount" && IS_PRIMARY) {
-    roleSelect.add(new Option("Admin", "Admin"));
-    roleSelect.add(new Option("SuperAdmin", "SuperAdmin"));
-    roleSelect.add(new Option("SuperAccount", "SuperAccount"));
-    roleSelect.add(new Option("Transfer Primary", "TRANSFER_PRIMARY"));
-  }
 }
 
 /* ================= PRIMARY WARNING ================= */
 function setupPrimaryWarning() {
-  roleSelect.addEventListener("change", () => {
+  roleSelect?.addEventListener("change", () => {
     primaryWarning?.classList.toggle(
       "hidden",
       roleSelect.value !== "TRANSFER_PRIMARY"
@@ -215,30 +184,30 @@ async function loadDashboardStats() {
   statScan.textContent = d.scansToday ?? "--";
   statMoney.textContent = d.totalAmount != null ? `₹${d.totalAmount}` : "--";
 
-  /* EVENT REG (ONLY SELECTED EVENT) */
   eventCountEl.textContent =
     CURRENT_EVENT ? (d.eventRegistrations ?? 0) : "—";
 
-  /* INSIDE CAMPUS */
+  /* ===== INSIDE CAMPUS ===== */
   campusLive.textContent = d.insideCampus?.live ?? 0;
-  campusMaxDay.textContent = d.insideCampus?.maxDay ?? 0;
-  campusMaxAll.textContent = d.insideCampus?.maxAll ?? 0;
 
-  /* ACCOMMODATION */
+  if (CURRENT_DAY) {
+    campusMaxDay.textContent = d.insideCampus?.max ?? 0;
+    campusMaxAll.textContent = "—";
+  } else {
+    campusMaxAll.textContent = d.insideCampus?.max ?? 0;
+    campusMaxDay.textContent = "—";
+  }
+
+  /* ===== ACCOMMODATION ===== */
   accLive.textContent = d.accommodation?.live ?? 0;
-  accMaxDay.textContent = d.accommodation?.maxDay ?? 0;
-  accMaxAll.textContent = d.accommodation?.maxAll ?? 0;
-}
 
-/* ================= PASSES SHEET ================= */
-function setupPassesSheet() {
-  if (!openPassesSheet) return;
-
-  openPassesSheet.onclick = async () => {
-    const res = await fetch(`${API}?type=openPassesSheet`);
-    const data = await res.json();
-    if (data.url) window.open(data.url, "_blank");
-  };
+  if (CURRENT_DAY) {
+    accMaxDay.textContent = d.accommodation?.max ?? 0;
+    accMaxAll.textContent = "—";
+  } else {
+    accMaxAll.textContent = d.accommodation?.max ?? 0;
+    accMaxDay.textContent = "—";
+  }
 }
 
 /* ================= SEARCH ================= */
