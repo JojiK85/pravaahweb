@@ -238,11 +238,7 @@ searchBtn.addEventListener("click", async () => {
       <th>College</th><th>Payment ID</th><th>Pass</th><th>QR</th>
     </tr>`;
 
-  rows.forEach((r) => {
-    const scanURL = `${API}?mode=admin&page=scan&scanner=dashboard&paymentId=${encodeURIComponent(
-      r["Payment ID"]
-    )}`;
-
+  rows.forEach((r, index) => {
     html += `
     <tr>
       <td>${r.Name}</td>
@@ -252,34 +248,36 @@ searchBtn.addEventListener("click", async () => {
       <td>${r["Payment ID"]}</td>
       <td>${r["Pass Type"]}</td>
       <td>
-  <div id="qr-${r["Payment ID"]}" style="cursor:pointer;"></div>
-</td>
-
+        <div id="qr-${index}" style="cursor:pointer;"></div>
+      </td>
     </tr>`;
   });
 
   html += "</table>";
   searchResults.innerHTML = html;
-   rows.forEach(r => {
-  const scanURL =
-    `${API}?mode=admin&page=scan&scanner=dashboard&paymentId=${encodeURIComponent(
-      r["Payment ID"]
-    )}`;
 
-  const qrBox = document.getElementById(`qr-${r["Payment ID"]}`);
-  if (!qrBox) return;
+  // ✅ Generate REAL scannable QR
+  rows.forEach((r, index) => {
+    const scanURL =
+      `${API}?mode=admin&page=scan&scanner=dashboard&paymentId=${encodeURIComponent(
+        r["Payment ID"]
+      )}`;
 
-  qrBox.onclick = () => window.open(scanURL, "_blank");
+    const qrBox = document.getElementById(`qr-${index}`);
+    if (!qrBox) return;
 
-  new QRCode(qrBox, {
-    text: scanURL,
-    width: 64,
-    height: 64,
-    correctLevel: QRCode.CorrectLevel.H
+    qrBox.innerHTML = ""; // ✅ clear previous QR
+    qrBox.onclick = () => window.open(scanURL, "_blank");
+
+    new QRCode(qrBox, {
+      text: scanURL,
+      width: 64,
+      height: 64,
+      correctLevel: QRCode.CorrectLevel.H
+    });
   });
 });
 
-});
 
 /* ================= ROLE SAVE ================= */
 roleSaveBtn.addEventListener("click", async () => {
