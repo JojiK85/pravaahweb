@@ -560,15 +560,17 @@ payBtn.addEventListener("click", async () => {
   }
 
   const payload = {
-    registeredEmail: participants[0].email,
-    passType: currentPassType,
-    totalAmount: currentTotal,
-    participants,
-    daySelected: currentDay,
-    visitorDays: currentVisitorDays,
-    starnite: includeStarNite,
-    events: collectSelectedEvents()
-  };
+  type: "PASS_REGISTRATION",   // 🔥 ADD THIS
+  registeredEmail: participants[0].email,
+  passType: currentPassType,
+  totalAmount: currentTotal,
+  participants,
+  daySelected: currentDay,
+  visitorDays: currentVisitorDays,
+  starnite: includeStarNite,
+  events: collectSelectedEvents()
+};
+
 
 
   const rzp = new Razorpay({
@@ -616,6 +618,7 @@ rzp.on("payment.failed", function () {
 rzp.open();
 
 });
+
 
 
 
