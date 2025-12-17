@@ -63,6 +63,8 @@ let CURRENT_ROLE = "";
 let IS_PRIMARY = false;
 let CURRENT_DAY = "";
 let CURRENT_EVENT = "";
+let ALL_SEARCH_ROWS = [];
+let FILTERED_ROWS = [];
 
 /* ================= AUTH ================= */
 onAuthStateChanged(auth, async (user) => {
@@ -226,37 +228,41 @@ searchBtn.addEventListener("click", async () => {
   );
   const rows = await res.json();
 
+  ALL_SEARCH_ROWS = rows;
+  FILTERED_ROWS = rows;
+
+  renderSearchResults(rows);
+  updatePassCounts(rows);
+});
+function renderSearchResults(rows) {
   if (!rows.length) {
     searchResults.innerHTML = "<p>No results found</p>";
     return;
   }
 
   let html = `
-  <table>
-    <tr>
-      <th>Name</th><th>Email</th><th>Phone</th>
-      <th>College</th><th>Payment ID</th><th>Pass</th><th>QR</th>
-    </tr>`;
+    <table>
+      <tr>
+        <th>Name</th><th>Email</th><th>Phone</th>
+        <th>College</th><th>Payment ID</th><th>Pass</th><th>QR</th>
+      </tr>`;
 
   rows.forEach((r, index) => {
     html += `
-    <tr>
-      <td>${r.Name}</td>
-      <td>${r.Email}</td>
-      <td>${r.Phone}</td>
-      <td>${r.College}</td>
-      <td>${r["Payment ID"]}</td>
-      <td>${r["Pass Type"]}</td>
-      <td>
-        <div id="qr-${index}" style="cursor:pointer;"></div>
-      </td>
-    </tr>`;
+      <tr>
+        <td>${r.Name}</td>
+        <td>${r.Email}</td>
+        <td>${r.Phone}</td>
+        <td>${r.College}</td>
+        <td>${r["Payment ID"]}</td>
+        <td>${r["Pass Type"]}</td>
+        <td><div id="qr-${index}" style="cursor:pointer;"></div></td>
+      </tr>`;
   });
 
   html += "</table>";
   searchResults.innerHTML = html;
 
-  // ✅ Generate REAL scannable QR
   rows.forEach((r, index) => {
     const scanURL =
       `${API}?mode=admin&page=scan&scanner=dashboard&paymentId=${encodeURIComponent(
@@ -266,7 +272,7 @@ searchBtn.addEventListener("click", async () => {
     const qrBox = document.getElementById(`qr-${index}`);
     if (!qrBox) return;
 
-    qrBox.innerHTML = ""; // ✅ clear previous QR
+    qrBox.innerHTML = "";
     qrBox.onclick = () => window.open(scanURL, "_blank");
 
     new QRCode(qrBox, {
@@ -276,7 +282,7 @@ searchBtn.addEventListener("click", async () => {
       correctLevel: QRCode.CorrectLevel.H
     });
   });
-});
+}
 
 
 /* ================= ROLE SAVE ================= */
@@ -320,6 +326,36 @@ window.openScanner = () => {
 function updateOfflineCount() {
   const q = JSON.parse(localStorage.getItem("offlineScans") || "[]");
   offlineCountEl.textContent = q.length;
+}
+const passDropdown = document.getElementById("passDropdown");
+
+passDropdown.addEventListener("change", () => {
+  const pass = passDropdown.value;
+
+  FILTERED_ROWS =
+    pass === "ALL"
+      ? ALL_SEARCH_ROWS
+      : ALL_SEARCH_ROWS.filter(
+          r => r["Pass Type"] === pass
+        );
+
+  renderSearchResults(FILTERED_ROWS);
+  updatePassCounts(FILTERED_ROWS);
+});
+function updatePassCounts(rows) {
+  let day = 0, fest = 0, star = 0, visitor = 0;
+
+  rows.forEach(r => {
+    if (r["Pass Type"] === "Day Pass") day++;
+    else if (r["Pass Type"] === "Fest Pass") fest++;
+    else if (r["Pass Type"] === "StarNite Pass") star++;
+    else if (r["Pass Type"] === "Visitor Pass") visitor++;
+  });
+
+  document.getElementById("countDayPass").textContent = day;
+  document.getElementById("countFestPass").textContent = fest;
+  document.getElementById("countStarPass").textContent = star;
+  document.getElementById("countVisitorPass").textContent = visitor;
 }
 
 /* ================= LOGOUT ================= */
