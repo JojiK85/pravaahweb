@@ -36,7 +36,6 @@
     <li><a href="sponsors.html">Sponsors</a></li>
     <li><a href="contact_us.html">Contact Us</a></li>
     <li><a href="profile.html">Profile</a></li>
-
     <li class="active"><a href="dashboard.html">Dashboard</a></li>
     <li class="mobile-only"><a id="logoutMobile">Logout</a></li>
   </ul>
@@ -56,7 +55,7 @@
     </p>
   </section>
 
-  <!-- 🗓️ DAY FILTER (SUPERADMIN+) -->
+  <!-- 🗓️ DAY FILTER -->
   <section id="dayFilter" class="dashboard-filter hidden">
     <select id="dayDropdown">
       <option value="ALL">All Days</option>
@@ -67,7 +66,7 @@
     </select>
   </section>
 
-  <!-- 📊 STATS -->
+  <!-- 📊 CORE STATS -->
   <section class="dashboard-cards">
 
     <div class="dash-card">
@@ -102,13 +101,38 @@
 
     <div class="dash-card hidden" id="cardMoney">
       <i class="fa-solid fa-indian-rupee-sign"></i>
-      <h3>Total Amount Collected</h3>
+      <h3>Total Amount</h3>
       <p id="statMoney">—</p>
     </div>
 
   </section>
 
-  <!-- 🔍 PARTICIPANT SEARCH -->
+  <!-- 🎟️ PASS-WISE UNIQUE COUNTS -->
+  <section class="dashboard-cards">
+
+    <div class="dash-card">
+      <h3>Day Pass</h3>
+      <p id="countDayPass">—</p>
+    </div>
+
+    <div class="dash-card">
+      <h3>Fest Pass</h3>
+      <p id="countFestPass">—</p>
+    </div>
+
+    <div class="dash-card">
+      <h3>StarNite Pass</h3>
+      <p id="countStarPass">—</p>
+    </div>
+
+    <div class="dash-card">
+      <h3>Visitor Pass</h3>
+      <p id="countVisitorPass">—</p>
+    </div>
+
+  </section>
+
+  <!-- 🔍 SEARCH -->
   <section class="role-section">
     <h2>
       <i class="fa-solid fa-magnifying-glass"></i>
@@ -129,16 +153,16 @@
     <div id="searchResults" style="margin-top:18px;overflow-x:auto;"></div>
   </section>
 
-  <!-- 🔽 EVENT DROPDOWN + COUNT + SHEET -->
+  <!-- 🎭 EVENT STATS -->
   <section class="dashboard-filter" style="flex-direction:column;gap:14px;">
     <select id="eventDropdown">
       <option value="ALL">All Events</option>
     </select>
 
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-      <div style="font-weight:600;">
+      <div>
         Registrations:
-        <span id="eventCount" style="color:var(--gold)">—</span>
+        <b id="eventCount">—</b>
       </div>
 
       <button id="openEventSheetBtn" class="hidden">
@@ -148,7 +172,7 @@
     </div>
 
     <p style="font-size:0.8rem;opacity:0.7;text-align:center;">
-      Select an event to view count & open its Google Sheet
+      Event registration & entry stats
     </p>
   </section>
 
@@ -176,9 +200,8 @@
     </div>
 
     <p id="primaryWarning" class="role-note hidden">
-  ⚠️ Only one Primary SuperAccount exists at any time.
-</p>
-
+      ⚠️ Only one Primary SuperAccount exists at any time.
+    </p>
   </section>
 
 </main>
@@ -190,7 +213,7 @@
   </div>
 </footer>
 
-<!-- 📱 MOBILE MENU -->
+<!-- 📱 MENU -->
 <script>
   const menuToggle = document.getElementById("menuToggle");
   const menu = document.getElementById("menu");
