@@ -4,8 +4,11 @@
 ============================================================ */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from
-  "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
 /* ================= FIREBASE ================= */
 const firebaseConfig = {
@@ -23,48 +26,47 @@ const auth = getAuth(app);
 /* ================= BACKEND ================= */
 const API = "/api/pravaah";
 
-
 /* ================= DOM ================= */
 const adminEmailEl = document.getElementById("adminEmail");
-const adminRoleEl  = document.getElementById("adminRole");
+const adminRoleEl = document.getElementById("adminRole");
 
 const cardTotalReg = document.getElementById("cardTotalReg");
-const cardMoney    = document.getElementById("cardMoney");
+const cardMoney = document.getElementById("cardMoney");
 
-const statTotalReg      = document.getElementById("statTotalReg");
-const statEventReg      = document.getElementById("statEventReg");
+const statTotalReg = document.getElementById("statTotalReg");
+const statEventReg = document.getElementById("statEventReg");
 const statAccommodation = document.getElementById("statAccommodation");
-const statInCampus      = document.getElementById("statInCampus");
-const statScan          = document.getElementById("statScan");
-const statMoney         = document.getElementById("statMoney");
+const statInCampus = document.getElementById("statInCampus");
+const statScan = document.getElementById("statScan");
+const statMoney = document.getElementById("statMoney");
 
-const dayDropdown   = document.getElementById("dayDropdown");
+const dayDropdown = document.getElementById("dayDropdown");
 const eventDropdown = document.getElementById("eventDropdown");
 
 const eventCountEl = document.getElementById("eventCount");
 const openEventSheetBtn = document.getElementById("openEventSheetBtn");
 
-const searchInput   = document.getElementById("searchInput");
-const searchBtn     = document.getElementById("searchBtn");
+const searchInput = document.getElementById("searchInput");
+const searchBtn = document.getElementById("searchBtn");
 const searchResults = document.getElementById("searchResults");
 
 const roleSection = document.getElementById("roleSection");
-const roleEmail   = document.getElementById("roleEmail");
-const roleSelect  = document.getElementById("roleSelect");
+const roleEmail = document.getElementById("roleEmail");
+const roleSelect = document.getElementById("roleSelect");
 const roleSaveBtn = document.getElementById("saveRoleBtn");
 const primaryWarning = document.getElementById("primaryWarning");
 
 const offlineCountEl = document.getElementById("offlineCount");
 
 /* ================= STATE ================= */
-let CURRENT_ROLE  = "";
-let IS_PRIMARY    = false;
-let CURRENT_DAY   = "";
+let CURRENT_ROLE = "";
+let IS_PRIMARY = false;
+let CURRENT_DAY = "";
 let CURRENT_EVENT = "";
 
 /* ================= AUTH ================= */
 onAuthStateChanged(auth, async (user) => {
-  if (!user) return location.href = "login.html";
+  if (!user) return (location.href = "login.html");
 
   const res = await fetch(
     `${API}?type=role&email=${encodeURIComponent(user.email)}`
@@ -72,11 +74,11 @@ onAuthStateChanged(auth, async (user) => {
   const roleObj = await res.json();
 
   CURRENT_ROLE = roleObj.role;
-  IS_PRIMARY   = roleObj.isPrimary === true;
+  IS_PRIMARY = roleObj.isPrimary === true;
 
   if (!["Admin", "SuperAdmin", "SuperAccount"].includes(CURRENT_ROLE)) {
     alert("Access denied");
-    return location.href = "home.html";
+    return (location.href = "home.html");
   }
 
   adminEmailEl.textContent = user.email;
@@ -96,7 +98,6 @@ onAuthStateChanged(auth, async (user) => {
 
 /* ================= ROLE VISIBILITY ================= */
 function applyRoleVisibility() {
-
   if (CURRENT_ROLE === "Admin") {
     cardTotalReg.classList.add("hidden");
     cardMoney.classList.add("hidden");
@@ -139,14 +140,11 @@ function configureRoleUI() {
 
 /* ================= PRIMARY WARNING ================= */
 function setupPrimaryWarning() {
-  if (!primaryWarning) return;
-
   roleSelect.addEventListener("change", () => {
-    if (roleSelect.value === "TRANSFER_PRIMARY") {
-      primaryWarning.classList.remove("hidden");
-    } else {
-      primaryWarning.classList.add("hidden");
-    }
+    primaryWarning.classList.toggle(
+      "hidden",
+      roleSelect.value !== "TRANSFER_PRIMARY"
+    );
   });
 }
 
@@ -154,15 +152,11 @@ function setupPrimaryWarning() {
 function loadDayFilter() {
   const dayFilterSection = document.getElementById("dayFilter");
 
-  if (!dayDropdown) return;
-
-  // Admin → NO day filter
   if (CURRENT_ROLE === "Admin") {
     dayFilterSection.classList.add("hidden");
     return;
   }
 
-  // SuperAdmin / SuperAccount → SHOW
   dayFilterSection.classList.remove("hidden");
 
   dayDropdown.addEventListener("change", () => {
@@ -171,48 +165,39 @@ function loadDayFilter() {
   });
 }
 
-
 async function loadEventFilter() {
-  try {
-    const res = await fetch(`${API}?type=eventList`);
-    const events = await res.json();
+  const res = await fetch(`${API}?type=eventList`);
+  const events = await res.json();
 
-    eventDropdown.innerHTML = `<option value="">All Events</option>`;
-    events.forEach(ev => eventDropdown.add(new Option(ev, ev)));
+  eventDropdown.innerHTML = `<option value="">All Events</option>`;
+  events.forEach((e) => eventDropdown.add(new Option(e, e)));
 
-    eventDropdown.addEventListener("change", () => {
-      CURRENT_EVENT = eventDropdown.value;
-      loadDashboardStats();
-      updateEventSheetButton();
-    });
-  } catch (e) {
-    console.error("Event list failed", e);
-  }
+  eventDropdown.addEventListener("change", () => {
+    CURRENT_EVENT = eventDropdown.value;
+    loadDashboardStats();
+    updateEventSheetButton();
+  });
 }
 
 /* ================= DASHBOARD STATS ================= */
 async function loadDashboardStats() {
-  try {
-    const qs = new URLSearchParams({
-      type: "dashboardStats",
-      day: CURRENT_DAY,
-      event: CURRENT_EVENT
-    });
+  const qs = new URLSearchParams({
+    type: "dashboardStats",
+    day: CURRENT_DAY,
+    event: CURRENT_EVENT
+  });
 
-    const res = await fetch(`${API}?${qs}`);
-    const d = await res.json();
+  const res = await fetch(`${API}?${qs}`);
+  const d = await res.json();
 
-    statTotalReg.textContent      = d.totalRegistrations ?? "--";
-    statEventReg.textContent      = d.eventRegistrations ?? "--";
-    statAccommodation.textContent = d.accommodation ?? "--";
-    statInCampus.textContent      = d.inCampus ?? "--";
-    statScan.textContent          = d.scansToday ?? "--";
-    statMoney.textContent         = d.totalAmount ?? "--";
+  statTotalReg.textContent = d.totalRegistrations ?? "--";
+  statEventReg.textContent = d.eventRegistrations ?? "--";
+  statAccommodation.textContent = d.accommodation ?? "--";
+  statInCampus.textContent = d.inCampus ?? "--";
+  statScan.textContent = d.scansToday ?? "--";
+  statMoney.textContent = d.totalAmount ?? "--";
 
-    eventCountEl.textContent = d.eventRegistrations ?? "0";
-  } catch (e) {
-    console.error("Stats failed", e);
-  }
+  eventCountEl.textContent = d.eventRegistrations ?? "0";
 }
 
 /* ================= EVENT SHEET ================= */
@@ -246,22 +231,32 @@ searchBtn.addEventListener("click", async () => {
     return;
   }
 
-  let html = `<table>
+  let html = `
+  <table>
     <tr>
       <th>Name</th><th>Email</th><th>Phone</th>
-      <th>College</th><th>Payment ID</th><th>Pass Type</th>
+      <th>College</th><th>Payment ID</th><th>Pass</th><th>QR</th>
     </tr>`;
 
-  rows.forEach(r => {
+  rows.forEach((r) => {
+    const scanURL = `${API}?mode=admin&page=scan&scanner=dashboard&paymentId=${encodeURIComponent(
+      r["Payment ID"]
+    )}`;
+
     html += `
-      <tr>
-        <td>${r.Name}</td>
-        <td>${r.Email}</td>
-        <td>${r.Phone}</td>
-        <td>${r.College}</td>
-        <td>${r["Payment ID"]}</td>
-        <td>${r["Pass Type"]}</td>
-      </tr>`;
+    <tr>
+      <td>${r.Name}</td>
+      <td>${r.Email}</td>
+      <td>${r.Phone}</td>
+      <td>${r.College}</td>
+      <td>${r["Payment ID"]}</td>
+      <td>${r["Pass Type"]}</td>
+      <td>
+        <a href="${scanURL}" target="_blank">
+          <i class="fa-solid fa-qrcode"></i>
+        </a>
+      </td>
+    </tr>`;
   });
 
   html += "</table>";
@@ -273,22 +268,23 @@ roleSaveBtn.addEventListener("click", async () => {
   if (!roleEmail.value || !roleSelect.value) return;
 
   if (roleSelect.value === "TRANSFER_PRIMARY") {
-    const ok = confirm(
-      "⚠️ You are about to TRANSFER PRIMARY access.\n\n" +
-      "You will lose primary privileges.\n\n" +
-      "Do you want to continue?"
-    );
-    if (!ok) return;
+    if (
+      !confirm(
+        "⚠️ Transfer PRIMARY access?\nYou will lose primary privileges."
+      )
+    )
+      return;
   }
 
   await fetch(API, {
     method: "POST",
-     mode: "no-cors",
+    mode: "no-cors",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      type: roleSelect.value === "TRANSFER_PRIMARY"
-        ? "TRANSFER_PRIMARY"
-        : "setRole",
+      type:
+        roleSelect.value === "TRANSFER_PRIMARY"
+          ? "TRANSFER_PRIMARY"
+          : "setRole",
       requesterEmail: adminEmailEl.textContent,
       targetEmail: roleEmail.value.trim(),
       newRole: roleSelect.value
