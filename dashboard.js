@@ -1,5 +1,5 @@
 /* ============================================================
-   PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL, STABLE)
+   PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL, FIXED)
 ============================================================ */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -34,16 +34,24 @@ const cardMoney = document.getElementById("cardMoney");
 
 const statTotalReg = document.getElementById("statTotalReg");
 const statEventReg = document.getElementById("statEventReg");
-const statAccommodation = document.getElementById("statAccommodation");
-const statInCampus = document.getElementById("statInCampus");
 const statScan = document.getElementById("statScan");
 const statMoney = document.getElementById("statMoney");
+
+const campusLive = document.getElementById("campusLive");
+const campusMaxDay = document.getElementById("campusMaxDay");
+const campusMaxAll = document.getElementById("campusMaxAll");
+
+const accLive = document.getElementById("accLive");
+const accMaxDay = document.getElementById("accMaxDay");
+const accMaxAll = document.getElementById("accMaxAll");
 
 const dayDropdown = document.getElementById("dayDropdown");
 const eventDropdown = document.getElementById("eventDropdown");
 
 const eventCountEl = document.getElementById("eventCount");
-const openEventSheetBtn = document.getElementById("openEventSheetBtn");
+const openEventRegSheet = document.getElementById("openEventRegSheet");
+const openEventEntrySheet = document.getElementById("openEventEntrySheet");
+const openPassesSheet = document.getElementById("openPassesSheet");
 
 const searchInput = document.getElementById("searchInput");
 const searchBtn = document.getElementById("searchBtn");
@@ -60,7 +68,7 @@ const offlineCountEl = document.getElementById("offlineCount");
 /* ================= STATE ================= */
 let CURRENT_ROLE = "";
 let IS_PRIMARY = false;
-let CURRENT_DAY = "";      // "" = ALL DAYS
+let CURRENT_DAY = "";        // "" = ALL DAYS
 let CURRENT_EVENT = "";
 
 /* ================= AUTH ================= */
@@ -91,6 +99,7 @@ onAuthStateChanged(auth, async (user) => {
   setupPrimaryWarning();
   setupDayFilter();
   setupEventFilter();
+  setupPassesSheet();
   loadDashboardStats();
   updateOfflineCount();
 });
@@ -150,8 +159,19 @@ function setupPrimaryWarning() {
 function setupDayFilter() {
   dayDropdown?.addEventListener("change", () => {
     CURRENT_DAY = dayDropdown.value || "";
+    toggleDayAllView();
     loadDashboardStats();
   });
+}
+
+function toggleDayAllView() {
+  const isAll = CURRENT_DAY === "";
+
+  document.querySelectorAll(".day-only")
+    .forEach(el => el.classList.toggle("hidden", isAll));
+
+  document.querySelectorAll(".all-only")
+    .forEach(el => el.classList.toggle("hidden", !isAll));
 }
 
 /* ================= EVENT FILTER ================= */
@@ -159,13 +179,23 @@ async function setupEventFilter() {
   const res = await fetch(`${API}?type=eventList`);
   const events = await res.json();
 
-  eventDropdown.innerHTML = `<option value="">All Events</option>`;
+  eventDropdown.innerHTML = `<option value="">Select Event</option>`;
   events.forEach(e => eventDropdown.add(new Option(e, e)));
 
   eventDropdown.addEventListener("change", () => {
     CURRENT_EVENT = eventDropdown.value;
+
+    if (!CURRENT_EVENT) {
+      eventCountEl.textContent = "—";
+      openEventRegSheet.classList.add("hidden");
+      openEventEntrySheet.classList.add("hidden");
+      return;
+    }
+
+    openEventRegSheet.classList.remove("hidden");
+    openEventEntrySheet.classList.remove("hidden");
+
     loadDashboardStats();
-    updateEventSheetButton();
   });
 }
 
@@ -182,40 +212,30 @@ async function loadDashboardStats() {
   const d = await res.json();
 
   statTotalReg.textContent = d.totalRegistrations ?? "--";
-  statEventReg.textContent = d.eventRegistrations ?? "--";
-  eventCountEl.textContent = d.eventRegistrations ?? "0";
-
-  // INSIDE CAMPUS (ALL DAYS + DAY SAME FORMAT)
-  statInCampus.innerHTML = `
-    Live: <b>${d.insideCampus?.live ?? 0}</b><br>
-    Max: <b>${d.insideCampus?.max ?? 0}</b><br>
-    Unique: <b>${d.insideCampus?.unique ?? 0}</b>
-  `;
-
-  // ACCOMMODATION
-  statAccommodation.innerHTML = `
-    Live: <b>${d.accommodation?.live ?? 0}</b><br>
-    Max: <b>${d.accommodation?.max ?? 0}</b><br>
-    Unique: <b>${d.accommodation?.unique ?? 0}</b>
-  `;
-
   statScan.textContent = d.scansToday ?? "--";
-  statMoney.textContent =
-    d.totalAmount != null ? `₹${d.totalAmount}` : "--";
+  statMoney.textContent = d.totalAmount != null ? `₹${d.totalAmount}` : "--";
+
+  /* EVENT REG (ONLY SELECTED EVENT) */
+  eventCountEl.textContent =
+    CURRENT_EVENT ? (d.eventRegistrations ?? 0) : "—";
+
+  /* INSIDE CAMPUS */
+  campusLive.textContent = d.insideCampus?.live ?? 0;
+  campusMaxDay.textContent = d.insideCampus?.maxDay ?? 0;
+  campusMaxAll.textContent = d.insideCampus?.maxAll ?? 0;
+
+  /* ACCOMMODATION */
+  accLive.textContent = d.accommodation?.live ?? 0;
+  accMaxDay.textContent = d.accommodation?.maxDay ?? 0;
+  accMaxAll.textContent = d.accommodation?.maxAll ?? 0;
 }
 
-/* ================= EVENT SHEET ================= */
-function updateEventSheetButton() {
-  if (!CURRENT_EVENT) {
-    openEventSheetBtn?.classList.add("hidden");
-    return;
-  }
+/* ================= PASSES SHEET ================= */
+function setupPassesSheet() {
+  if (!openPassesSheet) return;
 
-  openEventSheetBtn?.classList.remove("hidden");
-  openEventSheetBtn.onclick = async () => {
-    const res = await fetch(
-      `${API}?type=openEventSheet&event=${encodeURIComponent(CURRENT_EVENT)}`
-    );
+  openPassesSheet.onclick = async () => {
+    const res = await fetch(`${API}?type=openPassesSheet`);
     const data = await res.json();
     if (data.url) window.open(data.url, "_blank");
   };
@@ -276,34 +296,6 @@ searchBtn?.addEventListener("click", async () => {
     });
   });
 });
-
-/* ================= ROLE SAVE ================= */
-roleSaveBtn?.addEventListener("click", async () => {
-  if (!roleEmail.value || !roleSelect.value) return;
-
-  await fetch(API, {
-    method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      type:
-        roleSelect.value === "TRANSFER_PRIMARY"
-          ? "TRANSFER_PRIMARY"
-          : "setRole",
-      requesterEmail: adminEmailEl.textContent,
-      targetEmail: roleEmail.value.trim(),
-      newRole: roleSelect.value
-    })
-  });
-
-  alert("Role updated");
-  location.reload();
-});
-
-/* ================= SCANNER ================= */
-window.openScanner = () => {
-  location.href = `${API}?mode=admin&page=scan&scanner=dashboard`;
-};
 
 /* ================= OFFLINE ================= */
 function updateOfflineCount() {
