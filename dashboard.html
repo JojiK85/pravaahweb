@@ -58,34 +58,25 @@
     </p>
   </section>
 
-  <!-- ================= CORE STATS ================= -->
-  <section>
-    <div class="dashboard-cards">
+  <!-- ================= OVERVIEW ================= -->
+  <section class="dashboard-section">
+    <h2>Overview</h2>
 
+    <div class="dashboard-cards">
       <div class="dash-card">
         <h3>Event Registrations</h3>
-        <p id="statEventReg" style="font-size:1.9rem;">—</p>
+        <p id="statEventReg">—</p>
       </div>
 
       <div class="dash-card">
         <h3>Accommodation</h3>
-        <p id="statAccommodation" style="font-size:1.9rem;">—</p>
+        <p id="statAccommodation">—</p>
       </div>
-
-      <div class="dash-card hidden" id="cardTotalReg">
-        <h3>Total Registrations</h3>
-        <p id="statTotalReg" style="font-size:1.9rem;">—</p>
-        <button id="openPassesSheet">
-          <i class="fa-solid fa-arrow-up-right-from-square"></i>
-          Passes Sheet
-        </button>
-      </div>
-
     </div>
   </section>
 
   <!-- ================= DAY FILTER ================= -->
-  <section class="dashboard-filter">
+  <section class="dashboard-filter" id="dayFilter">
     <select id="dayDropdown">
       <option value="">All Days</option>
       <option value="day0">Day 0</option>
@@ -96,90 +87,88 @@
   </section>
 
   <!-- ================= CAMPUS & ACCOMMODATION ================= -->
-  <section>
+  <section class="dashboard-section">
+    <h2>Campus Status</h2>
+
     <div class="dashboard-cards">
 
       <div class="dash-card">
         <h3>Inside Campus</h3>
-        <p style="font-size:1.3rem; line-height:1.8;">
-          Live: <b id="campusLive">—</b><br>
-
-          <span class="day-only">
-            Max (Day): <b id="campusMaxDay">—</b>
-          </span>
-
-          <span class="all-only hidden">
-            Max (All Days): <b id="campusMaxAll">—</b>
-          </span>
-        </p>
+        <p id="statInCampus">—</p>
       </div>
 
       <div class="dash-card">
         <h3>Accommodation</h3>
-        <p style="font-size:1.3rem; line-height:1.8;">
-          Live: <b id="accLive">—</b><br>
+        <p id="statAccommodation">—</p>
+      </div>
 
-          <span class="day-only">
-            Max (Day): <b id="accMaxDay">—</b>
-          </span>
+    </div>
+  </section>
 
-          <span class="all-only hidden">
-            Max (All Days): <b id="accMaxAll">—</b>
-          </span>
-        </p>
+  <!-- ================= REGISTRATIONS & SCANS ================= -->
+  <section class="dashboard-section">
+    <h2>Registrations & Activity</h2>
+
+    <div class="dashboard-cards">
+
+      <div class="dash-card hidden" id="cardTotalReg">
+        <h3>Total Registrations</h3>
+        <p id="statTotalReg">—</p>
+
+        <!-- SAME BUTTON STYLE -->
+        <button id="openPassesSheet">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          Passes Sheet
+        </button>
       </div>
 
       <div class="dash-card">
         <h3>Scans Today</h3>
-        <p id="statScan" style="font-size:1.9rem;">—</p>
+        <p id="statScan">—</p>
       </div>
 
       <div class="dash-card hidden" id="cardMoney">
         <h3>Total Amount</h3>
-        <p id="statMoney" style="font-size:1.9rem;">—</p>
+        <p id="statMoney">—</p>
       </div>
 
     </div>
   </section>
 
   <!-- ================= EVENT FILTER ================= -->
-  <!-- ================= EVENT REGISTRATION ================= -->
-<section class="dashboard-section">
-  <h2>Event Registrations</h2>
+  <section class="dashboard-section">
+    <h2>Event Filter</h2>
 
-  <div class="dashboard-filter">
-    <select id="eventDropdown">
-      <option value="">All Events</option>
-    </select>
-  </div>
-
-  <div class="dashboard-cards">
-
-    <!-- EVENT REG COUNT -->
-    <div class="dash-card">
-      <h3>Registrations</h3>
-      <p id="eventCount">—</p>
+    <div class="dashboard-filter">
+      <select id="eventDropdown">
+        <option value="">All Events</option>
+      </select>
     </div>
 
-    <!-- EVENT ACTIONS -->
-    <div class="dash-card action-card">
-      <button id="openEventRegSheet" class="action-btn hidden">
-        <i class="fa-solid fa-file-lines"></i>
-        Registration Sheet
-      </button>
+    <div class="dashboard-cards">
 
-      <button id="openEventEntrySheet" class="action-btn hidden">
-        <i class="fa-solid fa-door-open"></i>
-        Entry Sheet
-      </button>
+      <div class="dash-card">
+        <h3>Registrations</h3>
+        <p id="eventCount">—</p>
+      </div>
+
+      <div class="dash-card">
+        <button id="openEventRegSheet" class="hidden">
+          <i class="fa-solid fa-file-lines"></i>
+          Registration Sheet
+        </button>
+
+        <button id="openEventEntrySheet" class="hidden">
+          <i class="fa-solid fa-door-open"></i>
+          Entry Sheet
+        </button>
+      </div>
+
     </div>
-
-  </div>
-</section>
-
+  </section>
 
   <!-- ================= SEARCH ================= -->
-  <section class="role-section">
+  <section class="dashboard-section role-section">
     <h2><i class="fa-solid fa-magnifying-glass"></i> Search Participant</h2>
 
     <div class="role-form">
@@ -187,9 +176,10 @@
         type="text"
         id="searchInput"
         placeholder="Name / Email / Phone / Payment ID"
-        style="min-width:360px;font-size:1rem;padding:14px 16px;"
       />
-      <button id="searchBtn" style="padding:14px 22px;">Search</button>
+      <button id="searchBtn">
+        <i class="fa-solid fa-search"></i> Search
+      </button>
     </div>
 
     <div id="searchResults"></div>
@@ -225,6 +215,7 @@
 
 </main>
 
+<!-- ================= FOOTER ================= -->
 <footer>
   <p>@PRAVAAH'26 IIT BHUBANESWAR | MADE WITH 💜 BY WEB TEAM</p>
 </footer>
