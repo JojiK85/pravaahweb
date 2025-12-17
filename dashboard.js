@@ -252,15 +252,33 @@ searchBtn.addEventListener("click", async () => {
       <td>${r["Payment ID"]}</td>
       <td>${r["Pass Type"]}</td>
       <td>
-        <a href="${scanURL}" target="_blank">
-          <i class="fa-solid fa-qrcode"></i>
-        </a>
-      </td>
+  <div id="qr-${r["Payment ID"]}" style="cursor:pointer;"></div>
+</td>
+
     </tr>`;
   });
 
   html += "</table>";
   searchResults.innerHTML = html;
+   rows.forEach(r => {
+  const scanURL =
+    `${API}?mode=admin&page=scan&scanner=dashboard&paymentId=${encodeURIComponent(
+      r["Payment ID"]
+    )}`;
+
+  const qrBox = document.getElementById(`qr-${r["Payment ID"]}`);
+  if (!qrBox) return;
+
+  qrBox.onclick = () => window.open(scanURL, "_blank");
+
+  new QRCode(qrBox, {
+    text: scanURL,
+    width: 64,
+    height: 64,
+    correctLevel: QRCode.CorrectLevel.H
+  });
+});
+
 });
 
 /* ================= ROLE SAVE ================= */
