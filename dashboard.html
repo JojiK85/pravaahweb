@@ -10,8 +10,10 @@
   <link rel="stylesheet" href="dashboard.css" />
 
   <!-- ICONS -->
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
 
   <!-- QR -->
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
@@ -47,7 +49,7 @@
 <!-- ================= DASHBOARD ================= -->
 <main class="dashboard-wrapper">
 
-  <!-- ================= HEADER ================= -->
+  <!-- HEADER -->
   <section class="dashboard-header">
     <h1>Admin Dashboard</h1>
     <p>
@@ -56,27 +58,33 @@
     </p>
   </section>
 
-  <!-- =================================================
-      1️⃣ EVENT REGISTRATIONS & ACCOMMODATION
-  ================================================= -->
+  <!-- ================= CORE STATS ================= -->
   <section>
-    <div class="dashboard-cards" style="justify-content:center;">
+    <div class="dashboard-cards">
+
       <div class="dash-card">
         <h3>Event Registrations</h3>
-        <p id="statEventReg">—</p>
+        <p id="statEventReg" style="font-size:1.9rem;">—</p>
       </div>
 
       <div class="dash-card">
         <h3>Accommodation</h3>
-        <p id="statAccommodation">—</p>
+        <p id="statAccommodation" style="font-size:1.9rem;">—</p>
       </div>
+
+      <div class="dash-card hidden" id="cardTotalReg">
+        <h3>Total Registrations</h3>
+        <p id="statTotalReg" style="font-size:1.9rem;">—</p>
+        <button id="openPassesSheet">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          Passes Sheet
+        </button>
+      </div>
+
     </div>
   </section>
 
-  <!-- =================================================
-      2️⃣ DAY FILTER
-      (All Days → only max unique shown)
-  ================================================= -->
+  <!-- ================= DAY FILTER ================= -->
   <section class="dashboard-filter">
     <select id="dayDropdown">
       <option value="">All Days</option>
@@ -87,120 +95,107 @@
     </select>
   </section>
 
-  <!-- =================================================
-      3️⃣ INSIDE CAMPUS & ACCOMMODATION
-  ================================================= -->
+  <!-- ================= CAMPUS & ACCOMMODATION ================= -->
   <section>
     <div class="dashboard-cards">
 
-      <!-- INSIDE CAMPUS -->
       <div class="dash-card">
         <h3>Inside Campus</h3>
+        <p style="font-size:1.3rem; line-height:1.8;">
+          Live: <b id="campusLive">—</b><br>
 
-        <p>
           <span class="day-only">
-            Live: <b id="campusLive">—</b><br />
             Max (Day): <b id="campusMaxDay">—</b>
           </span>
 
           <span class="all-only hidden">
-            Max Unique (All Days): <b id="campusMaxAll">—</b>
+            Max (All Days): <b id="campusMaxAll">—</b>
           </span>
         </p>
       </div>
 
-      <!-- ACCOMMODATION -->
       <div class="dash-card">
         <h3>Accommodation</h3>
+        <p style="font-size:1.3rem; line-height:1.8;">
+          Live: <b id="accLive">—</b><br>
 
-        <p>
           <span class="day-only">
-            Live: <b id="accLive">—</b><br />
             Max (Day): <b id="accMaxDay">—</b>
           </span>
 
           <span class="all-only hidden">
-            Max Unique (All Days): <b id="accMaxAll">—</b>
+            Max (All Days): <b id="accMaxAll">—</b>
           </span>
         </p>
       </div>
 
-    </div>
-  </section>
-
-  <!-- =================================================
-      4️⃣ REGISTRATIONS & SCANS
-  ================================================= -->
-  <section>
-    <div class="dashboard-cards">
-
-      <div class="dash-card hidden" id="cardTotalReg">
-        <h3>Total Registrations</h3>
-        <p id="statTotalReg">—</p>
-      </div>
-
       <div class="dash-card">
         <h3>Scans Today</h3>
-        <p id="statScan">—</p>
+        <p id="statScan" style="font-size:1.9rem;">—</p>
       </div>
 
       <div class="dash-card hidden" id="cardMoney">
         <h3>Total Amount</h3>
-        <p id="statMoney">—</p>
+        <p id="statMoney" style="font-size:1.9rem;">—</p>
       </div>
 
     </div>
   </section>
 
-  <!-- =================================================
-      5️⃣ EVENT FILTER
-  ================================================= -->
-  <section class="dashboard-filter">
+  <!-- ================= EVENT FILTER ================= -->
+  <section class="dashboard-filter" style="flex-direction:column;">
     <select id="eventDropdown">
       <option value="">All Events</option>
     </select>
 
-    <button id="openEventSheetBtn" class="hidden">
-      <i class="fa-solid fa-arrow-up-right-from-square"></i>
-      Open Event Sheet
-    </button>
+    <div class="dashboard-actions">
+      <button id="openEventRegSheet" class="hidden">
+        <i class="fa-solid fa-file-lines"></i>
+        Registration Sheet
+      </button>
+
+      <button id="openEventEntrySheet" class="hidden">
+        <i class="fa-solid fa-door-open"></i>
+        Entry Sheet
+      </button>
+    </div>
+
+    <p style="opacity:0.7;">
+      Registrations: <b id="eventCount">—</b>
+    </p>
   </section>
 
-  <!-- =================================================
-      6️⃣ SEARCH
-  ================================================= -->
+  <!-- ================= SEARCH ================= -->
   <section class="role-section">
     <h2><i class="fa-solid fa-magnifying-glass"></i> Search Participant</h2>
 
     <div class="role-form">
-      <input type="text" id="searchInput"
-        placeholder="Name / Email / Phone / Payment ID" />
-      <button id="searchBtn">Search</button>
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Name / Email / Phone / Payment ID"
+        style="min-width:360px;font-size:1rem;padding:14px 16px;"
+      />
+      <button id="searchBtn" style="padding:14px 22px;">Search</button>
     </div>
 
     <div id="searchResults"></div>
   </section>
 
-  <!-- =================================================
-      7️⃣ SCANNER
-  ================================================= -->
+  <!-- ================= SCANNER ================= -->
   <section class="dashboard-actions">
     <button onclick="openScanner()">
       <i class="fa-solid fa-qrcode"></i> Open Scanner
     </button>
   </section>
 
-  <!-- =================================================
-      8️⃣ OFFLINE QUEUE
-  ================================================= -->
+  <!-- ================= OFFLINE ================= -->
   <section class="offline-section">
     <h2>Offline Scan Queue</h2>
     <p>Pending scans: <b id="offlineCount">0</b></p>
   </section>
 
-  <!-- =================================================
-      9️⃣ ROLE MANAGEMENT
-  ================================================= -->
+  <!-- ================= ROLE MANAGEMENT ================= -->
   <section id="roleSection" class="role-section hidden">
     <h2>Role Management</h2>
 
@@ -217,7 +212,6 @@
 
 </main>
 
-<!-- ================= FOOTER ================= -->
 <footer>
   <p>@PRAVAAH'26 IIT BHUBANESWAR | MADE WITH 💜 BY WEB TEAM</p>
 </footer>
