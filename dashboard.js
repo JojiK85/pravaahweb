@@ -52,6 +52,7 @@ const roleSection = document.getElementById("roleSection");
 const roleEmail   = document.getElementById("roleEmail");
 const roleSelect  = document.getElementById("roleSelect");
 const roleSaveBtn = document.getElementById("saveRoleBtn");
+const primaryWarning = document.getElementById("primaryWarning");
 
 const offlineCountEl = document.getElementById("offlineCount");
 
@@ -86,6 +87,7 @@ onAuthStateChanged(auth, async (user) => {
 
   applyRoleVisibility();
   configureRoleUI();
+  setupPrimaryWarning();
   loadDayFilter();
   loadEventFilter();
   loadDashboardStats();
@@ -95,7 +97,6 @@ onAuthStateChanged(auth, async (user) => {
 /* ================= ROLE VISIBILITY ================= */
 function applyRoleVisibility() {
 
-  // Admin → limited view
   if (CURRENT_ROLE === "Admin") {
     cardTotalReg.classList.add("hidden");
     cardMoney.classList.add("hidden");
@@ -103,13 +104,11 @@ function applyRoleVisibility() {
     return;
   }
 
-  // SuperAdmin → no money, no role mgmt
   if (CURRENT_ROLE === "SuperAdmin") {
     cardMoney.classList.add("hidden");
     roleSection.classList.add("hidden");
   }
 
-  // SuperAccount (Primary) → FULL ACCESS
   if (CURRENT_ROLE === "SuperAccount" && IS_PRIMARY) {
     cardTotalReg.classList.remove("hidden");
     cardMoney.classList.remove("hidden");
@@ -117,27 +116,19 @@ function applyRoleVisibility() {
   }
 }
 
-/* ================= ROLE MANAGEMENT UI ================= */
+/* ================= ROLE UI ================= */
 function configureRoleUI() {
-  if (CURRENT_ROLE === "Admin") {
-    roleSection.classList.add("hidden");
-    return;
-  }
-
   roleSelect.innerHTML = "";
 
-  // SuperAdmin → Admin only
   if (CURRENT_ROLE === "SuperAdmin") {
     roleSelect.add(new Option("Admin", "Admin"));
   }
 
-  // SuperAccount (NOT Primary) → Admin + SuperAdmin
   if (CURRENT_ROLE === "SuperAccount" && !IS_PRIMARY) {
     roleSelect.add(new Option("Admin", "Admin"));
     roleSelect.add(new Option("SuperAdmin", "SuperAdmin"));
   }
 
-  // SuperAccount (Primary) → FULL CONTROL
   if (CURRENT_ROLE === "SuperAccount" && IS_PRIMARY) {
     roleSelect.add(new Option("Admin", "Admin"));
     roleSelect.add(new Option("SuperAdmin", "SuperAdmin"));
@@ -146,7 +137,20 @@ function configureRoleUI() {
   }
 }
 
-/* ================= DAY FILTER ================= */
+/* ================= PRIMARY WARNING ================= */
+function setupPrimaryWarning() {
+  if (!primaryWarning) return;
+
+  roleSelect.addEventListener("change", () => {
+    if (roleSelect.value === "TRANSFER_PRIMARY") {
+      primaryWarning.classList.remove("hidden");
+    } else {
+      primaryWarning.classList.add("hidden");
+    }
+  });
+}
+
+/* ================= FILTERS ================= */
 function loadDayFilter() {
   if (!dayDropdown || CURRENT_ROLE === "Admin") return;
 
@@ -156,41 +160,47 @@ function loadDayFilter() {
   });
 }
 
-/* ================= EVENT FILTER ================= */
 async function loadEventFilter() {
-  const res = await fetch(`${API}?type=eventList`);
-  const events = await res.json();
+  try {
+    const res = await fetch(`${API}?type=eventList`);
+    const events = await res.json();
 
-  eventDropdown.innerHTML = `<option value="">All Events</option>`;
-  events.forEach(ev => eventDropdown.add(new Option(ev, ev)));
+    eventDropdown.innerHTML = `<option value="">All Events</option>`;
+    events.forEach(ev => eventDropdown.add(new Option(ev, ev)));
 
-  eventDropdown.addEventListener("change", () => {
-    CURRENT_EVENT = eventDropdown.value;
-    loadDashboardStats();
-    updateEventSheetButton();
-  });
+    eventDropdown.addEventListener("change", () => {
+      CURRENT_EVENT = eventDropdown.value;
+      loadDashboardStats();
+      updateEventSheetButton();
+    });
+  } catch (e) {
+    console.error("Event list failed", e);
+  }
 }
 
 /* ================= DASHBOARD STATS ================= */
 async function loadDashboardStats() {
-  const qs = new URLSearchParams({
-    type: "dashboardStats",
-    day: CURRENT_DAY,
-    event: CURRENT_EVENT,
-    role: CURRENT_ROLE
-  });
+  try {
+    const qs = new URLSearchParams({
+      type: "dashboardStats",
+      day: CURRENT_DAY,
+      event: CURRENT_EVENT
+    });
 
-  const res = await fetch(`${API}?${qs}`);
-  const d = await res.json();
+    const res = await fetch(`${API}?${qs}`);
+    const d = await res.json();
 
-  statTotalReg.textContent      = d.totalRegistrations ?? "--";
-  statEventReg.textContent      = d.eventRegistrations ?? "--";
-  statAccommodation.textContent = d.accommodation ?? "--";
-  statInCampus.textContent      = d.inCampus ?? "--";
-  statScan.textContent          = d.scansToday ?? "--";
-  statMoney.textContent         = d.totalAmount ?? "--";
+    statTotalReg.textContent      = d.totalRegistrations ?? "--";
+    statEventReg.textContent      = d.eventRegistrations ?? "--";
+    statAccommodation.textContent = d.accommodation ?? "--";
+    statInCampus.textContent      = d.inCampus ?? "--";
+    statScan.textContent          = d.scansToday ?? "--";
+    statMoney.textContent         = d.totalAmount ?? "--";
 
-  eventCountEl.textContent = d.eventRegistrations ?? "0";
+    eventCountEl.textContent = d.eventRegistrations ?? "0";
+  } catch (e) {
+    console.error("Stats failed", e);
+  }
 }
 
 /* ================= EVENT SHEET ================= */
@@ -249,6 +259,15 @@ searchBtn.addEventListener("click", async () => {
 /* ================= ROLE SAVE ================= */
 roleSaveBtn.addEventListener("click", async () => {
   if (!roleEmail.value || !roleSelect.value) return;
+
+  if (roleSelect.value === "TRANSFER_PRIMARY") {
+    const ok = confirm(
+      "⚠️ You are about to TRANSFER PRIMARY access.\n\n" +
+      "You will lose primary privileges.\n\n" +
+      "Do you want to continue?"
+    );
+    if (!ok) return;
+  }
 
   await fetch(API, {
     method: "POST",
