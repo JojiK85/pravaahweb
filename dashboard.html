@@ -15,13 +15,13 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
   />
 
-  <!-- ✅ QR CODE LIB (REQUIRED FOR SCANNABLE QR) -->
+  <!-- QR -->
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 </head>
 
 <body>
 
-<!-- 🔹 NAVBAR -->
+<!-- ================= NAVBAR ================= -->
 <nav>
   <a href="https://www.iitbbs.ac.in/" target="_blank" class="iitbbs-logo">
     <img src="iitbbs-logo.png" alt="IIT Bhubaneswar Logo" />
@@ -46,7 +46,7 @@
   <button id="logoutDesktop" class="logout-btn">Logout</button>
 </nav>
 
-<!-- 🛠️ DASHBOARD CONTENT -->
+<!-- ================= DASHBOARD ================= -->
 <main class="dashboard-wrapper">
 
   <!-- HEADER -->
@@ -58,10 +58,32 @@
     </p>
   </section>
 
-  <!-- 🗓️ DAY FILTER -->
-  <section id="dayFilter" class="dashboard-filter hidden">
+  <!-- =================================================
+       1️⃣ EVENT REGISTRATIONS & ACCOMMODATION
+  ================================================= -->
+  <section class="dashboard-section">
+    <h2>Overview</h2>
+
+    <div class="dashboard-cards">
+      <div class="dash-card">
+        <h3>Event Registrations</h3>
+        <p id="statEventReg">—</p>
+      </div>
+
+      <div class="dash-card">
+        <h3>Accommodation</h3>
+        <p id="statAccommodation">—</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================================================
+       2️⃣ DAY FILTER (ONLY FOR CAMPUS & ACCOMMODATION)
+  ================================================= -->
+  <section class="dashboard-section">
+    <h2>Day Filter</h2>
+
     <select id="dayDropdown">
-      <option value="ALL">All Days</option>
       <option value="day0">Day 0</option>
       <option value="day1">Day 1</option>
       <option value="day2">Day 2</option>
@@ -69,138 +91,185 @@
     </select>
   </section>
 
-  <!-- 📊 CORE STATS -->
-  <section class="dashboard-cards">
+  <!-- =================================================
+       3️⃣ INSIDE CAMPUS & ACCOMMODATION
+  ================================================= -->
+  <section class="dashboard-section">
+    <h2>Inside Campus & Accommodation</h2>
+
+    <div class="dashboard-cards">
+
+      <div class="dash-card">
+        <h3>Inside Campus</h3>
+        <p>
+          Live (Day): <b id="campusLive">—</b><br />
+          Max (Day): <b id="campusMaxDay">—</b><br />
+          Max Unique (All Days): <b id="campusMaxAll">—</b>
+        </p>
+        <button id="openGateLogsSheet">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          Open Gate Logs
+        </button>
+      </div>
+
+      <div class="dash-card">
+        <h3>Accommodation</h3>
+        <p>
+          Live (Day): <b id="accLive">—</b><br />
+          Max (Day): <b id="accMaxDay">—</b><br />
+          Max Unique (All Days): <b id="accMaxAll">—</b>
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =================================================
+       4️⃣ TOTAL REGISTRATIONS & SCANS
+       (Total registrations hidden for Admin)
+  ================================================= -->
+  <section class="dashboard-section">
+    <h2>Registrations & Activity</h2>
+
+    <div class="dashboard-cards">
+      <div class="dash-card hidden" id="cardTotalReg">
+        <h3>Total Registrations</h3>
+        <p id="statTotalReg">—</p>
+        <button id="openPassesSheet">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          Open Passes Sheet
+        </button>
+      </div>
+
+      <div class="dash-card">
+        <h3>Scans Today</h3>
+        <p id="statScan">—</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================================================
+       5️⃣ PASS FILTER (HIDDEN FOR ADMINS)
+  ================================================= -->
+  <section id="passFilterSection" class="dashboard-section hidden">
+    <h2>Pass Filter</h2>
+
+    <select id="passFilter">
+      <option value="DAY">Day Pass</option>
+      <option value="VISITOR">Visitor Pass</option>
+      <option value="FEST">Fest Pass</option>
+      <option value="STARNITE">StarNite Pass</option>
+    </select>
+  </section>
+
+  <!-- =================================================
+       6️⃣ PASS-WISE UNIQUE COUNTS (HIDDEN FOR ADMINS)
+  ================================================= -->
+  <section id="passCardsSection" class="dashboard-section hidden">
+    <h2>Pass-wise Unique Count</h2>
+
+    <div class="dashboard-cards">
+      <div class="dash-card"><h3>Day Pass</h3><p id="countDayPass">—</p></div>
+      <div class="dash-card"><h3>Fest Pass</h3><p id="countFestPass">—</p></div>
+      <div class="dash-card"><h3>StarNite Pass</h3><p id="countStarPass">—</p></div>
+      <div class="dash-card"><h3>Visitor Pass</h3><p id="countVisitorPass">—</p></div>
+    </div>
+  </section>
+
+  <!-- =================================================
+       7️⃣ TOTAL MONEY (SUPERACCOUNT ONLY)
+  ================================================= -->
+  <section id="moneySection" class="dashboard-section hidden">
+    <h2>Total Revenue</h2>
 
     <div class="dash-card">
-      <i class="fa-solid fa-building"></i>
-      <h3>Inside Campus</h3>
-      <p id="statInCampus">—</p>
-    </div>
-
-    <div class="dash-card hidden" id="cardTotalReg">
-      <i class="fa-solid fa-users"></i>
-      <h3>Total Registrations</h3>
-      <p id="statTotalReg">—</p>
-    </div>
-
-    <div class="dash-card">
-      <i class="fa-solid fa-calendar-check"></i>
-      <h3>Event Registrations</h3>
-      <p id="statEventReg">—</p>
-    </div>
-
-    <div class="dash-card">
-      <i class="fa-solid fa-bed"></i>
-      <h3>Accommodation</h3>
-      <p id="statAccommodation">—</p>
-    </div>
-
-    <div class="dash-card">
-      <i class="fa-solid fa-qrcode"></i>
-      <h3>Scans Today</h3>
-      <p id="statScan">—</p>
-    </div>
-
-    <div class="dash-card hidden" id="cardMoney">
-      <i class="fa-solid fa-indian-rupee-sign"></i>
       <h3>Total Amount</h3>
       <p id="statMoney">—</p>
     </div>
-
   </section>
 
-  <!-- 🎟️ PASS-WISE UNIQUE COUNTS -->
-  <section class="dashboard-cards">
-    <div class="dash-card"><h3>Day Pass</h3><p id="countDayPass">—</p></div>
-    <div class="dash-card"><h3>Fest Pass</h3><p id="countFestPass">—</p></div>
-    <div class="dash-card"><h3>StarNite Pass</h3><p id="countStarPass">—</p></div>
-    <div class="dash-card"><h3>Visitor Pass</h3><p id="countVisitorPass">—</p></div>
-  </section>
+  <!-- =================================================
+       8️⃣ EVENT REGISTRATION FILTER
+  ================================================= -->
+  <section class="dashboard-section">
+    <h2>Event Registration Filter</h2>
 
-  <!-- 🔍 SEARCH -->
-  <section class="role-section">
-    <h2>
-      <i class="fa-solid fa-magnifying-glass"></i>
-      Search Participant / Pass
-    </h2>
-
-    <div class="role-form">
-      <input
-        type="text"
-        id="searchInput"
-        placeholder="Name / Email / Phone / Payment ID"
-      />
-      <button id="searchBtn">
-        <i class="fa-solid fa-search"></i> Search
-      </button>
-    </div>
-
-    <!-- 🔹 RESULTS TABLE (QR WILL BE RENDERED HERE) -->
-    <div id="searchResults" style="margin-top:18px;overflow-x:auto;"></div>
-  </section>
-
-  <!-- 🎭 EVENT STATS -->
-  <section class="dashboard-filter" style="flex-direction:column;gap:14px;">
     <select id="eventDropdown">
       <option value="ALL">All Events</option>
     </select>
 
-    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-      <div>
-        Registrations:
-        <b id="eventCount">—</b>
-      </div>
+    <div class="dashboard-actions">
+      <button id="openEventRegSheet">
+        <i class="fa-solid fa-file-lines"></i>
+        Registration Sheet
+      </button>
 
-      <button id="openEventSheetBtn" class="hidden">
-        <i class="fa-solid fa-arrow-up-right-from-square"></i>
-        Open Event Sheet
+      <button id="openEventEntrySheet">
+        <i class="fa-solid fa-door-open"></i>
+        Entry Sheet
       </button>
     </div>
-
-    <p style="font-size:0.8rem;opacity:0.7;text-align:center;">
-      Event registration & entry stats
-    </p>
   </section>
 
-  <!-- ✅ SCAN -->
-  <section class="dashboard-actions single-scan">
+  <!-- =================================================
+       9️⃣ SEARCH
+  ================================================= -->
+  <section class="dashboard-section">
+    <h2>Search Participant / Pass</h2>
+
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Name / Email / Phone / Payment ID"
+    />
+    <button id="searchBtn">
+      <i class="fa-solid fa-search"></i> Search
+    </button>
+
+    <div id="searchResults" style="margin-top:16px;overflow-x:auto;"></div>
+  </section>
+
+  <!-- =================================================
+       🔟 SCANNER
+  ================================================= -->
+  <section class="dashboard-section">
+    <h2>Scanner</h2>
     <button onclick="openScanner()">
       <i class="fa-solid fa-qrcode"></i> Open Scanner
     </button>
   </section>
 
-  <!-- 📶 OFFLINE -->
-  <section class="offline-section">
-    <h2><i class="fa-solid fa-cloud-slash"></i> Offline Scan Queue</h2>
+  <!-- =================================================
+       1️⃣1️⃣ OFFLINE QUEUE
+  ================================================= -->
+  <section class="dashboard-section">
+    <h2>Offline Scan Queue</h2>
     <p>Pending scans: <b id="offlineCount">0</b></p>
   </section>
 
-  <!-- 🔐 ROLE MANAGEMENT -->
-  <section id="roleSection" class="role-section hidden">
-    <h2><i class="fa-solid fa-user-shield"></i> Role Management</h2>
+  <!-- =================================================
+       1️⃣2️⃣ ROLE MANAGEMENT (SUPERACCOUNT ONLY)
+  ================================================= -->
+  <section id="roleSection" class="dashboard-section hidden">
+    <h2>Role Management</h2>
 
-    <div class="role-form">
-      <input type="email" id="roleEmail" placeholder="User Email" />
-      <select id="roleSelect"></select>
-      <button id="saveRoleBtn">Assign / Update Role</button>
-    </div>
+    <input type="email" id="roleEmail" placeholder="User Email" />
+    <select id="roleSelect"></select>
+    <button id="saveRoleBtn">Assign / Update Role</button>
 
-    <p id="primaryWarning" class="role-note hidden">
+    <p id="primaryWarning" class="hidden">
       ⚠️ Only one Primary SuperAccount exists at any time.
     </p>
   </section>
 
 </main>
 
-<!-- ⚫ FOOTER -->
+<!-- FOOTER -->
 <footer>
-  <div class="footer-bottom">
-    <p>@PRAVAAH'26 IIT BHUBANESWAR | MADE WITH 💜 BY WEB TEAM</p>
-  </div>
+  <p>@PRAVAAH'26 IIT BHUBANESWAR | MADE WITH 💜 BY WEB TEAM</p>
 </footer>
 
-<!-- 📱 MENU -->
+<!-- MENU LOGIC -->
 <script>
   const menuToggle = document.getElementById("menuToggle");
   const menu = document.getElementById("menu");
@@ -217,15 +286,12 @@
 
   function openScanner() {
     const SCAN_URL =
-      "https://script.google.com/macros/s/AKfycbxTtdt1HmTIP0i5WOeXMLRWLKA1k4RpD153EmgU-Ow6CPRGOISzjOVLplKFDm-gUaggmg/exec";
-
+      "/api/pravaah";
     window.location.href =
       `${SCAN_URL}?mode=admin&page=scan&scanner=dashboard`;
   }
 </script>
 
-<!-- 🔹 DASHBOARD LOGIC -->
 <script type="module" src="dashboard.js"></script>
-
 </body>
 </html>
