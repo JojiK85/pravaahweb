@@ -2,16 +2,21 @@ export default async function handler(req, res) {
   try {
     const qs = new URLSearchParams(req.query).toString();
 
-    const url =
-      "https://script.google.com/macros/s/AKfycbyAiWPJSE7Qm3qPyL-vZTlBR07xlhqzSRxfu-eeXMnXowOE8GXc1AZsLGW1ZOwyP7kjow/exec?" +
-      qs;
+    const GAS_URL =
+      "https://script.google.com/macros/s/AKfycbyAiWPJSE7Qm3qPyL-vZTlBR07xlhqzSRxfu-eeXMnXowOE8GXc1AZsLGW1ZOwyP7kjow/exec";
 
-    const r = await fetch(url);
-    const text = await r.text();
+    const url = qs ? `${GAS_URL}?${qs}` : GAS_URL;
 
-    res.setHeader("Access-Control-Allow-Origin", "*");
+    const gasRes = await fetch(url, {
+      method: req.method,
+      headers: { "Content-Type": "application/json" }
+    });
+
+    const text = await gasRes.text();
+
     res.status(200).send(text);
+
   } catch (e) {
-    res.status(500).json({ error: "Proxy failed" });
+    res.status(500).json({ error: "Proxy failed", details: e.message });
   }
 }
