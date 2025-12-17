@@ -13,7 +13,7 @@ import {
 const firebaseConfig = {
   apiKey: "AIzaSyCbXKleOw4F46gFDXz2Wynl3YzPuHsVwh8",
   authDomain: "pravaah-55b1d.firebaseapp.com",
-  projectId: "pravaah-55b1d",
+  projectId: "pravaah-55b1d.firebaseapp.com",
   storageBucket: "pravaah-55b1d.appspot.com",
   messagingSenderId: "287687647267",
   appId: "1:287687647267:web:7aecd603ee202779b89196"
@@ -60,7 +60,7 @@ const offlineCountEl = document.getElementById("offlineCount");
 /* ================= STATE ================= */
 let CURRENT_ROLE = "";
 let IS_PRIMARY = false;
-let CURRENT_DAY = "";     // "" = ALL DAYS
+let CURRENT_DAY = "";      // "" = ALL DAYS
 let CURRENT_EVENT = "";
 
 /* ================= AUTH ================= */
@@ -139,7 +139,7 @@ function configureRoleUI() {
 /* ================= PRIMARY WARNING ================= */
 function setupPrimaryWarning() {
   roleSelect.addEventListener("change", () => {
-    primaryWarning.classList.toggle(
+    primaryWarning?.classList.toggle(
       "hidden",
       roleSelect.value !== "TRANSFER_PRIMARY"
     );
@@ -148,13 +148,8 @@ function setupPrimaryWarning() {
 
 /* ================= DAY FILTER ================= */
 function setupDayFilter() {
-  if (CURRENT_ROLE === "Admin") {
-    document.getElementById("dayFilter")?.classList.add("hidden");
-    return;
-  }
-
-  dayDropdown.addEventListener("change", () => {
-    CURRENT_DAY = dayDropdown.value === "ALL" ? "" : dayDropdown.value;
+  dayDropdown?.addEventListener("change", () => {
+    CURRENT_DAY = dayDropdown.value || "";
     loadDashboardStats();
   });
 }
@@ -190,12 +185,14 @@ async function loadDashboardStats() {
   statEventReg.textContent = d.eventRegistrations ?? "--";
   eventCountEl.textContent = d.eventRegistrations ?? "0";
 
+  // INSIDE CAMPUS (ALL DAYS + DAY SAME FORMAT)
   statInCampus.innerHTML = `
     Live: <b>${d.insideCampus?.live ?? 0}</b><br>
     Max: <b>${d.insideCampus?.max ?? 0}</b><br>
     Unique: <b>${d.insideCampus?.unique ?? 0}</b>
   `;
 
+  // ACCOMMODATION
   statAccommodation.innerHTML = `
     Live: <b>${d.accommodation?.live ?? 0}</b><br>
     Max: <b>${d.accommodation?.max ?? 0}</b><br>
@@ -210,11 +207,11 @@ async function loadDashboardStats() {
 /* ================= EVENT SHEET ================= */
 function updateEventSheetButton() {
   if (!CURRENT_EVENT) {
-    openEventSheetBtn.classList.add("hidden");
+    openEventSheetBtn?.classList.add("hidden");
     return;
   }
 
-  openEventSheetBtn.classList.remove("hidden");
+  openEventSheetBtn?.classList.remove("hidden");
   openEventSheetBtn.onclick = async () => {
     const res = await fetch(
       `${API}?type=openEventSheet&event=${encodeURIComponent(CURRENT_EVENT)}`
@@ -225,7 +222,7 @@ function updateEventSheetButton() {
 }
 
 /* ================= SEARCH ================= */
-searchBtn.addEventListener("click", async () => {
+searchBtn?.addEventListener("click", async () => {
   const q = searchInput.value.trim();
   if (!q) return;
 
@@ -281,7 +278,7 @@ searchBtn.addEventListener("click", async () => {
 });
 
 /* ================= ROLE SAVE ================= */
-roleSaveBtn.addEventListener("click", async () => {
+roleSaveBtn?.addEventListener("click", async () => {
   if (!roleEmail.value || !roleSelect.value) return;
 
   await fetch(API, {
