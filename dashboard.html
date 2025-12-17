@@ -5,15 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PRAVAAH — Admin Dashboard</title>
 
-  <!-- GLOBAL STYLES -->
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="dashboard.css" />
 
-  <!-- ICONS -->
   <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
-  <!-- QR -->
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 </head>
 
@@ -74,7 +71,7 @@
         <h3>Total Registrations</h3>
         <p id="statTotalReg">—</p>
 
-        <!-- SAME BUTTON STYLE -->
+        <!-- SAME AS SEARCH BUTTON -->
         <button class="dashboard-btn" id="openPassesSheet">
           <i class="fa-solid fa-file-lines"></i>
           Passes Sheet
@@ -100,7 +97,7 @@
     </select>
   </section>
 
-  <!-- ================= CAMPUS & ACCOMMODATION ================= -->
+  <!-- ================= CAMPUS / ACCOMMODATION ================= -->
   <section>
     <div class="dashboard-cards">
 
@@ -140,28 +137,31 @@
       </select>
     </div>
 
-    <!-- ONE CLEAN ROW -->
+    <!-- SINGLE DASH CARD (SIDE BY SIDE) -->
     <div class="dashboard-cards">
 
-      <!-- LEFT: COUNT -->
-      <div class="dash-card">
-        <h3>Total Registrations</h3>
-        <p id="eventCount">—</p>
-      </div>
+      <div class="dash-card hidden" id="eventActionCard"
+           style="display:flex;align-items:center;justify-content:space-between;gap:20px;">
 
-      <!-- RIGHT: ACTIONS -->
-      <div class="dash-card">
-        <button id="openEventRegSheet" class="dashboard-btn hidden">
-          <i class="fa-solid fa-file-lines"></i>
-          Registration Sheet
-        </button>
+        <!-- LEFT -->
+        <div style="text-align:left;">
+          <h3>Registrations</h3>
+          <p id="eventCount" style="font-size:2rem;">—</p>
+        </div>
 
-        <br><br>
+        <!-- RIGHT -->
+        <div style="display:flex;gap:14px;flex-wrap:wrap;">
+          <button id="openEventRegSheet" class="dashboard-btn">
+            <i class="fa-solid fa-file-lines"></i>
+            Registration Sheet
+          </button>
 
-        <button id="openEventEntrySheet" class="dashboard-btn hidden">
-          <i class="fa-solid fa-door-open"></i>
-          Entry Sheet
-        </button>
+          <button id="openEventEntrySheet" class="dashboard-btn">
+            <i class="fa-solid fa-door-open"></i>
+            Entry Sheet
+          </button>
+        </div>
+
       </div>
 
     </div>
@@ -177,9 +177,7 @@
         id="searchInput"
         placeholder="Name / Email / Phone / Payment ID"
       />
-      <button id="searchBtn" class="dashboard-btn">
-        Search
-      </button>
+      <button id="searchBtn" class="dashboard-btn">Search</button>
     </div>
 
     <div id="searchResults"></div>
@@ -205,9 +203,7 @@
     <div class="role-form">
       <input type="email" id="roleEmail" placeholder="User Email" />
       <select id="roleSelect"></select>
-      <button id="saveRoleBtn" class="dashboard-btn">
-        Assign / Update
-      </button>
+      <button id="saveRoleBtn" class="dashboard-btn">Assign / Update</button>
     </div>
 
     <p id="primaryWarning" class="hidden">
@@ -221,7 +217,6 @@
   <p>@PRAVAAH'26 IIT BHUBANESWAR | MADE WITH 💜 BY WEB TEAM</p>
 </footer>
 
-<!-- ================= MENU ================= -->
 <script>
   const menuToggle = document.getElementById("menuToggle");
   const menu = document.getElementById("menu");
