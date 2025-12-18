@@ -560,76 +560,60 @@ payBtn.addEventListener("click", async () => {
   }
 
   const payload = {
-  type: "PASS_REGISTRATION",   // 🔥 ADD THIS
-  registeredEmail: participants[0].email,
-  passType: currentPassType,
-  totalAmount: currentTotal,
-  participants,
-  daySelected: currentDay,
-  visitorDays: currentVisitorDays,
-  starnite: includeStarNite,
-  events: collectSelectedEvents()
-};
-
-
+    type: "PASS_REGISTRATION",
+    registeredEmail: participants[0].email,
+    passType: currentPassType,
+    totalAmount: currentTotal,
+    participants,
+    daySelected: currentDay,
+    visitorDays: currentVisitorDays,
+    starnite: includeStarNite,
+    events: collectSelectedEvents()
+  };
 
   const rzp = new Razorpay({
-  key: "rzp_test_Re1mOkmIGroT2c",
-  amount: currentTotal * 100,
-  currency: "INR",
-  name: "PRAVAAH 2026",
-  description: `${currentPassType} — Registration`,
+    key: "rzp_test_Re1mOkmIGroT2c",
+    amount: currentTotal * 100,
+    currency: "INR",
+    name: "PRAVAAH 2026",
+    description: `${currentPassType} — Registration`,
 
-  handler: async function (response) {
-    payload.paymentId = response.razorpay_payment_id;
+    handler: async function (response) {
+      payload.paymentId = response.razorpay_payment_id;
 
-    /* ✅ CLEAR CACHE DEFINITIVELY */
-    localStorage.removeItem("failedForm");
+      try {
+        const res = await fetch(scriptURL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
 
-    try {
-        fetch(scriptURL, {
-        method: "POST",
-        mode: "no-cors",
-        body: JSON.stringify(payload),
-        headers: { "Content-Type": "application/json" }
-      });
-    } catch (e) {
-      console.error("Sheet save failed", e);
+        const result = await res.json();
+
+        if (!result || result.error) {
+          throw new Error("Backend save failed");
+        }
+
+        window.location.replace("payment_success.html");
+      } catch (e) {
+        console.error(e);
+        alert("Payment succeeded but saving failed. Contact support.");
+        window.location.replace("payment_failure.html");
+      }
+    },
+
+    modal: {
+      ondismiss: function () {
+        paying = false;
+        window.location.replace("payment_failure.html");
+      }
     }
+  });
 
-    window.location.replace("payment_success.html");
-  },
+  rzp.on("payment.failed", function () {
+    paying = false;
+    window.location.replace("payment_failure.html");
+  });
 
-  modal: {
-    ondismiss: function () {
-
-      paying = false;
-      window.location.replace("payment_failure.html");
-    }
-  }
+  rzp.open();
 });
-
-/* ❌ Payment failed → SAVE FORM */
-rzp.on("payment.failed", function () {
-  paying = false;
-  window.location.replace("payment_failure.html");
-});
-
-rzp.open();
-
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
