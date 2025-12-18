@@ -9,7 +9,7 @@ import {
   signOut
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 const GAS_PAGE =
-  "https://script.google.com/macros/s/AKfycbwTr5coBCjyckJXDbL11KAA1QP3kTJEg40AfW8HNrLuRqAIFX5gbER8vE3do3ekUCTBpQ/exec";
+  "https://script.google.com/macros/s/AKfycbweZDnVTMhqkedLgg35FBJvUrrT0axiIXgcmp94OhGrsoegIiKsG-4DzHlRB6rO4ePTvw/exec";
 
 /* ================= FIREBASE ================= */
 const firebaseConfig = {
