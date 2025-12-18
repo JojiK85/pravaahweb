@@ -337,3 +337,18 @@
   background-position: right 18px center;
   background-size: 14px;
 }
+/* ============================================================
+   🔍 OPEN SCANNER — BIG SIZE (SAME GLOW)
+============================================================ */
+
+.dashboard-actions .action-btn {
+  padding: 20px 46px;     /* BIGGER */
+  font-size: 1.2rem;     /* TEXT BIG */
+  font-weight: 800;
+  border-radius: 18px;
+}
+
+.dashboard-actions .action-btn i {
+  font-size: 1.35rem;    /* QR ICON BIG */
+  margin-right: 10px;
+}
