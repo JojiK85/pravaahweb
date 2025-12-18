@@ -44,7 +44,7 @@
 <!-- ================= DASHBOARD ================= -->
 <main class="dashboard-wrapper">
 
-<!-- HEADER -->
+<!-- ================= HEADER ================= -->
 <section class="dashboard-header">
   <h1>Admin Dashboard</h1>
   <p>
@@ -53,10 +53,11 @@
   </p>
 </section>
 
-<!-- ================= TOTAL REG + MONEY ================= -->
-<section>
-  <div class="dashboard-cards">
+<!-- ================= OVERALL STATS ================= -->
+<section class="dashboard-section">
+  <h2>Overall Statistics</h2>
 
+  <div class="dashboard-cards">
     <div class="dash-card hidden" id="cardTotalReg">
       <h3>Total Registrations</h3>
       <p id="statTotalReg">—</p>
@@ -69,46 +70,43 @@
       <h3>Total Amount</h3>
       <p id="statMoney">—</p>
     </div>
-
   </div>
 </section>
 
 <!-- ================= DAY FILTER ================= -->
-<section class="dashboard-filter">
-  <select id="dayDropdown">
-    <option value="">All Days</option>
-    <option value="day0">Day 0</option>
-    <option value="day1">Day 1</option>
-    <option value="day2">Day 2</option>
-    <option value="day3">Day 3</option>
-  </select>
+<section class="dashboard-section">
+  <h2>Filter by Day</h2>
+
+  <div class="dashboard-filter">
+    <select id="dayDropdown">
+      <option value="">All Days</option>
+      <option value="day0">Day 0</option>
+      <option value="day1">Day 1</option>
+      <option value="day2">Day 2</option>
+      <option value="day3">Day 3</option>
+    </select>
+  </div>
 </section>
 
-<!-- ================= CAMPUS & ACCOMMODATION ================= -->
-<section>
-  <div class="dashboard-cards">
+<!-- ================= LIVE STATUS ================= -->
+<section class="dashboard-section">
+  <h2>Live Status</h2>
 
+  <div class="dashboard-cards">
     <div class="dash-card">
       <h3>Inside Campus</h3>
-      <p id="statInCampus">
-        Live: —<br>
-        Max: —
-      </p>
+      <p id="statInCampus">Live: —<br>Max: —</p>
     </div>
 
     <div class="dash-card">
       <h3>Accommodation</h3>
-      <p id="statAccommodation">
-        Live: —<br>
-        Max: —
-      </p>
+      <p id="statAccommodation">Live: —<br>Max: —</p>
     </div>
 
     <div class="dash-card">
       <h3>Scans Today</h3>
       <p id="statScan">—</p>
     </div>
-
   </div>
 </section>
 
@@ -151,35 +149,27 @@
 
   <div class="dashboard-cards">
     <div class="dash-card event-card">
-
-      <div class="event-info">
-        <h3>Registrations</h3>
-        <p id="eventCount">—</p>
-      </div>
+      <h3>Registrations</h3>
+      <p id="eventCount">—</p>
 
       <div class="event-actions">
         <button id="openEventRegSheet" class="action-btn hidden">
           <i class="fa-solid fa-file-lines"></i> Registration Sheet
         </button>
-
         <button id="openEventEntrySheet" class="action-btn hidden">
           <i class="fa-solid fa-door-open"></i> Entry Sheet
         </button>
       </div>
-
     </div>
   </div>
 </section>
 
 <!-- ================= SEARCH ================= -->
-<section class="role-section">
+<section class="dashboard-section role-section">
   <h2><i class="fa-solid fa-magnifying-glass"></i> Search Participant</h2>
 
   <div class="role-form">
-    <input
-      id="searchInput"
-      placeholder="Name / Email / Phone / Payment ID"
-    />
+    <input id="searchInput" placeholder="Name / Email / Phone / Payment ID" />
     <button id="searchBtn" class="action-btn">Search</button>
   </div>
 
@@ -187,28 +177,33 @@
 </section>
 
 <!-- ================= SCANNER ================= -->
-<section class="dashboard-actions">
-  <button class="action-btn" onclick="openScanner()">
-    <i class="fa-solid fa-qrcode"></i> Open Scanner
-  </button>
+<section class="dashboard-section">
+  <h2>Gate Scanner</h2>
+
+  <div class="dashboard-actions">
+    <button class="action-btn">
+      <i class="fa-solid fa-qrcode"></i> Open Scanner
+    </button>
+  </div>
 </section>
 
 <!-- ================= OFFLINE ================= -->
-<section class="offline-section">
-  <h2>Offline Scan Queue</h2>
-  <p>Pending scans: <b id="offlineCount">0</b></p>
+<section class="dashboard-section">
+  <h2>Offline Sync</h2>
+
+  <div class="offline-section">
+    <p>Pending scans: <b id="offlineCount">0</b></p>
+  </div>
 </section>
 
 <!-- ================= ROLE MANAGEMENT ================= -->
-<section id="roleSection" class="role-section hidden">
+<section id="roleSection" class="dashboard-section role-section hidden">
   <h2>Role Management</h2>
 
   <div class="role-form">
     <input type="email" id="roleEmail" placeholder="User Email" />
     <select id="roleSelect" class="dashboard-filter-select"></select>
-    <button id="saveRoleBtn" class="action-btn">
-      Assign / Update
-    </button>
+    <button id="saveRoleBtn" class="action-btn">Assign / Update</button>
   </div>
 
   <p id="primaryWarning" class="hidden">
