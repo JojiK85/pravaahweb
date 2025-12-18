@@ -352,3 +352,29 @@
   font-size: 1.35rem;    /* QR ICON BIG */
   margin-right: 10px;
 }
+/* ============================================================
+   🔽 ROLE SELECT — SAME AS DAY / EVENT FILTER
+============================================================ */
+
+#roleSelect {
+  min-width: 260px;
+  padding: 12px 42px 12px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--primary-soft);
+  background-color: rgba(0,0,0,0.65);
+  color: var(--primary);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  box-shadow: 0 0 14px rgba(36,224,236,0.18);
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='cyan' viewBox='0 0 16 16'%3E%3Cpath d='M1.5 5.5l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  background-size: 14px;
+}
