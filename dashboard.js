@@ -1,5 +1,5 @@
 /* ============================================================
-   PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL, ROLE SAFE)
+   PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL, ROLE SAFE + PRIMARY)
 ============================================================ */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -29,14 +29,15 @@ const API = "/api/pravaah";
 const adminEmailEl = document.getElementById("adminEmail");
 const adminRoleEl = document.getElementById("adminRole");
 
+const overallStatsSection = document.getElementById("overallStatsSection");
 const cardTotalReg = document.getElementById("cardTotalReg");
 const cardMoney = document.getElementById("cardMoney");
 const passStatsSection = document.getElementById("passStatsSection");
+const roleSection = document.getElementById("roleSection");
 
 const statTotalReg = document.getElementById("statTotalReg");
 const statMoney = document.getElementById("statMoney");
 const statScan = document.getElementById("statScan");
-
 const statInCampus = document.getElementById("statInCampus");
 const statAccommodation = document.getElementById("statAccommodation");
 
@@ -53,8 +54,9 @@ const openEventRegSheet = document.getElementById("openEventRegSheet");
 const openEventEntrySheet = document.getElementById("openEventEntrySheet");
 const openPassesSheet = document.getElementById("openPassesSheet");
 
-const roleSection = document.getElementById("roleSection");
+const roleEmailInput = document.getElementById("roleEmail");
 const roleSelect = document.getElementById("roleSelect");
+const saveRoleBtn = document.getElementById("saveRoleBtn");
 const primaryWarning = document.getElementById("primaryWarning");
 
 const searchInput = document.getElementById("searchInput");
@@ -74,9 +76,7 @@ let REFRESH_TIMER = null;
 onAuthStateChanged(auth, async (user) => {
   if (!user) return location.href = "login.html";
 
-  const roleRes = await fetch(
-    `${API}?type=role&email=${encodeURIComponent(user.email)}`
-  );
+  const roleRes = await fetch(`${API}?type=role&email=${encodeURIComponent(user.email)}`);
   const roleObj = await roleRes.json();
 
   CURRENT_ROLE = roleObj.role;
@@ -105,48 +105,32 @@ onAuthStateChanged(auth, async (user) => {
   startAutoRefresh();
 });
 
-/* ================= ROLE VISIBILITY ================= */
+/* ================= VISIBILITY ================= */
 function applyRoleVisibility() {
-  // Hide everything first
   overallStatsSection.classList.add("hidden");
   cardTotalReg.classList.add("hidden");
   cardMoney.classList.add("hidden");
-
   passStatsSection.classList.add("hidden");
   roleSection.classList.add("hidden");
 
-  // ---------------- ADMIN ----------------
-  if (CURRENT_ROLE === "Admin") {
-    // Admin sees NO overall stats, NO pass stats, NO role mgmt
-    return;
-  }
+  if (CURRENT_ROLE === "Admin") return;
 
-  // ---------------- SUPER ADMIN ----------------
-  if (CURRENT_ROLE === "SuperAdmin") {
-    overallStatsSection.classList.remove("hidden");
-    cardTotalReg.classList.remove("hidden");
+  overallStatsSection.classList.remove("hidden");
+  passStatsSection.classList.remove("hidden");
 
-    passStatsSection.classList.remove("hidden");
-    roleSection.classList.remove("hidden");
-    return;
-  }
+  cardTotalReg.classList.remove("hidden");
 
-  // ---------------- SUPER ACCOUNT ----------------
   if (CURRENT_ROLE === "SuperAccount") {
-    overallStatsSection.classList.remove("hidden");
-    cardTotalReg.classList.remove("hidden");
     cardMoney.classList.remove("hidden");
-
-    passStatsSection.classList.remove("hidden");
-    roleSection.classList.remove("hidden");
   }
+
+  roleSection.classList.remove("hidden");
 }
 
-/* ================= ROLE DROPDOWN OPTIONS ================= */
+/* ================= ROLE DROPDOWN ================= */
 function setupRoleDropdown() {
-  if (!roleSelect) return;
-
   roleSelect.innerHTML = "";
+  roleSelect.add(new Option("Select Role", ""));
 
   if (CURRENT_ROLE === "SuperAdmin") {
     roleSelect.add(new Option("Admin", "Admin"));
@@ -157,6 +141,7 @@ function setupRoleDropdown() {
     roleSelect.add(new Option("SuperAdmin", "SuperAdmin"));
 
     if (IS_PRIMARY) {
+      roleSelect.add(new Option("SuperAccount", "SuperAccount"));
       roleSelect.add(new Option("Transfer Primary", "TRANSFER_PRIMARY"));
     }
   }
@@ -164,13 +149,34 @@ function setupRoleDropdown() {
 
 /* ================= PRIMARY WARNING ================= */
 function setupPrimaryWarning() {
-  roleSelect?.addEventListener("change", () => {
+  roleSelect.addEventListener("change", () => {
     primaryWarning.classList.toggle(
       "hidden",
       roleSelect.value !== "TRANSFER_PRIMARY"
     );
   });
 }
+
+/* ================= ROLE ASSIGN ================= */
+saveRoleBtn.onclick = async () => {
+  const email = roleEmailInput.value.trim();
+  const role = roleSelect.value;
+
+  if (!email || !role) return alert("Email and role required");
+
+  const res = await fetch(`${API}?type=assignRole`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email,
+      role,
+      transferPrimary: role === "TRANSFER_PRIMARY"
+    })
+  });
+
+  const r = await res.json();
+  alert(r.message || "Updated");
+};
 
 /* ================= FILTERS ================= */
 function setupDayFilter() {
@@ -189,15 +195,13 @@ async function setupEventFilter() {
 
   eventDropdown.addEventListener("change", () => {
     CURRENT_EVENT = eventDropdown.value;
-
     openEventRegSheet.classList.toggle("hidden", !CURRENT_EVENT);
     openEventEntrySheet.classList.toggle("hidden", !CURRENT_EVENT);
-
     loadDashboardStats();
   });
 }
 
-/* ================= DASHBOARD STATS ================= */
+/* ================= STATS ================= */
 async function loadDashboardStats() {
   const qs = new URLSearchParams({
     type: "dashboardStats",
@@ -218,7 +222,7 @@ async function loadDashboardStats() {
   statInCampus.innerHTML = `Live: <b>${d.insideCampus?.live ?? 0}</b><br>Max: <b>${d.insideCampus?.max ?? 0}</b>`;
   statAccommodation.innerHTML = `Live: <b>${d.accommodation?.live ?? 0}</b><br>Max: <b>${d.accommodation?.max ?? 0}</b>`;
 
-  if (d.passes && CURRENT_ROLE !== "Admin") {
+  if (CURRENT_ROLE !== "Admin" && d.passes) {
     passDay.textContent = d.passes.day ?? "—";
     passFest.textContent = d.passes.fest ?? "—";
     passStar.textContent = d.passes.starnite ?? "—";
@@ -235,19 +239,19 @@ function startAutoRefresh() {
 /* ================= PASSES SHEET ================= */
 function setupPassesSheet() {
   openPassesSheet.onclick = async () => {
-    const res = await fetch(`${API}?type=openPassesSheet`);
-    const data = await res.json();
-    if (data.url) window.open(data.url, "_blank");
+    const r = await fetch(`${API}?type=openPassesSheet`);
+    const d = await r.json();
+    if (d.url) window.open(d.url, "_blank");
   };
 }
 
 /* ================= SEARCH ================= */
-searchBtn.addEventListener("click", async () => {
+searchBtn.onclick = async () => {
   const q = searchInput.value.trim();
   if (!q) return;
 
-  const res = await fetch(`${API}?type=searchPass&query=${encodeURIComponent(q)}`);
-  const rows = await res.json();
+  const r = await fetch(`${API}?type=searchPass&query=${encodeURIComponent(q)}`);
+  const rows = await r.json();
 
   if (!rows.length) {
     searchResults.innerHTML = "<p>No results found</p>";
@@ -259,14 +263,14 @@ searchBtn.addEventListener("click", async () => {
     <th>College</th><th>Payment ID</th><th>Pass</th><th>QR</th>
   </tr>`;
 
-  rows.forEach((r, i) => {
+  rows.forEach((x, i) => {
     html += `<tr>
-      <td>${r.Name}</td>
-      <td>${r.Email}</td>
-      <td>${r.Phone}</td>
-      <td>${r.College}</td>
-      <td>${r["Payment ID"]}</td>
-      <td>${r["Pass Type"]}</td>
+      <td>${x.Name}</td>
+      <td>${x.Email}</td>
+      <td>${x.Phone}</td>
+      <td>${x.College}</td>
+      <td>${x["Payment ID"]}</td>
+      <td>${x["Pass Type"]}</td>
       <td><div id="qr-${i}"></div></td>
     </tr>`;
   });
@@ -274,14 +278,14 @@ searchBtn.addEventListener("click", async () => {
   html += "</table>";
   searchResults.innerHTML = html;
 
-  rows.forEach((r, i) => {
+  rows.forEach((x, i) => {
     new QRCode(document.getElementById(`qr-${i}`), {
-      text: `${API}?mode=admin&page=scan&paymentId=${r["Payment ID"]}`,
+      text: `${API}?mode=admin&page=scan&paymentId=${x["Payment ID"]}`,
       width: 64,
       height: 64
     });
   });
-});
+};
 
 /* ================= OFFLINE ================= */
 function updateOfflineCount() {
