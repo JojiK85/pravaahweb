@@ -338,7 +338,7 @@ searchBtn.onclick = async () => {
       <td>${x["Pass Type"]}</td>
       <td>
   <a href="${GAS_PAGE}?mode=admin&page=scan&paymentId=${x["Payment ID"]}" target="_blank">
-    <div id="qr-${i}"></div>
+    <div class="qr-box" id="qr-${i}"></div>
   </a>
 </td>
 
