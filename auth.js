@@ -43,6 +43,10 @@ const logout = async () => {
   await signOut(auth);
   window.location.href = "login.html";
 };
+window.PRAVAAH_AUTH = {
+  auth,
+  onAuthStateChanged
+};
 
 document.getElementById("logoutDesktop")?.addEventListener("click", logout);
 document.getElementById("logoutMobile")?.addEventListener("click", logout);
