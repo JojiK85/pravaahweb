@@ -107,24 +107,37 @@ onAuthStateChanged(auth, async (user) => {
 
 /* ================= ROLE VISIBILITY ================= */
 function applyRoleVisibility() {
+  // Hide everything first
+  overallStatsSection.classList.add("hidden");
   cardTotalReg.classList.add("hidden");
   cardMoney.classList.add("hidden");
-  roleSection.classList.add("hidden");
+
   passStatsSection.classList.add("hidden");
+  roleSection.classList.add("hidden");
 
-  if (CURRENT_ROLE === "Admin") return;
+  // ---------------- ADMIN ----------------
+  if (CURRENT_ROLE === "Admin") {
+    // Admin sees NO overall stats, NO pass stats, NO role mgmt
+    return;
+  }
 
-  passStatsSection.classList.remove("hidden");
-
+  // ---------------- SUPER ADMIN ----------------
   if (CURRENT_ROLE === "SuperAdmin") {
+    overallStatsSection.classList.remove("hidden");
     cardTotalReg.classList.remove("hidden");
+
+    passStatsSection.classList.remove("hidden");
     roleSection.classList.remove("hidden");
     return;
   }
 
+  // ---------------- SUPER ACCOUNT ----------------
   if (CURRENT_ROLE === "SuperAccount") {
+    overallStatsSection.classList.remove("hidden");
     cardTotalReg.classList.remove("hidden");
     cardMoney.classList.remove("hidden");
+
+    passStatsSection.classList.remove("hidden");
     roleSection.classList.remove("hidden");
   }
 }
