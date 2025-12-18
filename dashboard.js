@@ -337,10 +337,13 @@ searchBtn.onclick = async () => {
       <td>${x["Payment ID"]}</td>
       <td>${x["Pass Type"]}</td>
       <td>
-  <a href="${GAS_PAGE}?mode=admin&page=scan&paymentId=${x["Payment ID"]}" target="_blank">
-    <div class="qr-box" id="qr-${i}"></div>
-  </a>
+  <div
+    class="qr-box"
+    id="qr-${i}"
+    data-url="${GAS_PAGE}?mode=admin&page=scan&paymentId=${x["Payment ID"]}">
+  </div>
 </td>
+
 
     </tr>`;
   });
@@ -352,10 +355,13 @@ searchBtn.onclick = async () => {
   const el = document.getElementById(`qr-${i}`);
   const url = el.dataset.url;
 
-  // Clear container completely
+  if (!url) {
+    console.error("QR URL missing for row", i);
+    return;
+  }
+
   el.innerHTML = "";
 
-  // Create isolated QR instance
   const qr = new QRCode(el, {
     width: 110,
     height: 110,
@@ -364,11 +370,9 @@ searchBtn.onclick = async () => {
 
   qr.makeCode(url);
 
-  // Click handler (replaces <a>)
-  el.addEventListener("click", () => {
-    window.open(url, "_blank");
-  });
+  el.onclick = () => window.open(url, "_blank");
 });
+
 
 };
 
