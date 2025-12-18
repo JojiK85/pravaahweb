@@ -61,22 +61,32 @@
   gap: 16px;
 }
 
+/* 🔽 CUSTOM SELECT WITH LEFT-SHIFTED ARROW */
 .dashboard-filter select {
   min-width: 260px;
-  padding: 12px 16px;
+  padding: 12px 42px 12px 16px; /* extra right padding for arrow */
   border-radius: 14px;
   border: 1px solid var(--primary-soft);
-  background: rgba(0,0,0,0.65);
+  background-color: rgba(0,0,0,0.65);
   color: var(--primary);
   font-weight: 700;
   letter-spacing: 0.5px;
   outline: none;
   cursor: pointer;
   box-shadow: 0 0 14px rgba(36,224,236,0.18);
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='cyan' viewBox='0 0 16 16'%3E%3Cpath d='M1.5 5.5l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 18px center; /* ⬅️ arrow moved left */
+  background-size: 14px;
 }
 
 /* ============================================================
-   📊 STAT & PASS CARDS (CENTERED)
+   📊 STAT & PASS CARDS
 ============================================================ */
 
 .dashboard-cards {
@@ -112,16 +122,11 @@
   letter-spacing: 0.4px;
 }
 
-/* 🔽 FONT SIZE REDUCED (IMPORTANT CHANGE) */
 .dash-card p {
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--gold);
   line-height: 1.55;
-}
-
-.dash-card b {
-  font-weight: 800;
 }
 
 /* 💰 MONEY CARD */
@@ -131,7 +136,7 @@
 }
 
 /* ============================================================
-   🔍 SEARCH + INPUT
+   🔍 SEARCH + ROLE SECTIONS
 ============================================================ */
 
 .role-section {
@@ -150,7 +155,6 @@
   margin-bottom: 18px;
 }
 
-/* 🔼 INPUT SIZE INCREASED */
 .role-form {
   display: flex;
   flex-wrap: wrap;
@@ -178,7 +182,11 @@
   color: var(--text);
 }
 
-.role-form button {
+/* ============================================================
+   🔘 BUTTONS (Search / Event / Entry / Scanner)
+============================================================ */
+
+.action-btn {
   padding: 14px 26px;
   border-radius: 14px;
   border: none;
@@ -187,6 +195,11 @@
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 0 14px rgba(36,224,236,0.25);
+  transition: transform 0.25s ease;
+}
+
+.action-btn:hover {
+  transform: scale(1.05);
 }
 
 /* ============================================================
@@ -214,34 +227,6 @@
 #searchResults th {
   color: var(--primary);
   background: rgba(0,0,0,0.65);
-}
-
-/* ============================================================
-   🔘 SCAN ACTION
-============================================================ */
-
-.dashboard-actions {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 3.2rem;
-}
-
-.dashboard-actions button {
-  min-width: 260px;
-  padding: 14px 24px;
-  border-radius: 16px;
-  border: none;
-  background: linear-gradient(135deg, var(--violet), var(--primary));
-  color: #fff;
-  font-size: 0.95rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-  cursor: pointer;
-  box-shadow: 0 0 18px rgba(36,224,236,0.25);
-}
-
-.dashboard-actions button:hover {
-  transform: scale(1.05);
 }
 
 /* ============================================================
