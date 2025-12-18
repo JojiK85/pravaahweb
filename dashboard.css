@@ -378,3 +378,20 @@
   background-position: right 18px center; /* ⬅️ arrow moved left */
   background-size: 14px;
 }
+/* ================= QR FIX ================= */
+
+.qr-box {
+  width: 96px;
+  height: 96px;
+  background: #fff;          /* scanner contrast */
+  padding: 6px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.qr-box canvas,
+.qr-box img {
+  width: auto !important;    /* ❗ DO NOT SCALE */
+  height: auto !important;
+  display: block;
+}
