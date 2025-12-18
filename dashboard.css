@@ -357,11 +357,6 @@
 ============================================================ */
 
 #roleSelect {
-   display: flex;
-  justify-content: center;
-  margin-bottom: 3rem;
-  flex-wrap: wrap;
-  gap: 16px;
   min-width: 260px;
   padding: 12px 42px 12px 16px; /* extra right padding for arrow */
   border-radius: 14px;
