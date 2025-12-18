@@ -259,3 +259,55 @@
     min-width: 100%;
   }
 }
+/* ============================================================
+   🔧 DASHBOARD FIXES (ADD AT END)
+============================================================ */
+
+/* ---------- CENTER OPEN SCANNER ---------- */
+.dashboard-actions {
+  display: flex;
+  justify-content: center;
+  margin: 2.5rem 0;
+}
+
+/* ---------- STANDARD BUTTON SIZE (MATCH SEARCH) ---------- */
+.action-btn {
+  padding: 12px 22px;        /* ⬅️ slightly smaller */
+  font-size: 0.95rem;
+  border-radius: 14px;
+}
+
+/* ---------- PASSES SHEET BUTTON (SMALL) ---------- */
+#openPassesSheet {
+  margin-top: 12px;
+  padding: 10px 18px;
+  font-size: 0.9rem;
+}
+
+/* ---------- EVENT CARD BUTTON ALIGNMENT ---------- */
+.event-card .event-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+/* Registration & Entry SAME SIZE */
+#openEventRegSheet,
+#openEventEntrySheet {
+  min-width: 190px;
+  padding: 12px 18px;
+  font-size: 0.95rem;
+}
+
+/* ---------- SEARCH BAR BALANCE ---------- */
+.role-form input {
+  max-width: 420px;
+}
+
+/* ---------- STAT TEXT (LIVE / MAX) ---------- */
+.dash-card p b {
+  color: var(--primary);
+  font-weight: 800;
+}
