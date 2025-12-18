@@ -47,12 +47,16 @@
 <!-- HEADER -->
 <section class="dashboard-header">
   <h1>Admin Dashboard</h1>
-  <p>Logged in as <span id="adminEmail"></span> | Role: <b id="adminRole"></b></p>
+  <p>
+    Logged in as <span id="adminEmail"></span> |
+    Role: <b id="adminRole"></b>
+  </p>
 </section>
 
 <!-- ================= TOTAL REG + MONEY ================= -->
 <section>
   <div class="dashboard-cards">
+
     <div class="dash-card hidden" id="cardTotalReg">
       <h3>Total Registrations</h3>
       <p id="statTotalReg">—</p>
@@ -65,6 +69,7 @@
       <h3>Total Amount</h3>
       <p id="statMoney">—</p>
     </div>
+
   </div>
 </section>
 
@@ -82,31 +87,49 @@
 <!-- ================= CAMPUS & ACCOMMODATION ================= -->
 <section>
   <div class="dashboard-cards">
+
     <div class="dash-card">
       <h3>Inside Campus</h3>
-      <p id="statInCampus">—</p>
+      <p id="campusLive">—</p>
     </div>
 
     <div class="dash-card">
       <h3>Accommodation</h3>
-      <p id="statAccommodation">—</p>
+      <p id="accLive">—</p>
     </div>
 
     <div class="dash-card">
       <h3>Scans Today</h3>
       <p id="statScan">—</p>
     </div>
+
   </div>
 </section>
 
 <!-- ================= PASS STATS ================= -->
 <section class="dashboard-section">
   <h2>Pass Statistics</h2>
+
   <div class="dashboard-cards">
-    <div class="dash-card"><h3>Day Pass</h3><p id="passDay">—</p></div>
-    <div class="dash-card"><h3>Fest Pass</h3><p id="passFest">—</p></div>
-    <div class="dash-card"><h3>StarNite Pass</h3><p id="passStar">—</p></div>
-    <div class="dash-card"><h3>Visitor Pass</h3><p id="passVisitor">—</p></div>
+    <div class="dash-card">
+      <h3>Day Pass</h3>
+      <p id="passDay">—</p>
+    </div>
+
+    <div class="dash-card">
+      <h3>Fest Pass</h3>
+      <p id="passFest">—</p>
+    </div>
+
+    <div class="dash-card">
+      <h3>StarNite Pass</h3>
+      <p id="passStar">—</p>
+    </div>
+
+    <div class="dash-card">
+      <h3>Visitor Pass</h3>
+      <p id="passVisitor">—</p>
+    </div>
   </div>
 </section>
 
@@ -145,10 +168,15 @@
 <!-- ================= SEARCH ================= -->
 <section class="role-section">
   <h2><i class="fa-solid fa-magnifying-glass"></i> Search Participant</h2>
+
   <div class="role-form">
-    <input id="searchInput" placeholder="Name / Email / Phone / Payment ID" />
+    <input
+      id="searchInput"
+      placeholder="Name / Email / Phone / Payment ID"
+    />
     <button id="searchBtn" class="action-btn">Search</button>
   </div>
+
   <div id="searchResults"></div>
 </section>
 
@@ -168,12 +196,18 @@
 <!-- ================= ROLE MANAGEMENT ================= -->
 <section id="roleSection" class="role-section hidden">
   <h2>Role Management</h2>
+
   <div class="role-form">
     <input type="email" id="roleEmail" placeholder="User Email" />
     <select id="roleSelect"></select>
-    <button id="saveRoleBtn" class="action-btn">Assign / Update</button>
+    <button id="saveRoleBtn" class="action-btn">
+      Assign / Update
+    </button>
   </div>
-  <p id="primaryWarning" class="hidden">⚠️ Only one Primary SuperAccount exists.</p>
+
+  <p id="primaryWarning" class="hidden">
+    ⚠️ Only one Primary SuperAccount exists.
+  </p>
 </section>
 
 </main>
