@@ -1,23 +1,30 @@
 /* ============================================================
    PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL + ROLE CORRECT)
 ============================================================ */
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+const GAS_PAGE =
+  "https://script.google.com/macros/s/AKfycbzauZjXDiCzsqOf8T3ILy3BxwBKnkwuB79UXt_5RXvEp0RrXpcFPpoRcCCh_BtS1VYA-A/exec";
+
+/* ================= FIREBASE ================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyCbXKleOw4F46gFDXz2Wynl3YzPuHsVwh8",
+  authDomain: "pravaah-55b1d.firebaseapp.com",
+  projectId: "pravaah-55b1d.firebaseapp.com",
+  storageBucket: "pravaah-55b1d.appspot.com",
+  messagingSenderId: "287687647267",
+  appId: "1:287687647267:web:7aecd603ee202779b89196"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
 /* ================= BACKEND ================= */
-/* ================= AUTH BRIDGE ================= */
-
-// Wait until auth.js sets role
-function waitForAuth() {
-  return new Promise((resolve) => {
-    if (window.PRAVAAH_AUTH?.role) return resolve();
-
-    const i = setInterval(() => {
-      if (window.PRAVAAH_AUTH?.role) {
-        clearInterval(i);
-        resolve();
-      }
-    }, 100);
-  });
-}
-
 const API = "/api/pravaah";
 
 /* ================= DOM ================= */
@@ -61,31 +68,29 @@ const searchResults = document.getElementById("searchResults");
 const offlineCountEl = document.getElementById("offlineCount");
 
 /* ================= STATE ================= */
-/* ================= STATE ================= */
 let CURRENT_ROLE = "USER";
 let IS_PRIMARY = false;
 let CURRENT_DAY = "";
 let CURRENT_EVENT = "";
 let REFRESH_TIMER = null;
-/* ================= BOOTSTRAP ================= */
-(async () => {
-  await waitForAuth();
 
-  CURRENT_ROLE = window.PRAVAAH_AUTH.role;
-  IS_PRIMARY = window.PRAVAAH_AUTH.isPrimary === true;
+/* ================= AUTH ================= */
+onAuthStateChanged(auth, async (user) => {
+  if (!user) return location.href = "login.html";
 
-  // 🚫 Hard block non-admin
+  const roleRes = await fetch(`${API}?type=role&email=${encodeURIComponent(user.email)}`);
+  const roleObj = await roleRes.json();
+
+  CURRENT_ROLE = roleObj?.role || "USER";
+  IS_PRIMARY = roleObj?.isPrimary === true;
+
   if (!["Admin", "SuperAdmin", "SuperAccount"].includes(CURRENT_ROLE)) {
     alert("Access denied");
-    location.href = "home.html";
-    return;
+    return location.href = "home.html";
   }
 
-  // Show admin info
-  document.getElementById("adminEmail").textContent =
-    window.PRAVAAH_AUTH.email;
-
-  document.getElementById("adminRole").textContent =
+  adminEmailEl.textContent = user.email;
+  adminRoleEl.textContent =
     CURRENT_ROLE === "SuperAccount" && IS_PRIMARY
       ? "SuperAccount (Primary)"
       : CURRENT_ROLE;
@@ -100,9 +105,7 @@ let REFRESH_TIMER = null;
   await loadDashboardStats();
   updateOfflineCount();
   startAutoRefresh();
-})();
-
-
+});
 
 /* ================= VISIBILITY ================= */
 function applyRoleVisibility() {
@@ -339,24 +342,12 @@ function updateOfflineCount() {
   const q = JSON.parse(localStorage.getItem("offlineScans") || "[]");
   offlineCountEl.textContent = q.length;
 }
-/* ================= LIVE ROLE MONITOR ================= */
-setInterval(() => {
-  const newRole = window.PRAVAAH_AUTH?.role;
 
-  if (!newRole) return;
+/* ================= LOGOUT ================= */
+document.getElementById("logoutDesktop").onclick = logout;
+document.getElementById("logoutMobile").onclick = logout;
 
-  if (newRole !== CURRENT_ROLE) {
-    // role changed while page open
-    if (!["Admin", "SuperAdmin", "SuperAccount"].includes(newRole)) {
-      alert("Your admin access has been revoked.");
-      location.href = "home.html";
-    } else {
-      CURRENT_ROLE = newRole;
-      IS_PRIMARY = window.PRAVAAH_AUTH.isPrimary === true;
-      applyRoleVisibility();
-      loadDashboardStats();
-    }
-  }
-}, 5000); // check every 5s
-
-
+async function logout() {
+  await signOut(auth);
+  location.href = "login.html";
+}
