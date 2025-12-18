@@ -97,17 +97,30 @@ onAuthStateChanged(auth, async (user) => {
 
 /* ================= ROLE VISIBILITY ================= */
 function applyRoleVisibility() {
+
+  // Hide by default
+  cardTotalReg?.classList.add("hidden");
+  cardMoney?.classList.add("hidden");
+  roleSection?.classList.add("hidden");
+
   if (CURRENT_ROLE === "Admin") {
-    cardTotalReg.classList.add("hidden");
-    cardMoney.classList.add("hidden");
-    roleSection.classList.add("hidden");
+    return;
   }
 
   if (CURRENT_ROLE === "SuperAdmin") {
-    cardMoney.classList.add("hidden");
-    roleSection.classList.add("hidden");
+    cardTotalReg?.classList.remove("hidden");
+     roleSection?.classList.remove("hidden");
+    return;
+  }
+
+  // ✅ PRIMARY SUPERACCOUNT (YOUR CASE)
+  if (CURRENT_ROLE === "SuperAccount") {
+    cardTotalReg?.classList.remove("hidden");
+    cardMoney?.classList.remove("hidden");
+    roleSection?.classList.remove("hidden");
   }
 }
+
 
 /* ================= PRIMARY WARNING ================= */
 function setupPrimaryWarning() {
