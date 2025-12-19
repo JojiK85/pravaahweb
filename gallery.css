@@ -337,4 +337,14 @@ body {
   gap: 32px; /* slightly more breathing space */
 }
 
+/* ---------- GAP BEFORE FOOTER ---------- */
+footer {
+  margin-top: 80px; /* adjust if needed */
+}
+@media (max-width: 650px) {
+  footer {
+    margin-top: 50px;
+  }
+}
+
 
