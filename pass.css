@@ -513,10 +513,9 @@ body {
 
 @media (max-width: 600px) {
 
-  /* ---------- EVENT ROW: KEEP PDF ON RIGHT ---------- */
   .event-row {
     display: flex;
-    flex-direction: row;          /* 🔥 stay horizontal */
+    flex-direction: row;          /* keep horizontal */
     align-items: center;
     justify-content: space-between;
     padding: 14px 16px;
@@ -527,24 +526,24 @@ body {
     display: flex;
     align-items: center;
     gap: 12px;
-    flex: 1;                      /* 🔥 take remaining space */
-    min-width: 0;                 /* prevents overflow */
+    flex: 1;
+    min-width: 0;
   }
 
   .event-label {
     font-size: 1rem;
-    line-height: 1.3rem;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;      /* clean truncation if long */
+    text-overflow: ellipsis;
   }
 
   .pdf-icon {
-    flex-shrink: 0;               /* 🔥 NEVER wrap or move down */
+    flex-shrink: 0;
     font-size: 1.15rem;
-    margin-left: 10px;
   }
 }
+
+
 
 
 
