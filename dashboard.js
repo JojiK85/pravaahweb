@@ -348,13 +348,12 @@ searchBtn.onclick = async () => {
       <td>${x["Pass Type"]}</td>
       <td>
         <div
-          class="qr-box"
-          id="qr-${i}"
-          data-url="${FRONTEND_BASE}/scan.html?paymentId=${encodeURIComponent(
-  x["Payment ID"]
-)}&from=dashboard"
+  class="qr-box"
+  id="qr-${i}"
+  data-qr="${FRONTEND_BASE}/public.html?paymentId=${encodeURIComponent(x["Payment ID"])}"
+  data-scan="${FRONTEND_BASE}/scan.html?paymentId=${encodeURIComponent(x["Payment ID"])}&from=dashboard"
+></div>
 
-        ></div>
       </td>
     </tr>`;
   });
@@ -363,21 +362,28 @@ searchBtn.onclick = async () => {
   searchResults.innerHTML = html;
 
   rows.forEach((x, i) => {
-    const el = document.getElementById(`qr-${i}`);
-    const url = el.dataset.url;
+  const el = document.getElementById(`qr-${i}`);
 
-    if (!url) return;
+  const publicUrl = el.dataset.qr;     // what QR encodes
+  const scanUrl   = el.dataset.scan;   // what admin click opens
 
-    el.innerHTML = "";
-    const qr = new QRCode(el, {
-      width: 110,
-      height: 110,
-      correctLevel: QRCode.CorrectLevel.L
-    });
+  el.innerHTML = "";
 
-    qr.makeCode(url);
-    el.onclick = () => window.open(url, "_blank", "noopener,noreferrer");
+  const qr = new QRCode(el, {
+    width: 110,
+    height: 110,
+    correctLevel: QRCode.CorrectLevel.L
   });
+
+  // ✅ QR ALWAYS opens public.html
+  qr.makeCode(publicUrl);
+
+  // ✅ Admin click opens scan.html
+  el.onclick = () => {
+    window.open(scanUrl, "_blank", "noopener,noreferrer");
+  };
+});
+
 };
 
 /* ================= OFFLINE ================= */
