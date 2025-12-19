@@ -347,14 +347,15 @@ searchBtn.onclick = async () => {
       <td>${x["Payment ID"]}</td>
       <td>${x["Pass Type"]}</td>
       <td>
-  <div
-    class="qr-box"
-    id="qr-${i}"
-    data-url="${FRONTEND_BASE}/scan.html?from=dashboard&paymentId=${x["Payment ID"]}&scanner=${encodeURIComponent(auth.currentUser.email)}"
-  </div>
-</td>
+        <div
+          class="qr-box"
+          id="qr-${i}"
+          data-url="${FRONTEND_BASE}/scan.html?paymentId=${encodeURIComponent(
+  x["Payment ID"]
+)}&from=dashboard"
 
-
+        ></div>
+      </td>
     </tr>`;
   });
 
@@ -362,28 +363,21 @@ searchBtn.onclick = async () => {
   searchResults.innerHTML = html;
 
   rows.forEach((x, i) => {
-  const el = document.getElementById(`qr-${i}`);
-  const url = el.dataset.url;
+    const el = document.getElementById(`qr-${i}`);
+    const url = el.dataset.url;
 
-  if (!url) {
-    console.error("QR URL missing for row", i);
-    return;
-  }
+    if (!url) return;
 
-  el.innerHTML = "";
+    el.innerHTML = "";
+    const qr = new QRCode(el, {
+      width: 110,
+      height: 110,
+      correctLevel: QRCode.CorrectLevel.L
+    });
 
-  const qr = new QRCode(el, {
-    width: 110,
-    height: 110,
-    correctLevel: QRCode.CorrectLevel.L
+    qr.makeCode(url);
+    el.onclick = () => window.open(url, "_blank", "noopener,noreferrer");
   });
-
-  qr.makeCode(url);
-
-  el.onclick = () => window.open(url, "_blank");
-});
-
-
 };
 
 /* ================= OFFLINE ================= */
