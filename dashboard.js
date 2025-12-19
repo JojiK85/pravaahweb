@@ -350,7 +350,7 @@ searchBtn.onclick = async () => {
   <div
     class="qr-box"
     id="qr-${i}"
-    data-url="${GAS_PAGE}?mode=admin&page=scan&paymentId=${x["Payment ID"]}"
+    data-url="${GAS_PAGE}?mode=admin&page=scan&paymentId=${x["Payment ID"]}&scanner=${encodeURIComponent(auth.currentUser.email)}"
   </div>
 </td>
 
@@ -375,7 +375,7 @@ searchBtn.onclick = async () => {
   const qr = new QRCode(el, {
     width: 110,
     height: 110,
-    correctLevel: QRCode.CorrectLevel.H
+    correctLevel: QRCode.CorrectLevel.L
   });
 
   qr.makeCode(url);
