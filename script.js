@@ -1,25 +1,38 @@
 /* ============================================================
    PRAVAAH — FINAL UPDATED script.js (Optimized & Clean)
 ============================================================ */
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+
+import { initializeApp, getApps } from
+  "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getAuth, signOut, onAuthStateChanged } from
   "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+/* ---------------------- FIREBASE CONFIG ---------------------- */
+const firebaseConfig = {
+  apiKey: "AIzaSyCbXKleOw4F46gFDXz2Wynl3YzPuHsVwh8",
+  authDomain: "pravaah-55b1d.firebaseapp.com",
+  projectId: "pravaah-55b1d",
+  storageBucket: "pravaah-55b1d.appspot.com",
+  messagingSenderId: "287687647267",
+  appId: "1:287687647267:web:7aecd603ee202779b89196"
+};
+
+/* ---------------------- FIREBASE INIT (SAFE) ---------------------- */
+const app = getApps().length === 0
+  ? initializeApp(firebaseConfig)
+  : getApps()[0];
+
+const auth = getAuth(app);
+
 
 
 document.addEventListener("DOMContentLoaded", () => {
 
   /* ---------------------- FIREBASE CONFIG ---------------------- */
   const firebaseConfig = {
-    apiKey: "AIzaSyCbXKleOw4F46gFDXz2Wynl3YzPuHsVwh8",
-    authDomain: "pravaah-55b1d.firebaseapp.com",
-    projectId: "pravaah-55b1d",
-    storageBucket: "pravaah-55b1d.appspot.com",
-    messagingSenderId: "287687647267",
-    appId: "1:287687647267:web:7aecd603ee202779b89196"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+const ROLE_CACHE_KEY = "pravaah_user_role";
+const ROLE_CACHE_TS  = "pravaah_role_ts";
+const ROLE_TTL_MS    = 60 * 1000; // 10 minutes
 
 
   /* ---------------------- LOGOUT ---------------------- */
@@ -27,10 +40,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const logoutMobile = document.getElementById("logoutMobile");
 
   const handleLogout = () => {
-    signOut(auth)
-      .then(() => (window.location.href = "login.html"))
-      .catch(err => alert("Logout Error: " + err.message));
-  };
+  sessionStorage.removeItem(ROLE_CACHE_KEY);
+  sessionStorage.removeItem(ROLE_CACHE_TS);
+
+  signOut(auth)
+    .then(() => (window.location.href = "index.html"))
+    .catch(err => alert("Logout Error: " + err.message));
+};
+
 
   logoutDesktop?.addEventListener("click", handleLogout);
   logoutMobile?.addEventListener("click", handleLogout);
@@ -352,25 +369,66 @@ document.addEventListener("DOMContentLoaded", () => {
   const DASHBOARD_API = "/api/pravaah";
 
   onAuthStateChanged(auth, async (user) => {
-    if (!user) return;
+  if (!user) {
+    window.location.href = "index.html";
+    return;
+  }
 
-    try {
-      const res = await fetch(
-        `${DASHBOARD_API}?type=role&email=${encodeURIComponent(user.email)}`
-      );
-      const roleObj = await res.json();
-console.log("ROLE FROM API:", roleObj);
+  const dashboardNav = document.getElementById("dashboardNav");
+  if (!dashboardNav) return;
 
-if (["Admin", "SuperAdmin", "SuperAccount"].includes(roleObj.role)) {
-  document.getElementById("dashboardNav")?.classList.remove("hidden");
+  try {
+    /* ---------- 1️⃣ CHECK CACHE ---------- */
+    const cachedRole = sessionStorage.getItem(ROLE_CACHE_KEY);
+    const cachedTs   = sessionStorage.getItem(ROLE_CACHE_TS);
+
+    if (
+      cachedRole &&
+      cachedTs &&
+      Date.now() - Number(cachedTs) < ROLE_TTL_MS
+    ) {
+      console.log("ROLE FROM CACHE:", cachedRole);
+
+      if (["Admin", "SuperAdmin", "SuperAccount"].includes(role)) {
+  dashboardNav.classList.remove("hidden");
+} else {
+  dashboardNav.classList.add("hidden");
 }
 
-    } catch (err) {
-      console.error("Dashboard role check failed", err);
+      return;
     }
-  });
+
+    /* ---------- 2️⃣ FETCH FROM API ---------- */
+    const res = await fetch(
+      `${DASHBOARD_API}?type=role&email=${encodeURIComponent(user.email)}`
+    );
+    const roleObj = await res.json();
+
+    const role =
+      roleObj?.role ||
+      roleObj?.Role ||
+      roleObj?.data?.role ||
+      "";
+
+    console.log("ROLE FROM API:", role);
+
+    /* ---------- 3️⃣ CACHE IT ---------- */
+    sessionStorage.setItem(ROLE_CACHE_KEY, role);
+    sessionStorage.setItem(ROLE_CACHE_TS, Date.now().toString());
+
+    /* ---------- 4️⃣ APPLY UI ---------- */
+    if (["Admin", "SuperAdmin", "SuperAccount"].includes(role)) {
+      dashboardNav.classList.remove("hidden");
+    }
+
+  } catch (err) {
+    console.error("Dashboard role check failed", err);
+  }
+});
+
 
 });
+
 
 
 
