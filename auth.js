@@ -3,6 +3,7 @@
    - Firebase Auth init (safe)
    - Admin role check
    - Dashboard visibility
+   - Auto role refresh (every 60s)
 ========================================================== */
 
 import { initializeApp, getApps } from
@@ -35,7 +36,7 @@ const ROLE_TTL_MS    = 60 * 1000; // 1 minute
 const API_URL = "/api/pravaah";
 
 /* ==========================================================
-   🔐 AUTH + ROLE CHECK
+   🔐 AUTH + ROLE CHECK (PUBLIC)
 ========================================================== */
 
 export function initAuth({
@@ -44,8 +45,11 @@ export function initAuth({
   showDashboard = true
 } = {}) {
 
+  let roleIntervalStarted = false;
+
   onAuthStateChanged(auth, async (user) => {
 
+    /* ---------- AUTH REQUIRED ---------- */
     if (!user) {
       if (requireAuth) window.location.href = redirectTo;
       return;
@@ -55,6 +59,15 @@ export function initAuth({
 
     const dashboardNav = document.getElementById("dashboardNav");
     if (!dashboardNav) return;
+
+    /* ---------- APPLY ROLE ---------- */
+    const applyRole = (role) => {
+      if (isAdmin(role)) {
+        dashboardNav.classList.remove("hidden");
+      } else {
+        dashboardNav.classList.add("hidden");
+      }
+    };
 
     try {
       /* ---------- CACHE CHECK ---------- */
@@ -66,31 +79,25 @@ export function initAuth({
         cachedTs &&
         Date.now() - Number(cachedTs) < ROLE_TTL_MS
       ) {
-        if (isAdmin(cachedRole)) {
-          dashboardNav.classList.remove("hidden");
-        }
-        return;
+        applyRole(cachedRole);
+      } else {
+        const role = await fetchRole(user.email);
+        applyRole(role);
       }
 
-      /* ---------- FETCH ROLE ---------- */
-      const res = await fetch(
-        `${API_URL}?type=role&email=${encodeURIComponent(user.email)}`
-      );
-      const roleObj = await res.json();
+      /* ---------- START AUTO REFRESH ---------- */
+      if (!roleIntervalStarted) {
+        roleIntervalStarted = true;
 
-      const role =
-        roleObj?.role ||
-        roleObj?.Role ||
-        roleObj?.data?.role ||
-        "";
-
-      /* ---------- CACHE ---------- */
-      sessionStorage.setItem(ROLE_CACHE_KEY, role);
-      sessionStorage.setItem(ROLE_CACHE_TS, Date.now().toString());
-
-      /* ---------- APPLY ---------- */
-      if (isAdmin(role)) {
-        dashboardNav.classList.remove("hidden");
+        setInterval(async () => {
+          try {
+            const role = await fetchRole(user.email);
+            applyRole(role);
+            console.log("🔁 Role refreshed:", role);
+          } catch (e) {
+            console.warn("Role refresh failed", e);
+          }
+        }, ROLE_TTL_MS);
       }
 
     } catch (err) {
@@ -99,7 +106,32 @@ export function initAuth({
   });
 }
 
-/* ---------- HELPERS ---------- */
+/* ==========================================================
+   🔁 ROLE FETCH (INTERNAL)
+========================================================== */
+
+async function fetchRole(email) {
+  const res = await fetch(
+    `${API_URL}?type=role&email=${encodeURIComponent(email)}`
+  );
+  const roleObj = await res.json();
+
+  const role =
+    roleObj?.role ||
+    roleObj?.Role ||
+    roleObj?.data?.role ||
+    "";
+
+  sessionStorage.setItem(ROLE_CACHE_KEY, role);
+  sessionStorage.setItem(ROLE_CACHE_TS, Date.now().toString());
+
+  return role;
+}
+
+/* ==========================================================
+   🧠 HELPERS
+========================================================== */
+
 function isAdmin(role) {
   return ["Admin", "SuperAdmin", "SuperAccount"].includes(role);
 }
