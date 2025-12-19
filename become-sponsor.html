@@ -313,57 +313,65 @@
     "https://script.google.com/macros/s/AKfycbxRF637G8IMtRR5VXM7a5ZUvbKg3OU1IMDfy5pRFSg1A_21P-wmd2jwsw3UV4-naELosA/exec";
 
   document.getElementById("sponsorForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    statusEl.textContent = "Submitting...";
+  e.preventDefault();
+  statusEl.textContent = "Submitting...";
 
-    const payload = {
-      name: name.value.trim(),
-      company: company.value.trim(),
-      email: email.value.trim(),
-      phone: phone.value.trim(),
-      message: message.value.trim()
-    };
+  // ✅ FIX: Explicitly get inputs
+  const nameInput = document.getElementById("name");
+  const companyInput = document.getElementById("company");
+  const emailInput = document.getElementById("email");
+  const phoneInput = document.getElementById("phone");
+  const messageInput = document.getElementById("message");
 
-    if (selectedFile && selectedBase64) {
-      payload.fileName = selectedFile.name;
-      payload.fileType = selectedFile.type;
-      payload.fileData = selectedBase64;
-    }
+  const payload = {
+    name: nameInput.value.trim(),
+    company: companyInput.value.trim(),
+    email: emailInput.value.trim(),
+    phone: phoneInput.value.trim(),
+    message: messageInput.value.trim()
+  };
 
+  if (selectedFile && selectedBase64) {
+    payload.fileName = selectedFile.name;
+    payload.fileType = selectedFile.type;
+    payload.fileData = selectedBase64;
+  }
+
+  try {
+    const res = await fetch(scriptURL, {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const rawText = await res.text();
+    console.log("RAW RESPONSE:", rawText);
+
+    let result;
     try {
-      const res = await fetch(scriptURL, {
-        method: "POST",
-        mode: "cors",
-        headers: {
-          "Content-Type": "text/plain;charset=utf-8"
-        },
-        body: JSON.stringify(payload)
-      });
-
-      const rawText = await res.text();
-      console.log("RAW RESPONSE:", rawText);
-
-      let result;
-      try {
-        result = JSON.parse(rawText);
-      } catch {
-        throw new Error("Server did not return JSON");
-      }
-
-      if (result.status === "success") {
-        statusEl.textContent = "✔ Submitted! Redirecting...";
-        setTimeout(() => {
-          window.location.href = "thankyou.html";
-        }, 800);
-      } else {
-        statusEl.textContent = "⚠️ " + (result.message || "Submission failed");
-      }
-    } catch (err) {
-      console.error(err);
-      statusEl.textContent =
-        "❌ Submission failed. Please try again later.";
+      result = JSON.parse(rawText);
+    } catch {
+      throw new Error("Server did not return JSON");
     }
-  });
+
+    if (result.status === "success") {
+      statusEl.textContent = "✔ Submitted! Redirecting...";
+      setTimeout(() => {
+        window.location.href = "thankyou.html";
+      }, 800);
+    } else {
+      statusEl.textContent = "⚠️ " + (result.message || "Submission failed");
+    }
+  } catch (err) {
+    console.error(err);
+    statusEl.textContent =
+      "❌ Submission failed. Please try again later.";
+  }
+});
+
 </script>
 
 <script type="module">
@@ -395,6 +403,7 @@
 
 </body>
 </html>
+
 
 
 
