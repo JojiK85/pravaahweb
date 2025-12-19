@@ -1,6 +1,13 @@
-import { auth } from "./auth.js";
-import { signOut } from
-  "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { auth, initAuth } from "./auth.js";
+import { onAuthStateChanged, signOut }
+  from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+initAuth({
+  requireAuth: true,
+  redirectTo: "index.html",
+  showDashboard: true
+});
+
 
 /* ---------- LOGOUT ---------- */
 document.addEventListener("DOMContentLoaded", () => {
@@ -70,4 +77,5 @@ document.querySelectorAll(".card").forEach(card => {
     card.style.boxShadow = "0 0 20px rgba(0,255,255,0.3)";
   });
 });
+
 
