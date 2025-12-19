@@ -230,7 +230,17 @@
   </div>
 </footer>
 
+<script type="module">
+  import { auth, initAuth } from "./auth.js";
+
+  initAuth({
+    requireAuth: true,
+    redirectTo: "index.html",
+    showDashboard: false
+  });
+</script>
 
 </body>
 </html>
+
 
