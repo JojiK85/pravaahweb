@@ -9,7 +9,7 @@ import {
   signOut
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 const GAS_PAGE =
-  "https://script.google.com/macros/s/AKfycbxXKrd2v9b1Dw3ZoodGweYLa5tDR3rYZqVXhLVOmdmZPEJW8MWSdnVKxJRyNIabVUneFg/exec";
+  "https://script.google.com/macros/s/AKfycbyGTIWr0qOckn4DTcX4zhxk2sT-x2qp6jtwo4tTgyriAA2Tc2Napr7t2HOap5lXWBh5rg/exec";
 
 /* ================= FIREBASE ================= */
 const firebaseConfig = {
@@ -350,7 +350,7 @@ searchBtn.onclick = async () => {
   <div
     class="qr-box"
     id="qr-${i}"
-    data-url="${GAS_PAGE}?mode=admin&page=scan&paymentId=${x["Payment ID"]}">
+    data-url="${GAS_PAGE}?mode=admin&page=scan&paymentId=${x["Payment ID"]}&scanner=${encodeURIComponent(auth.currentUser.email)}"
   </div>
 </td>
 
