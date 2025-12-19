@@ -16,8 +16,6 @@ const firebaseConfig = {
 };
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const auth = getAuth(app);
-const GAS_URL =
-  "https://script.google.com/macros/s/AKfycbwzLAeF0v-RvIrNzd8mymns8RM-K0Qz2j8QL2g9UyVsPGNR5fYy_wczpwuk1TWxllJpdQ/exec";
 
 /* ---------- Backend Script URL ---------- */
 const scriptURL = "/api/pravaah";
@@ -123,15 +121,15 @@ function renderPasses(passes, container, userEmail) {
     <p><strong>StarNite:</strong> ${starnite}</p>
     <p><strong>Events:</strong> ${events}</p>
   </div>
-  <div id="${qrId}" class="qr-box qr-click">
-  <div class="qr-hover-box">Tap to open pass</div>
+  <div id="${qrId}" class="qr-box">
+  <button class="qr-open-btn">Tap to open pass</button>
 </div>
 
 `;
 
     container.appendChild(card);
 
-   const qrBox = document.getElementById(qrId);
+    const qrBox = document.getElementById(qrId);
 const qrUrl = `${GAS_URL}?paymentId=${encodeURIComponent(paymentId)}`;
 
 new QRCode(qrBox, {
@@ -140,11 +138,14 @@ new QRCode(qrBox, {
   height: 130
 });
 
-/* Make QR clickable */
+/* HARDEN: no accidental URL exposure */
+qrBox.querySelector("canvas")?.removeAttribute("title");
+
+/* Click opens pass */
 qrBox.style.cursor = "pointer";
-qrBox.onclick = () => {
-  window.open(qrUrl, "_blank");
-};
+qrBox.addEventListener("click", () => {
+  window.open(qrUrl, "_blank", "noopener,noreferrer");
+});
 
 
 
@@ -308,4 +309,3 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
-
