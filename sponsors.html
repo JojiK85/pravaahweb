@@ -7,6 +7,7 @@
 
   <!-- GLOBAL STYLES (SAME AS HOME) -->
   <link rel="stylesheet" href="style.css" />
+<script type="module" src="auth.js"></script>
 
   <!-- PAGE STYLES -->
   <link rel="stylesheet" href="sponsors.css" />
@@ -103,10 +104,18 @@
   </div>
 
   <div class="become-sponsor">
-    <button class="become-sponsor-btn">
-      <i class="fa-solid fa-handshake"></i> Become a Sponsor
-    </button>
-  </div>
+  <button class="become-sponsor-btn" id="becomeSponsorBtn">
+    <i class="fa-solid fa-handshake"></i> Become a Sponsor
+  </button>
+</div>
+
+<script>
+  document.getElementById("becomeSponsorBtn")
+    .addEventListener("click", () => {
+      window.location.href = "become-sponsor.html";
+    });
+</script>
+
 </section>
 
 <!-- ================= PAST SPONSORS ================= -->
@@ -195,25 +204,6 @@
 </footer>
 
 <!-- ================= AUTH + LOGOUT ================= -->
-<script type="module">
-  import { auth, initAuth } from "./auth.js";
-  import { signOut } from
-    "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-
-  initAuth({
-    requireAuth: true,
-    redirectTo: "index.html",
-    showDashboard: true
-  });
-
-  const logout = async () => {
-    await signOut(auth);
-    window.location.href = "index.html";
-  };
-
-  document.getElementById("logoutDesktop")?.addEventListener("click", logout);
-  document.getElementById("logoutMobile")?.addEventListener("click", logout);
-</script>
 
 <!-- ================= MOBILE MENU ================= -->
 <script>
@@ -224,6 +214,33 @@
     menu.classList.toggle("active");
   });
 </script>
+<script type="module">
+  import { auth, initAuth } from "./auth.js";
+  import { signOut } from
+    "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+  /* 🔐 AUTH + ROLE CHECK */
+  initAuth({
+    requireAuth: true,
+    redirectTo: "index.html",
+    showDashboard: true
+  });
+
+  /* 🚪 LOGOUT */
+  document.addEventListener("DOMContentLoaded", () => {
+    const logoutDesktop = document.getElementById("logoutDesktop");
+    const logoutMobile  = document.querySelector(".mobile-only a");
+
+    const logout = async () => {
+      await signOut(auth);
+      window.location.href = "index.html";
+    };
+
+    logoutDesktop?.addEventListener("click", logout);
+    logoutMobile?.addEventListener("click", logout);
+  });
+</script>
 
 </body>
 </html>
+
