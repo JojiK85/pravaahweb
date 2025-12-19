@@ -4,10 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PRAVAAH — Gallery</title>
-<script type="module" src="auth.js"></script>
 
   <!-- Fonts + Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
   <!-- Global + Gallery Styles -->
   <link rel="stylesheet" href="style.css" />
@@ -16,10 +16,7 @@
 
 <body>
 
-<!-- 🔒 FIREBASE AUTH + DASHBOARD + LOGOUT -->
-
-
-<!-- ================= NAVBAR (SAME AS HOME) ================= -->
+<!-- ================= NAVBAR ================= -->
 <nav>
   <a href="https://www.iitbbs.ac.in/" target="_blank" class="iitbbs-logo">
     <img src="iitbbs-logo.png" alt="IIT Bhubaneswar Logo">
@@ -40,29 +37,25 @@
     <li><a href="sponsors.html">Sponsors</a></li>
     <li><a href="contact_us.html">Contact Us</a></li>
     <li><a href="profile.html">Profile</a></li>
-
-    <!-- ✅ DASHBOARD -->
     <li id="dashboardNav" class="hidden">
       <a href="dashboard.html">Dashboard</a>
     </li>
-
     <li class="mobile-only"><a id="logoutMobile">Logout</a></li>
   </ul>
 
   <button id="logoutDesktop" class="logout-btn">Logout</button>
 </nav>
 
-<!-- ================= GALLERY HEADER ================= -->
+<!-- ================= HEADER ================= -->
 <section class="gallery-header">
   <h1>Gallery</h1>
   <p>Capturing the best of PRAVAAH — energy, color, and creativity.</p>
 </section>
 
-<!-- ================= GRID GALLERY (NOT CAROUSEL) ================= -->
+<!-- ================= GRID ================= -->
 <section class="gallery-container">
   <div class="gallery-grid">
 
-    <!-- IMAGE CARD -->
     <div class="gallery-item" data-title="Opening Ceremony">
       <img src="DSC09133.JPG">
       <div class="zoom-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
@@ -78,25 +71,10 @@
       <div class="zoom-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
     </div>
 
-    <div class="gallery-item" data-title="Sports Gala">
-      <img src="DSC09133.JPG">
-      <div class="zoom-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
-    </div>
-
-    <div class="gallery-item" data-title="Star Night">
-      <img src="DSC09133.JPG">
-      <div class="zoom-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
-    </div>
-
-    <div class="gallery-item" data-title="Prize Distribution">
-      <img src="DSC09133.JPG">
-      <div class="zoom-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
-    </div>
-
   </div>
 </section>
 
-<!-- ================= ADVANCED LIGHTBOX (SAME AS HOME) ================= -->
+<!-- ================= LIGHTBOX ================= -->
 <div id="lightbox" class="lightbox hidden">
   <div class="lightbox-top">
     <span class="close-lightbox"><i class="fa-solid fa-xmark"></i></span>
@@ -106,97 +84,47 @@
   </div>
 
   <div class="lb-arrow left"><i class="fa-solid fa-chevron-left"></i></div>
-
   <img id="lightboxImg">
-
   <div class="lb-arrow right"><i class="fa-solid fa-chevron-right"></i></div>
 
   <div class="lightbox-info">
     <h3 id="lightboxTitle"></h3>
-    <p>Experience the Chronicles of Time — PRAVAAH 2K25.</p>
+    <p id="lightboxDesc">Experience the Chronicles of Time — PRAVAAH 2K25.</p>
   </div>
 </div>
 
-<!-- ================= FOOTER (SAME AS HOME) ================= -->
+<!-- ================= FOOTER ================= -->
 <footer>
-  <div class="footer-container">
-
-    <div class="footer-left">
-      <img src="pravah-logo.png" class="footer-logo">
-      <a href="registrationPravaah.html" class="register-btn">Register Now</a>
-    </div>
-
-    <div class="footer-column">
-      <h3>Quick Links</h3>
-      <ul>
-        <li><a href="#">Events Portal</a></li>
-        <li><a href="#">CA Portal</a></li>
-        <li><a href="#">Join the Community</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-column">
-      <h3>Explore More</h3>
-      <ul>
-        <li><a href="#">Star Attractions</a></li>
-        <li><a href="#">Hall of Fame</a></li>
-        <li><a href="#">Brochure</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-column">
-      <h3>Reach Out to Us</h3>
-      <ul>
-        <li><a href="contact_us.html">Contact Us</a></li>
-      </ul>
-
-      <div class="footer-social-icons">
-        <a href="#"><i class="fa-brands fa-instagram"></i></a>
-        <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
-        <a href="#"><i class="fa-brands fa-youtube"></i></a>
-      </div>
-    </div>
-  </div>
-
-  <div class="footer-line"></div>
-
   <div class="footer-bottom">
     <p><span>@PRAVAAH'26 IIT BHUBANESWAR</span> | MADE WITH 💜 BY WEB TEAM</p>
   </div>
 </footer>
+
+<!-- 🔐 AUTH + LOGOUT + MENU -->
 <script type="module">
   import { auth, initAuth } from "./auth.js";
   import { signOut } from
     "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-  /* 🔐 AUTH + ROLE CHECK */
   initAuth({
     requireAuth: true,
     redirectTo: "index.html",
     showDashboard: true
   });
 
-  /* 🚪 LOGOUT */
-  document.addEventListener("DOMContentLoaded", () => {
-    const logoutDesktop = document.getElementById("logoutDesktop");
-    const logoutMobile = document.getElementById("logoutMobile");
+  const logout = async () => {
+    await signOut(auth);
+    location.href = "index.html";
+  };
 
-    const logout = async () => {
-      await signOut(auth);
-      window.location.href = "index.html";
-    };
+  logoutDesktop.onclick = logout;
+  logoutMobile.onclick = logout;
 
-    logoutDesktop?.addEventListener("click", logout);
-    logoutMobile?.addEventListener("click", logout);
-  });
+  menuToggle.onclick = () => menu.classList.toggle("open");
 </script>
 
-
-<!-- ================= GALLERY JS ================= -->
+<!-- ✅ GALLERY ONLY -->
 <script src="gallery.js"></script>
 
 </body>
 </html>
-
-
-
