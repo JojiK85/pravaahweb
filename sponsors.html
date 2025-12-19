@@ -7,6 +7,7 @@
 
   <!-- GLOBAL STYLES (SAME AS HOME) -->
   <link rel="stylesheet" href="style.css" />
+<script type="module" src="auth.js"></script>
 
   <!-- PAGE STYLES -->
   <link rel="stylesheet" href="sponsors.css" />
@@ -19,27 +20,6 @@
 <body>
 
 <!-- ================= AUTH CHECK ================= -->
-<script type="module">
-  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCbXKleOw4F46gFDXz2Wynl3YzPuHsVwh8",
-    authDomain: "pravaah-55b1d.firebaseapp.com",
-    projectId: "pravaah-55b1d",
-    storageBucket: "pravaah-55b1d.appspot.com",
-    messagingSenderId: "287687647267",
-    appId: "1:287687647267:web:7aecd603ee202779b89196"
-  };
-
-  const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-  const auth = getAuth(app);
-
-  onAuthStateChanged(auth, (user) => {
-    if (!user) window.location.href = "index.html";
-  });
-</script>
-
 <!-- ================= NAVBAR (COPY FROM HOME) ================= -->
 <nav>
   <a href="https://www.iitbbs.ac.in/" target="_blank" class="iitbbs-logo">
@@ -61,6 +41,10 @@
     <li><a href="sponsors.html" class="active">Sponsors</a></li>
     <li><a href="contact_us.html">Contact Us</a></li>
     <li><a href="profile.html">Profile</a></li>
+    <li id="dashboardNav" class="hidden">
+  <a href="dashboard.html">Dashboard</a>
+</li>
+
     <li class="mobile-only"><a href="index.html">Logout</a></li>
   </ul>
 
@@ -184,6 +168,32 @@
     </p>
   </div>
 </footer>
+<script type="module">
+  import { auth, initAuth } from "./auth.js";
+  import { signOut } from
+    "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+  /* 🔐 AUTH + ROLE CHECK */
+  initAuth({
+    requireAuth: true,
+    redirectTo: "index.html",
+    showDashboard: true
+  });
+
+  /* 🚪 LOGOUT */
+  document.addEventListener("DOMContentLoaded", () => {
+    const logoutBtn = document.querySelector(".logout-btn");
+    const logoutMobile = document.querySelector("#menu .mobile-only a");
+
+    const logout = async () => {
+      await signOut(auth);
+      window.location.href = "index.html";
+    };
+
+    logoutBtn?.addEventListener("click", logout);
+    logoutMobile?.addEventListener("click", logout);
+  });
+</script>
 
 <!-- ================= MOBILE MENU ================= -->
 <script>
@@ -197,4 +207,5 @@
 
 </body>
 </html>
+
 
