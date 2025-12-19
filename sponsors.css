@@ -69,7 +69,7 @@ body {
 .sponsor-card {
   position: relative;
   width: 320px;
-  height: 220px;
+  aspect-ratio: 16 / 11;
   border-radius: 20px;
   overflow: hidden;
 
@@ -298,5 +298,6 @@ footer {
 .become-sponsor-btn:active {
   transform: scale(0.98);
 }
+
 
 
