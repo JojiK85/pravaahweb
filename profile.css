@@ -508,4 +508,22 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
 }
 
 
+/* 🔥 QR CLICK FIX */
+.qr-box {
+  position: relative;
+}
+
+.qr-box canvas,
+.qr-box img {
+  pointer-events: none; /* ✅ allow click to pass through */
+}
+
+.qr-clickable {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: cyan;
+}
+
 
