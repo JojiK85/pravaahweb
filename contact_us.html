@@ -8,6 +8,7 @@
   <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<script type="module" src="auth.js"></script>
 
   <!-- Global + Page CSS -->
   <link rel="stylesheet" href="style.css" />
@@ -170,47 +171,44 @@
 
 <!-- ================= AUTH + NAVBAR LOGIC ================= -->
 <script type="module">
-  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from
+  import { auth, initAuth } from "./auth.js";
+  import { signOut } from
     "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCbXKleOw4F46gFDXz2Wynl3YzPuHsVwh8",
-    authDomain: "pravaah-55b1d.firebaseapp.com",
-    projectId: "pravaah-55b1d",
-    appId: "1:287687647267:web:7aecd603ee202779b89196"
-  };
-
-  const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-  const auth = getAuth(app);
-
-  onAuthStateChanged(auth, user => {
-    if (!user) location.href = "index.html";
+  /* 🔐 AUTH + ROLE CHECK */
+  initAuth({
+    requireAuth: true,
+    redirectTo: "index.html",
+    showDashboard: true   // ✅ dashboard visible for admins
   });
 
+  /* 🚪 LOGOUT */
   const logout = async () => {
     await signOut(auth);
-    location.href = "index.html";
+    window.location.href = "index.html";
   };
 
-  logoutDesktop.onclick = logout;
-  logoutMobile.onclick = logout;
+  document.getElementById("logoutDesktop")?.addEventListener("click", logout);
+  document.getElementById("logoutMobile")?.addEventListener("click", logout);
 
+  /* 📱 MOBILE MENU */
   const menuToggle = document.getElementById("menuToggle");
   const menu = document.getElementById("menu");
 
-  menuToggle.onclick = (e) => {
+  menuToggle?.addEventListener("click", (e) => {
     e.stopPropagation();
-    menu.classList.toggle("open");
-  };
+    menu.classList.toggle("active"); // ✅ matches CSS
+  });
 
   document.addEventListener("click", (e) => {
     if (!menu.contains(e.target) && !menuToggle.contains(e.target)) {
-      menu.classList.remove("open");
+      menu.classList.remove("active");
     }
   });
 </script>
 
+
 </body>
 </html>
+
 
