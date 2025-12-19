@@ -209,7 +209,10 @@ function renderParticipants() {
 /* ================= SUBMIT ================= */
 function submitAction(action) {
   const selected = [...document.querySelectorAll("input[type=checkbox]:checked")];
-  if (!selected.length) return alert("Select at least one participant");
+  if (!selected.length) {
+    alert("Select at least one participant");
+    return;
+  }
 
   Promise.all(
     selected.map(cb =>
@@ -217,8 +220,8 @@ function submitAction(action) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          logType: action === "ENTRY" ? "GATE_ENTRY" : "GATE_EXIT", // ✅ REQUIRED
-          action: action,                                          // ✅ REQUIRED
+          logType: action === "ENTRY" ? "GATE_ENTRY" : "GATE_EXIT",
+          action: action,                     // ENTRY / EXIT
           paymentId: paymentId,
           name: cb.dataset.name,
           email: cb.dataset.email,
@@ -229,14 +232,25 @@ function submitAction(action) {
           scanMode: "GATE"
         })
       })
+      .then(r => r.json())   // ✅ parse response
     )
   )
-  .then(() => {
-    alert("Gate log updated successfully");
+  .then(results => {
+    // ❌ If ANY participant failed, stop
+    const failed = results.find(r => r.ok === false);
+    if (failed) {
+      throw new Error(failed.error || "Gate action denied");
+    }
+
+    // ✅ All successful
+    alert(`Gate ${action} recorded successfully`);
     location.href = "dashboard.html";
   })
-  .catch(() => alert("Failed to update gate logs"));
+  .catch(err => {
+    alert(err.message);
+  });
 }
+
 
 </script>
 
