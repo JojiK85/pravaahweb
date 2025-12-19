@@ -121,23 +121,32 @@ function renderPasses(passes, container, userEmail) {
     <p><strong>Days:</strong> ${days}</p>
     <p><strong>StarNite:</strong> ${starnite}</p>
     <p><strong>Events:</strong> ${events}</p>
-  </div>
-    <div id="${qrId}" class="qr-box">
+  <div id="${qrId}" class="qr-box">
+  <a class="qr-link" target="_blank">
     <div class="qr-inner"></div>
-  </div>
+    <div class="qr-hint">Tap to open pass</div>
+  </a>
+</div>
+
 
 `;
 
     container.appendChild(card);
 const qrBox = document.getElementById(qrId);
+const qrLink = qrBox.querySelector(".qr-link");
 const qrInner = qrBox.querySelector(".qr-inner");
 
+const qrUrl = `${GAS_PAGE}?paymentId=${encodeURIComponent(paymentId)}`;
+
+qrLink.href = qrUrl;
+
 new QRCode(qrInner, {
-  text: `${scriptURL}?paymentId=${encodeURIComponent(paymentId)}`,
+  text: qrUrl,
   width: 120,
   height: 120,
   correctLevel: QRCode.CorrectLevel.H
 });
+
 
   });
 }
@@ -299,6 +308,7 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+
 
 
 
