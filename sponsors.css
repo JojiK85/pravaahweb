@@ -57,12 +57,17 @@ body {
 /* =========================================================
    GRID
 ========================================================= */
+/* =========================================================
+   GRID — 3 PER ROW (DESKTOP), 1 PER ROW (MOBILE)
+========================================================= */
 .sponsor-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(3, 1fr); /* ✅ 3 in a row on PC */
   gap: 36px;
   padding: 0 20px;
   justify-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 /* =========================================================
@@ -277,3 +282,9 @@ body {
     font-size: 0.75rem;
   }
 }
+@media (max-width: 900px) {
+  .sponsor-grid {
+    grid-template-columns: 1fr; /* ✅ 1 per row on mobile */
+  }
+}
+
