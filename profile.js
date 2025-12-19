@@ -138,14 +138,10 @@ qrContainer.innerHTML = `
 
 new QRCode(qrContainer.querySelector(".qr-inner"), {
   text: qrUrl,
-  width: 130,
-  height: 130,
+  width: 120,
+  height: 120,
   correctLevel: QRCode.CorrectLevel.H
 });
-
-
-
-
   });
 }
 
@@ -306,6 +302,7 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+
 
 
 
