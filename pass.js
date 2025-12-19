@@ -3,9 +3,15 @@
  *  (Complete working version)
  *******************************/
 
-import { auth } from "./auth.js";
-import { onAuthStateChanged, signOut } 
+import { auth, initAuth } from "./auth.js";
+import { onAuthStateChanged, signOut }
   from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+initAuth({
+  requireAuth: true,
+  redirectTo: "index.html",
+  showDashboard: true
+});
 
 
 const scriptURL = "/api/pravaah";
@@ -618,6 +624,7 @@ payBtn.addEventListener("click", async () => {
 
   rzp.open();
 });
+
 
 
 
