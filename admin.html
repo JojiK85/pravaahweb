@@ -118,14 +118,14 @@ body {
 
 <div class="container">
   <div class="title">PRAVAAH 2026 — Main Gate</div>
+
   <div class="meta">
     ⏰ <span id="nowTime"></span>
   </div>
 
-  <div id="statusBox" class="status">Loading...</div>
+  <div id="statusBox" class="status">Loading pass…</div>
 
   <div class="box" id="passInfo"></div>
-
   <div class="box" id="participantsBox"></div>
 
   <div class="actions">
@@ -136,7 +136,7 @@ body {
 
 <script>
 /* ================= CONFIG ================= */
-const API_BASE = "https://script.google.com/macros/s/XXXXXXXXXXXX/exec";
+const API_BASE = "/api/pravaah";
 
 /* ================= URL PARAMS ================= */
 const params = new URLSearchParams(window.location.search);
@@ -155,14 +155,17 @@ function updateTime() {
 updateTime();
 setInterval(updateTime, 1000);
 
-/* ================= LOAD PASS ================= */
+/* ================= STATE ================= */
 let passData = null;
 let participants = [];
 
+/* ================= LOAD PASS ================= */
 fetch(`${API_BASE}?type=searchPass&query=${encodeURIComponent(paymentId)}`)
   .then(r => r.json())
   .then(res => {
-    if (!res.length) throw new Error("Invalid pass");
+    if (!Array.isArray(res) || !res.length) {
+      throw new Error("Invalid or unknown pass");
+    }
 
     passData = res[0];
     participants = res;
@@ -179,12 +182,13 @@ function renderPass() {
   document.getElementById("passInfo").innerHTML = `
     <p><strong>Payment ID:</strong> ${passData["Payment ID"]}</p>
     <p><strong>Pass Type:</strong> ${passData["Pass Type"]}</p>
-    <p><strong>Selected Days:</strong> ${passData["Selected Days"]}</p>
-    <p><strong>StarNite:</strong> ${passData["Starnite"]}</p>
+    <p><strong>Selected Days:</strong> ${passData["Selected Days"] || "—"}</p>
+    <p><strong>StarNite:</strong> ${passData["Starnite"] || "—"}</p>
   `;
 
-  document.getElementById("statusBox").className = "status valid";
-  document.getElementById("statusBox").innerText = "✔ PASS FOUND";
+  const status = document.getElementById("statusBox");
+  status.className = "status valid";
+  status.textContent = "✔ PASS VERIFIED";
 }
 
 function renderParticipants() {
@@ -207,26 +211,26 @@ function submitAction(action) {
   const selected = [...document.querySelectorAll("input[type=checkbox]:checked")];
   if (!selected.length) return alert("Select at least one participant");
 
-  Promise.all(selected.map(cb =>
-    fetch(API_BASE, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        logType: action === "ENTRY" ? "GATE_ENTRY" : "GATE_EXIT",
-        paymentId,
-        name: cb.dataset.name,
-        email: cb.dataset.email,
-        phone: cb.dataset.phone,
-        college: cb.dataset.college,
-        passType: passData["Pass Type"],
-        action,
-        scanner: "WEB_ADMIN",
-        scanMode: "GATE"
+  Promise.all(
+    selected.map(cb =>
+      fetch(API_BASE, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: action === "ENTRY" ? "GATE_ENTRY" : "GATE_EXIT",
+          paymentId,
+          name: cb.dataset.name,
+          email: cb.dataset.email,
+          phone: cb.dataset.phone,
+          college: cb.dataset.college,
+          passType: passData["Pass Type"],
+          scanner: "WEB_ADMIN"
+        })
       })
-    })
-  ))
+    )
+  )
   .then(() => {
-    alert("Gate log updated");
+    alert("Gate log updated successfully");
     location.href = "scan.html";
   })
   .catch(() => alert("Failed to update gate logs"));
@@ -235,4 +239,3 @@ function submitAction(action) {
 
 </body>
 </html>
-
