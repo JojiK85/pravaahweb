@@ -122,9 +122,7 @@ function renderPasses(passes, container, userEmail) {
     <p><strong>StarNite:</strong> ${starnite}</p>
     <p><strong>Events:</strong> ${events}</p>
   </div>
-  <div id="${qrId}" class="qr-box">
-  <button class="qr-open-btn">Tap to open pass</button>
-</div>
+  <div id="${qrId}" class="qr-box"></div>
 
 `;
 
@@ -310,5 +308,6 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+
 
 
