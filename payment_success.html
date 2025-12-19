@@ -5,92 +5,107 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Payment Successful — PRAVAAH</title>
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet" />
+  <!-- ⭐ SAME FONT AS HOME -->
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
   <style>
+    :root {
+      --primary: #24E0EC;
+      --primary-soft: rgba(36,224,236,0.35);
+      --primary-border: rgba(36,224,236,0.45);
+      --text: #F4F9FC;
+      --muted: #BFC7D5;
+      --surface: rgba(0,0,0,0.55);
+    }
+
     body {
-      font-family: 'Orbitron', sans-serif;
-      background: linear-gradient(120deg, #0b1a36, #062e4c, #031a2d, #102046);
+      font-family: 'Exo 2', sans-serif;
+      background: linear-gradient(120deg, #2c1a55, #3e5d75, #022c43, #5b2a86);
       background-size: 400% 400%;
-      animation: gradient 12s ease infinite;
+      animation: gradientMove 15s ease infinite;
+
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
       margin: 0;
-      color: white;
-      text-align: center;
       padding: 20px;
+      color: var(--text);
+      text-align: center;
     }
 
-    @keyframes gradient {
+    @keyframes gradientMove {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
 
     .success-box {
-      background: rgba(0, 255, 255, 0.08);
-      border: 2px solid cyan;
-      border-radius: 20px;
-      padding: 40px;
-      max-width: 600px;
-      width: 90%;
-      box-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
-      backdrop-filter: blur(8px);
-      transition: all 0.3s ease;
+      background: var(--surface);
+      border: 2px solid var(--primary-border);
+      border-radius: 22px;
+      padding: 42px 38px;
+      max-width: 620px;
+      width: 100%;
+      box-shadow: 0 0 28px var(--primary-soft);
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    h1 {
-      color: cyan;
-      text-shadow: 0 0 15px cyan;
-      font-size: 2rem;
-      margin-bottom: 15px;
-    }
-
-    p {
-      color: #cceeff;
-      margin-bottom: 25px;
-      font-size: 1rem;
-      line-height: 1.6;
+    .success-box:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 36px var(--primary-soft);
     }
 
     .tick {
-      font-size: 80px;
-      color: cyan;
-      text-shadow: 0 0 25px cyan;
-      margin-bottom: 20px;
-      animation: tickPulse 1.5s infinite alternate;
+      font-size: 78px;
+      color: var(--primary);
+      text-shadow: 0 0 22px var(--primary-soft);
+      margin-bottom: 18px;
+      animation: tickPulse 1.6s ease-in-out infinite alternate;
     }
 
     @keyframes tickPulse {
-      from { transform: scale(1); opacity: 0.9; }
-      to { transform: scale(1.1); opacity: 1; }
+      from { transform: scale(1); opacity: 0.85; }
+      to   { transform: scale(1.12); opacity: 1; }
+    }
+
+    h1 {
+      font-size: 2.1rem;
+      color: var(--primary);
+      margin-bottom: 14px;
+      letter-spacing: 1px;
+      text-shadow: 0 0 12px var(--primary-soft);
+    }
+
+    p {
+      font-size: 1.05rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 30px;
     }
 
     .btn {
       display: inline-block;
-      background: cyan;
-      color: black;
-      font-weight: 700;
+      padding: 12px 34px;
+      border-radius: 26px;
+      background: linear-gradient(90deg, #7A00FF, var(--primary));
+      color: #fff;
       text-decoration: none;
-      padding: 12px 30px;
-      border-radius: 12px;
-      transition: 0.3s;
-      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .btn:hover {
-      background: #00ffff;
-      box-shadow: 0 0 25px cyan;
-      transform: scale(1.05);
+      transform: scale(1.08);
+      box-shadow: 0 0 22px var(--primary-soft);
     }
 
-    /* ✅ Responsive for smaller screens */
+    /* 📱 RESPONSIVE */
     @media (max-width: 768px) {
       .success-box {
-        padding: 30px 20px;
+        padding: 34px 24px;
       }
 
       .tick {
@@ -98,28 +113,18 @@
       }
 
       h1 {
-        font-size: 1.6rem;
+        font-size: 1.7rem;
       }
 
       p {
         font-size: 0.95rem;
       }
-
-      .btn {
-        padding: 10px 25px;
-        font-size: 0.95rem;
-      }
     }
 
     @media (max-width: 480px) {
-      body {
-        padding: 15px;
-      }
-
       .success-box {
-        width: 100%;
-        padding: 25px 18px;
-        border-radius: 15px;
+        padding: 26px 18px;
+        border-radius: 18px;
       }
 
       .tick {
@@ -127,18 +132,16 @@
       }
 
       h1 {
-        font-size: 1.4rem;
+        font-size: 1.45rem;
       }
 
       p {
         font-size: 0.9rem;
-        line-height: 1.4;
       }
 
       .btn {
-        padding: 10px 20px;
+        padding: 10px 26px;
         font-size: 0.9rem;
-        border-radius: 10px;
       }
     }
   </style>
@@ -146,12 +149,13 @@
 
 <body>
   <div class="success-box">
-    <div class="tick">✅</div>
+    <div class="tick">✓</div>
     <h1>Payment Successful!</h1>
-    <p>Thank you for registering for <strong>PRAVAAH 2026</strong>.<br>Your payment has been successfully received.</p>
+    <p>
+      Thank you for registering for <strong>PRAVAAH 2026</strong>.<br>
+      Your payment has been successfully received.
+    </p>
     <a href="profile.html" class="btn">Return to Profile</a>
   </div>
 </body>
 </html>
-
-
