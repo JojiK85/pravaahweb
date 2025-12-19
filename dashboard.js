@@ -8,8 +8,8 @@ import {
   onAuthStateChanged,
   signOut
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-const GAS_PAGE =
-  "https://script.google.com/macros/s/AKfycbyOUaWbQgD1nx2MyB1RRfY9R3lbOlRg1jDDcAhTajOTve44yJef_3LIuQqGVim8N4T0nA/exec";
+
+const FRONTEND_BASE = "https://pravaahweb1.vercel.app";
 
 /* ================= FIREBASE ================= */
 const firebaseConfig = {
@@ -350,7 +350,7 @@ searchBtn.onclick = async () => {
   <div
     class="qr-box"
     id="qr-${i}"
-    data-url="${GAS_PAGE}?mode=admin&page=scan&paymentId=${x["Payment ID"]}&scanner=${encodeURIComponent(auth.currentUser.email)}"
+    data-url="${FRONTEND_BASE}/scan.html?from=dashboard&paymentId=${x["Payment ID"]}&scanner=${encodeURIComponent(auth.currentUser.email)}"
   </div>
 </td>
 
@@ -409,12 +409,12 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const scannerUrl =
-      `${GAS_PAGE}?mode=admin&page=scan&scanner=` +
-      encodeURIComponent(user.email);
+    cconst scannerUrl =
+  `${FRONTEND_BASE}/scan.html?scanner=` +
+  encodeURIComponent(user.email);
 
-    // Same tab = no repeated camera permission issues
-    window.location.href = scannerUrl;
+window.location.href = scannerUrl;
+
   });
 });
 
