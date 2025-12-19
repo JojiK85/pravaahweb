@@ -331,49 +331,6 @@ body {
   .event-row { padding: 12px; }
 }
 /* UNIFY STARNITE TOGGLE WIDTH EVERYWHERE */
-.starnite-toggle-row {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-top: 15px;
-}
-
-.starnite-toggle-row label {
-  min-width: 240px;          /* 🔥 Force same width */
-  justify-content: center;   /* Center content */
-  text-align: center;
-}
-
-
-.starnite-toggle-row label span {
-  white-space: nowrap;
-}
-
-.starnite-toggle-row label {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px !important;       /* 🔥 force correct spacing */
-}
-
-.starnite-toggle-row input[type="checkbox"] {
-  margin: 0 !important;      /* 🔥 removes unwanted auto margin */
-}
-/* FIX: Prevent CHECKBOX from stretching to full width */
-.starnite-toggle-row input[type="checkbox"] {
-  width: auto !important;
-  height: auto !important;
-  display: inline-block !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-/* Ensure wrapper does not stretch checkbox */
-.starnite-toggle-row label {
-  width: auto !important;
-  display: inline-flex !important;
-  align-items: center;
-  gap: 10px;
-}
-
 
 /* REMOVE CYAN GLOW / BACKGROUND WHEN CLICKING CHECKBOX */
 .event-left input[type="checkbox"],
@@ -528,6 +485,7 @@ body {
   width: auto;
   height: auto;
 }
+
 
 
 
