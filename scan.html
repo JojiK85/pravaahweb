@@ -251,15 +251,19 @@ function showActions() {
   helperText.textContent = "Select scan type";
   actionButtons.style.display = "flex";
 
-  adminBtn.onclick = () => {
-    window.location.href =
-      `admin.html?paymentId=${encodeURIComponent(detectedPaymentId)}`;
-  };
+  const scannerEmail =
+  new URLSearchParams(location.search).get("scanner");
 
-  eventBtn.onclick = () => {
-    window.location.href =
-      `event.html?paymentId=${encodeURIComponent(detectedPaymentId)}`;
-  };
+eventBtn.onclick = () => {
+  window.location.href =
+    `event.html?paymentId=${encodeURIComponent(detectedPaymentId)}&scanner=${encodeURIComponent(scannerEmail)}`;
+};
+
+adminBtn.onclick = () => {
+  window.location.href =
+    `admin.html?paymentId=${encodeURIComponent(detectedPaymentId)}&scanner=${encodeURIComponent(scannerEmail)}`;
+};
+
 }
 
 /* ================= INIT ================= */
