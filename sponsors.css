@@ -176,7 +176,7 @@ body {
    PDF BOX (NO GAP ABOVE)
 ========================================================= */
 .pdf-box {
-  margin: 24px auto 20px; /* 🔥 tight spacing */
+  margin: 40px auto 40px; /* 🔥 tight spacing */
   padding: 18px 32px;
   border: 2px dashed rgba(36,224,236,0.7);
   border-radius: 16px;
@@ -228,8 +228,4 @@ body {
     height: 260px;
   }
 }
-body {
-  padding-down: 100px; /* same as home */
-}
-
 
