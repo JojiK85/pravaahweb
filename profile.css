@@ -386,100 +386,58 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
 /* ===============================
    FIX PASS CARD TEXT + QR LAYOUT
    =============================== */
+/* ===============================
+   FINAL PASS CARD — SAFE VERSION
+   =============================== */
 
-/* Make pass card horizontal */
 .pass-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 20px;
+
+  width: 100%;
+  max-width: 420px;     /* 🔥 replaces fixed 360px */
+  box-sizing: border-box;
 }
 
-/* Text container (left side) */
-.pass-item > div:not(.qr-box),
-.pass-item .pass-details {
+.pass-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   flex: 1;
-  min-width: 0;
+  min-width: 0;         /* 🔥 critical for flex overflow */
 }
 
-/* Prevent vertical text breaking */
 .pass-item h3,
 .pass-item p {
+  margin: 0;
   white-space: normal;
-  word-break: normal;
+  word-break: break-word;
   overflow-wrap: break-word;
-  writing-mode: horizontal-tb;
 }
 
-/* QR on right */
+/* QR CONTAINER — NO OVERFLOW */
 .qr-box {
   flex-shrink: 0;
   width: 132px;
   height: 132px;
   background: white;
   border-radius: 10px;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;        /* 🔥 IMPORTANT */
+
+  overflow: hidden;     /* 🔥 final safety */
 }
 
-
-/* MOBILE: stack QR below text */
-@media (max-width: 600px) {
-  .pass-item {
-    flex-direction: column;
-    align-items: center;
-    text-align: left;
-  }
-
-  .qr-box {
-    margin-top: 12px;
-  }
-}
-/* ===============================
-   FINAL PASS CARD FIX
-   =============================== */
-
-/* Pass card layout */
-.pass-item {
-  display: flex;
-  align-items: center;
-  gap: 24px;
+/* INNER QR HOLDER */
+.qr-inner {
+  width: 120px;
+  height: 120px;
 }
 
-/* LEFT TEXT BLOCK */
-.pass-item .pass-details {
-  display: flex;
-  flex-direction: column;   /* 🔥 STACK TEXT */
-  gap: 6px;
-  flex: 1;
-  min-width: 0;
-}
-
-/* Ensure text NEVER spreads */
-.pass-item h3,
-.pass-item p {
-  white-space: normal;
-  word-break: break-word;
-  overflow-wrap: break-word;
-  margin: 0;
-}
-
-/* QR RIGHT SIDE */
-.qr-box {
-  flex-shrink: 0;
-  width: 140px;
-  height: 140px;
-  background: white;
-  padding: 6px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* MOBILE: QR BELOW */
+/* MOBILE STACK */
 @media (max-width: 600px) {
   .pass-item {
     flex-direction: column;
@@ -494,6 +452,8 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
     margin-top: 12px;
   }
 }
+
+
 
 .qr-clickable {
   display: inline-block;
@@ -531,23 +491,4 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
   max-width: 420px;   /* safe desktop size */
   box-sizing: border-box;
 }
-
-.qr-inner {
-  width: 120px;
-  height: 120px;
-}
-.pass-details {
-  min-width: 0;      /* 🔥 prevents flex overflow */
-}
-@media (max-width: 600px) {
-  .pass-item {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .qr-box {
-    margin-top: 12px;
-  }
-}
-
 
