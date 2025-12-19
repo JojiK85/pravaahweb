@@ -2,6 +2,10 @@
  *  PRAVAAH 2026 — FINAL SCRIPT.JS
  *  (Complete working version)
  *******************************/
+import { auth } from "./auth.js";
+import { onAuthStateChanged } from
+  "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
 const scriptURL = "/api/pravaah";
 
 
@@ -22,27 +26,7 @@ const PRICES = {
   starnite: 300
 };
 
-/* =======================================
-      FIREBASE INIT
-======================================= */
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-let auth = window.auth;
-if (!auth) {
-  const firebaseConfig = {
-    apiKey: "AIzaSyCbXKleOw4F46gFDXz2Wynl3YzPuHsVwh8",
-    authDomain: "pravaah-55b1d.firebaseapp.com",
-    projectId: "pravaah-55b1d",
-    storageBucket: "pravaah-55b1d.appspot.com",
-    messagingSenderId: "287687647267",
-    appId: "1:287687647267:web:7aecd603ee202779b89196"
-  };
-
-  const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-  auth = getAuth(app);
-  window.auth = auth;
-}
 
 /* =======================================
       DOM ELEMENTS
@@ -70,7 +54,7 @@ let cachedProfile = {};
 let currentTotal = 0;
 let paying = false;
 
-const RULEBOOK_URL = "rulebooks/sample.pdf";
+const RULEBOOK_URL = "sponsorship-brochure.pdf";
 
 
 /* =======================================
@@ -105,11 +89,10 @@ async function refreshProfileFromSheets(email) {
   }
 }
 
-if (auth && auth.onAuthStateChanged) {
-  auth.onAuthStateChanged((u) => {
-    if (u?.email) refreshProfileFromSheets(u.email);
-  });
-}
+onAuthStateChanged(auth, (u) => {
+  if (u?.email) refreshProfileFromSheets(u.email);
+});
+
 
 /* =======================================
       EVENT ROW TEMPLATE
@@ -617,3 +600,4 @@ payBtn.addEventListener("click", async () => {
 
   rzp.open();
 });
+
