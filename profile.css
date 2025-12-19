@@ -414,15 +414,16 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
 /* QR on right */
 .qr-box {
   flex-shrink: 0;
-  width: 140px;
-  height: 140px;
+  width: 132px;
+  height: 132px;
   background: white;
-  padding: 6px;
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;        /* 🔥 IMPORTANT */
 }
+
 
 /* MOBILE: stack QR below text */
 @media (max-width: 600px) {
@@ -524,6 +525,29 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
   align-items: center;
   text-decoration: none;
   color: cyan;
+}
+.pass-item {
+  width: 100%;
+  max-width: 420px;   /* safe desktop size */
+  box-sizing: border-box;
+}
+
+.qr-inner {
+  width: 120px;
+  height: 120px;
+}
+.pass-details {
+  min-width: 0;      /* 🔥 prevents flex overflow */
+}
+@media (max-width: 600px) {
+  .pass-item {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .qr-box {
+    margin-top: 12px;
+  }
 }
 
 
