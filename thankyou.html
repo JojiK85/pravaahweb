@@ -5,13 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Thank You | PRAVAAH</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+  <!-- FONTS -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- ICONS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
     /* ---------- BASE ---------- */
     body {
-      font-family: 'Orbitron', sans-serif;
+      font-family: 'Exo 2', sans-serif;
       color: white;
       background: linear-gradient(120deg, #2c1a55, #3e5d75, #022c43, #5b2a86);
       background-size: 400% 400%;
@@ -46,73 +49,64 @@
     .thankyou-box {
       width: 90%;
       max-width: 600px;
-      background: rgba(0, 0, 0, 0.75);
-      border: 1.5px solid rgba(0, 255, 255, 0.5);
+      background: rgba(0, 0, 0, 0.72);
+      border: 1.4px solid rgba(36,224,236,0.5);
       border-radius: 20px;
-      box-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
-      backdrop-filter: blur(12px);
+      box-shadow: 0 0 18px rgba(36,224,236,0.35);
+      backdrop-filter: blur(10px);
       text-align: center;
       padding: 3rem 2rem;
       animation: fadeIn 1.2s ease;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(25px); }
+      from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     .thankyou-box i {
       font-size: 3rem;
-      color: cyan;
-      text-shadow: 0 0 20px cyan;
+      color: #24E0EC;
       margin-bottom: 1.2rem;
-      animation: pulse 2s infinite alternate;
-    }
-
-    @keyframes pulse {
-      from { text-shadow: 0 0 10px cyan, 0 0 25px rgba(0,255,255,0.3); }
-      to { text-shadow: 0 0 25px cyan, 0 0 50px rgba(0,255,255,0.7); }
     }
 
     .thankyou-box h1 {
+      font-family: 'Orbitron', sans-serif;
       font-size: 2rem;
-      color: cyan;
-      text-shadow: 0 0 15px cyan;
+      color: #24E0EC;
       margin-bottom: 1rem;
       letter-spacing: 1px;
     }
 
     .thankyou-box p {
-      color: #cfdfff;
+      color: #cfd9e0;
       font-size: 1rem;
       line-height: 1.6rem;
       margin-bottom: 2rem;
     }
 
     .back-btn {
-      background: linear-gradient(90deg, cyan, #00ffff);
-      color: black;
+      background: linear-gradient(90deg, #24E0EC, #00ffff);
+      color: #001c20;
       font-weight: 700;
       border: none;
-      border-radius: 10px;
-      padding: 14px 35px;
+      border-radius: 12px;
+      padding: 14px 36px;
       cursor: pointer;
-      box-shadow: 0 0 20px rgba(0,255,255,0.5);
-      transition: 0.3s ease;
+      transition: 0.25s ease;
       font-size: 1rem;
     }
 
     .back-btn:hover {
       transform: scale(1.05);
-      box-shadow: 0 0 25px cyan, 0 0 50px rgba(0,255,255,0.6);
     }
 
     /* ---------- FOOTER ---------- */
     footer {
       width: 100%;
-      background: rgba(0, 0, 0, 0.3);
-      padding: 1.8rem 1rem;
-      border-top: 1px solid rgba(0,255,255,0.3);
+      background: rgba(0, 0, 0, 0.25);
+      padding: 1.6rem 1rem;
+      border-top: 1px solid rgba(36,224,236,0.3);
       text-align: center;
       color: #bbb;
       font-size: 0.9rem;
@@ -127,35 +121,27 @@
     }
 
     footer .footer-social a {
-      color: cyan;
-      font-size: 1.4rem;
-      transition: all 0.3s ease;
+      color: #24E0EC;
+      font-size: 1.35rem;
+      transition: transform 0.25s ease;
     }
 
     footer .footer-social a:hover {
-      text-shadow: 0 0 10px cyan;
       transform: scale(1.15);
     }
 
     .footer-line {
       border: none;
       height: 1px;
-      background: rgba(0,255,255,0.3);
+      background: rgba(36,224,236,0.3);
       margin: 1rem auto;
       width: 80%;
     }
 
-    /* ---------- MOBILE OPTIMIZATION ---------- */
+    /* ---------- MOBILE ---------- */
     @media (max-width: 768px) {
-      .main-container {
-        padding: 2rem 1rem;
-      }
-
       .thankyou-box {
-        width: 92%;
-        padding: 2rem 1.5rem;
-        border-radius: 18px;
-        box-shadow: 0 0 20px rgba(0,255,255,0.3);
+        padding: 2.2rem 1.5rem;
       }
 
       .thankyou-box i {
@@ -168,38 +154,11 @@
 
       .thankyou-box p {
         font-size: 0.9rem;
-        line-height: 1.5rem;
       }
 
       .back-btn {
         width: 100%;
         padding: 12px;
-        font-size: 0.95rem;
-      }
-
-      footer {
-        padding: 1.5rem 0.8rem;
-        font-size: 0.8rem;
-      }
-    }
-
-    @media (max-width: 400px) {
-      .thankyou-box {
-        padding: 1.8rem 1.2rem;
-        border-radius: 15px;
-      }
-
-      .thankyou-box h1 {
-        font-size: 1.5rem;
-      }
-
-      .thankyou-box p {
-        font-size: 0.85rem;
-      }
-
-      .back-btn {
-        font-size: 0.85rem;
-        padding: 10px;
       }
     }
   </style>
@@ -207,7 +166,7 @@
 
 <body>
 
-  <!-- ✅ CENTERED CONTAINER -->
+  <!-- CENTERED CONTENT -->
   <div class="main-container">
     <div class="thankyou-box">
       <i class="fa-solid fa-circle-check"></i>
@@ -216,11 +175,13 @@
         Thank you for showing interest in <strong>Pravaah 2026</strong>.<br>
         Our team will contact you within two business days.
       </p>
-      <button class="back-btn" onclick="window.location.href='home.html'">Back to Home</button>
+      <button class="back-btn" onclick="window.location.href='home.html'">
+        Back to Home
+      </button>
     </div>
   </div>
 
-  <!-- 🌙 FOOTER -->
+  <!-- FOOTER -->
   <footer>
     <div class="footer-social">
       <a href="#"><i class="fab fa-instagram"></i></a>
