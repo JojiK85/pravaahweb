@@ -217,14 +217,16 @@ function submitAction(action) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          type: action === "ENTRY" ? "GATE_ENTRY" : "GATE_EXIT",
-          paymentId,
+          logType: action === "ENTRY" ? "GATE_ENTRY" : "GATE_EXIT", // ✅ REQUIRED
+          action: action,                                          // ✅ REQUIRED
+          paymentId: paymentId,
           name: cb.dataset.name,
           email: cb.dataset.email,
           phone: cb.dataset.phone,
           college: cb.dataset.college,
           passType: passData["Pass Type"],
-          scanner: "WEB_ADMIN"
+          scanner: "WEB_ADMIN",
+          scanMode: "GATE"
         })
       })
     )
@@ -235,6 +237,7 @@ function submitAction(action) {
   })
   .catch(() => alert("Failed to update gate logs"));
 }
+
 </script>
 
 </body>
