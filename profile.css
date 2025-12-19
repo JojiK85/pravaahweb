@@ -494,5 +494,18 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
   }
 }
 
+.qr-clickable {
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.qr-hint {
+  font-size: 0.65rem;
+  opacity: 0.7;
+  margin-top: 4px;
+}
+
 
 
