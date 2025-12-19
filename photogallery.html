@@ -4,169 +4,209 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PRAVAAH — Gallery</title>
-  
-  <!-- Styles -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Fonts + Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Global + Gallery Styles -->
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="gallery.css" />
 </head>
-<body>
-  <!-- 🔒 FIREBASE AUTH + LOGOUT -->
-  <script type="module">
-    import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCbXKleOw4F46gFDXz2Wynl3YzPuHsVwh8",
-      authDomain: "pravaah-55b1d.firebaseapp.com",
-      projectId: "pravaah-55b1d",
-      storageBucket: "pravaah-55b1d.appspot.com",
-      messagingSenderId: "287687647267",
-      appId: "1:287687647267:web:7aecd603ee202779b89196"
+<body>
+
+<!-- 🔒 FIREBASE AUTH + DASHBOARD + LOGOUT -->
+<script type="module">
+  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut, getIdTokenResult } 
+    from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCbXKleOw4F46gFDXz2Wynl3YzPuHsVwh8",
+    authDomain: "pravaah-55b1d.firebaseapp.com",
+    projectId: "pravaah-55b1d",
+    storageBucket: "pravaah-55b1d.appspot.com",
+    messagingSenderId: "287687647267",
+    appId: "1:287687647267:web:7aecd603ee202779b89196"
+  };
+
+  const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+  const auth = getAuth(app);
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.location.href = "index.html";
+      return;
+    }
+
+    const token = await getIdTokenResult(user);
+    if (token.claims.admin) {
+      document.getElementById("dashboardNav")?.classList.remove("hidden");
+    }
+  });
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const logoutDesktop = document.getElementById("logoutDesktop");
+    const logoutMobile = document.getElementById("logoutMobile");
+
+    const logout = async () => {
+      await signOut(auth);
+      window.location.href = "index.html";
     };
 
-    const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-    const auth = getAuth(app);
+    logoutDesktop?.addEventListener("click", logout);
+    logoutMobile?.addEventListener("click", logout);
+  });
+</script>
 
-    // 🔒 Redirect if not logged in
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        window.location.href = "index.html";
-      }
-    });
-
-    // 🚪 Logout functionality
-    document.addEventListener("DOMContentLoaded", () => {
-      const logoutDesktop = document.getElementById("logoutDesktop");
-      const logoutMobile = document.getElementById("logoutMobile");
-
-      const logout = async () => {
-        try {
-          await signOut(auth);
-          window.location.href = "index.html";
-        } catch (err) {
-          alert("Error logging out: " + err.message);
-        }
-      };
-
-      if (logoutDesktop) logoutDesktop.addEventListener("click", logout);
-      if (logoutMobile) logoutMobile.addEventListener("click", logout);
-    });
-  </script>
-
-  <!-- 🔹 NAVBAR -->
-  <nav>
-    <a href="https://www.iitbbs.ac.in/" target="_blank" class="iitbbs-logo">
+<!-- ================= NAVBAR (SAME AS HOME) ================= -->
+<nav>
+  <a href="https://www.iitbbs.ac.in/" target="_blank" class="iitbbs-logo">
     <img src="iitbbs-logo.png" alt="IIT Bhubaneswar Logo">
   </a>
-    <div class="logo">PRAVAAH</div>
-    <button class="menu-toggle" id="mobile-menu" aria-label="Toggle navigation" aria-expanded="false">
-      <i class="fas fa-bars" aria-hidden="true"></i>
-    </button>
-    <ul id="menu">
-      <li><a href="home.html">Home</a></li>
-      <li><a href="events.html">Events</a></li>
-      <li><a href="registrationPravaah.html">Register</a></li>
-      <li><a href="accommodation.html">Accommodation</a></li>
-      <li><a href="photogallery.html" class="active">Gallery</a></li>
-      <li><a href="sponsors.html">Sponsors</a></li>
-      <li><a href="contact_us.html">Contact Us</a></li>
-      <li><a href="profile.html" >Profile</a></li>
-      <li id="dashboardNav" class="hidden">
-  <a href="dashboard.html">Dashboard</a>
-</li>
 
-      <!-- 🔹 Logout link for mobile -->
-      <li class="mobile-only"><a href="index.html" id="logoutMobile">Logout</a></li>
-    </ul>
+  <div class="logo">PRAVAAH</div>
 
-    <!-- 🔹 Logout button for desktop -->
-    <button id="logoutDesktop" class="logout-btn">Logout</button>
-  </nav>
-
-  <!-- 🖼️ GALLERY TITLE -->
-  <section class="gallery-header">
-    <h1>Gallery</h1>
-    <p>Capturing the best of PRAVAAH — energy, color, and creativity.</p>
-  </section>
-
-  <!-- 📸 GALLERY GRID -->
-  <section class="gallery-container">
-    <div class="gallery-grid">
-      <!-- Example Images -->
-      <div class="gallery-item"><img src="DSC09133.JPG" alt=""></div>
-      <div class="gallery-item"><img src="DSC09133.JPG" alt=""></div>
-      <div class="gallery-item"><img src="DSC09133.JPG" alt=""></div>
-      <div class="gallery-item"><img src="DSC09133.JPG" alt=""></div>
-      <div class="gallery-item"><img src="DSC09133.JPG" alt=""></div>
-      <div class="gallery-item"><img src="DSC09133.JPG" alt=""></div>
-      <div class="gallery-item"><img src="DSC09133.JPG" alt=""></div>
-      <div class="gallery-item"><img src="DSC09133.JPG" alt=""></div>
-      <div class="gallery-item"><img src="DSC09133.JPG" alt=""></div>
-      <div class="gallery-item"><img src="DSC09133.JPG" alt=""></div>
-      <div class="gallery-item"><img src="DSC09133.JPG" alt=""></div>
-      <div class="gallery-item"><img src="DSC09133.JPG" alt=""></div>
-    </div>
-  </section>
-
-  <!-- 🔍 LIGHTBOX POPUP -->
-  <div id="lightbox" class="lightbox">
-    <div class="lightbox-controls">
-      <button class="download-btn"><i class="fas fa-download"></i></button>
-      <span class="close-btn">&times;</span>
-    </div>
-    <img id="lightbox-img" src="" alt="Full Image">
+  <div class="menu-toggle" id="menuToggle">
+    <i class="fa-solid fa-bars"></i>
   </div>
 
-  <!-- ⚫ FOOTER -->
-  <footer>
-    <div class="footer-container">
-      <div class="footer-left">
-        <img src="pravah-logo.png" alt="PRAVAAH Logo" class="footer-logo">
-        <a href="registrationPravaah.html" class="register-btn">Register Now</a>
+  <ul id="menu">
+    <li><a href="home.html">Home</a></li>
+    <li><a href="events.html">Events</a></li>
+    <li><a href="registrationPravaah.html">Register</a></li>
+    <li><a href="accommodation.html">Accommodation</a></li>
+    <li><a href="photogallery.html" class="active">Gallery</a></li>
+    <li><a href="sponsors.html">Sponsors</a></li>
+    <li><a href="contact_us.html">Contact Us</a></li>
+    <li><a href="profile.html">Profile</a></li>
+
+    <!-- ✅ DASHBOARD -->
+    <li id="dashboardNav" class="hidden">
+      <a href="dashboard.html">Dashboard</a>
+    </li>
+
+    <li class="mobile-only"><a id="logoutMobile">Logout</a></li>
+  </ul>
+
+  <button id="logoutDesktop" class="logout-btn">Logout</button>
+</nav>
+
+<!-- ================= GALLERY HEADER ================= -->
+<section class="gallery-header">
+  <h1>Gallery</h1>
+  <p>Capturing the best of PRAVAAH — energy, color, and creativity.</p>
+</section>
+
+<!-- ================= GRID GALLERY (NOT CAROUSEL) ================= -->
+<section class="gallery-container">
+  <div class="gallery-grid">
+
+    <!-- IMAGE CARD -->
+    <div class="gallery-item" data-title="Opening Ceremony">
+      <img src="DSC09133.JPG">
+      <div class="zoom-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+    </div>
+
+    <div class="gallery-item" data-title="Cultural Night">
+      <img src="DSC09133.JPG">
+      <div class="zoom-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+    </div>
+
+    <div class="gallery-item" data-title="Tech Expo">
+      <img src="DSC09133.JPG">
+      <div class="zoom-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+    </div>
+
+    <div class="gallery-item" data-title="Sports Gala">
+      <img src="DSC09133.JPG">
+      <div class="zoom-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+    </div>
+
+    <div class="gallery-item" data-title="Star Night">
+      <img src="DSC09133.JPG">
+      <div class="zoom-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+    </div>
+
+    <div class="gallery-item" data-title="Prize Distribution">
+      <img src="DSC09133.JPG">
+      <div class="zoom-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= ADVANCED LIGHTBOX (SAME AS HOME) ================= -->
+<div id="lightbox" class="lightbox hidden">
+  <div class="lightbox-top">
+    <span class="close-lightbox"><i class="fa-solid fa-xmark"></i></span>
+    <a id="downloadIcon" class="download-icon" download>
+      <i class="fa-solid fa-download"></i>
+    </a>
+  </div>
+
+  <div class="lb-arrow left"><i class="fa-solid fa-chevron-left"></i></div>
+
+  <img id="lightboxImg">
+
+  <div class="lb-arrow right"><i class="fa-solid fa-chevron-right"></i></div>
+
+  <div class="lightbox-info">
+    <h3 id="lightboxTitle"></h3>
+    <p>Experience the Chronicles of Time — PRAVAAH 2K25.</p>
+  </div>
+</div>
+
+<!-- ================= FOOTER (SAME AS HOME) ================= -->
+<footer>
+  <div class="footer-container">
+
+    <div class="footer-left">
+      <img src="pravah-logo.png" class="footer-logo">
+      <a href="registrationPravaah.html" class="register-btn">Register Now</a>
+    </div>
+
+    <div class="footer-column">
+      <h3>Quick Links</h3>
+      <ul>
+        <li><a href="#">Events Portal</a></li>
+        <li><a href="#">CA Portal</a></li>
+        <li><a href="#">Join the Community</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-column">
+      <h3>Explore More</h3>
+      <ul>
+        <li><a href="#">Star Attractions</a></li>
+        <li><a href="#">Hall of Fame</a></li>
+        <li><a href="#">Brochure</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-column">
+      <h3>Reach Out to Us</h3>
+      <ul>
+        <li><a href="contact_us.html">Contact Us</a></li>
+      </ul>
+
+      <div class="footer-social-icons">
+        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+        <a href="#"><i class="fa-brands fa-youtube"></i></a>
       </div>
-
-      <div class="footer-links">
-        <div class="footer-column">
-          <h3>Quick Links</h3>
-          <ul>
-            <li><a href="#">Events Portal</a></li>
-            <li><a href="#">CA Portal</a></li>
-            <li><a href="#">Join the Community</a></li>
-          </ul>
-        </div>
-        <div class="footer-column">
-          <h3>Explore More</h3>
-          <ul>
-            <li><a href="#">Star Attractions</a></li>
-            <li><a href="#">Hall of Fame</a></li>
-            <li><a href="#">Brochure</a></li>
-          </ul>
-        </div>
-        <div class="footer-column">
-          <h3>Reach Out to Us</h3>
-          <ul>
-            <li><a href="contact_us.html">Contact Us</a></li>
-          </ul>
-        </div>
-      </div>
     </div>
+  </div>
 
-    <div class="footer-social">
-      <a href="#"><i class="fab fa-instagram"></i></a>
-      <a href="#"><i class="fab fa-linkedin-in"></i></a>
-      <a href="#"><i class="fab fa-youtube"></i></a>
-    </div>
-    <hr class="footer-line">
-    <div class="footer-bottom">
-      <p>@PRAVAAH'26 IIT BHUBANESWAR | MADE WITH 💜 BY WEB TEAM | All Rights Reserved</p>
-    </div>
-  </footer>
+  <div class="footer-line"></div>
 
-  <!-- JS -->
-  <script src="gallery.js"></script>
+  <div class="footer-bottom">
+    <p><span>@PRAVAAH'26 IIT BHUBANESWAR</span> | MADE WITH 💜 BY WEB TEAM</p>
+  </div>
+</footer>
+
+<!-- ================= GALLERY JS ================= -->
+<script src="gallery.js"></script>
+
 </body>
 </html>
-
-
-
