@@ -32,7 +32,23 @@ if (menuToggle && menu) {
 }
 
 
+document.addEventListener("DOMContentLoaded", () => {
+  const logoutDesktop = document.getElementById("logoutDesktop");
+  const logoutMobile = document.getElementById("logoutMobile");
 
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      window.location.href = "index.html";
+    } catch (e) {
+      alert("Logout failed");
+      console.error(e);
+    }
+  };
+
+  logoutDesktop?.addEventListener("click", logout);
+  logoutMobile?.addEventListener("click", logout);
+});
 // ------------------------------------------------------------
 // 🎭 EVENT CATEGORY CONTROLS
 // ------------------------------------------------------------
@@ -107,3 +123,4 @@ document.head.insertAdjacentHTML(
     }
   </style>`
 );
+
