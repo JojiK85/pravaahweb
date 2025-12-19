@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -134,7 +133,7 @@ body {
     <img id="photo" src="https://via.placeholder.com/150">
   </div>
 
-  <div class="name" id="name">Loading...</div>
+  <div class="name" id="name">Loading…</div>
   <div class="college" id="college"></div>
 
   <div class="info" id="info"></div>
@@ -146,7 +145,7 @@ body {
 
 <script>
 /* ================= CONFIG ================= */
-const API_BASE = "https://script.google.com/macros/s/XXXXXXXXXXXX/exec";
+const API_BASE = "/api/pravaah";
 
 /* ================= PARAM ================= */
 const params = new URLSearchParams(location.search);
@@ -154,35 +153,34 @@ const paymentId = params.get("paymentId");
 
 if (!paymentId) {
   alert("Invalid QR");
-  throw new Error("No Payment ID");
+  throw new Error("Missing Payment ID");
 }
 
-/* ================= FETCH ================= */
-Promise.all([
-  fetch(`${API_BASE}?type=searchPass&query=${paymentId}`).then(r => r.json()),
-  fetch(`${API_BASE}?type=gatelogs&paymentId=${paymentId}`).then(r => r.json())
-])
-.then(([passes]) => {
-  if (!passes.length) throw new Error("Invalid Pass");
+/* ================= FETCH PASS ================= */
+fetch(`${API_BASE}?type=searchPass&query=${encodeURIComponent(paymentId)}`)
+  .then(r => r.json())
+  .then(rows => {
+    if (!rows || !rows.length) throw new Error("Invalid Pass");
 
-  const p = passes[0];
+    const p = rows[0];
 
-  document.getElementById("name").innerText = p.Name || "—";
-  document.getElementById("college").innerText = p.College || "—";
+    document.getElementById("name").innerText = p.Name || "—";
+    document.getElementById("college").innerText = p.College || "—";
 
-  document.getElementById("info").innerHTML = `
-    <p><span class="label">Payment ID</span><span class="value">${p["Payment ID"]}</span></p>
-    <p><span class="label">Pass Type</span><span class="value">${p["Pass Type"]}</span></p>
-    <p><span class="label">Days</span><span class="value">${p["Selected Days"] || "—"}</span></p>
-    <p><span class="label">StarNite</span><span class="value">${p["Starnite"]}</span></p>
-  `;
+    document.getElementById("info").innerHTML = `
+      <p><span class="label">Payment ID</span><span class="value">${p["Payment ID"]}</span></p>
+      <p><span class="label">Pass Type</span><span class="value">${p["Pass Type"]}</span></p>
+      <p><span class="label">Days</span><span class="value">${p["Selected Days"] || "—"}</span></p>
+      <p><span class="label">StarNite</span><span class="value">${p["Starnite"]}</span></p>
+    `;
 
-  validatePass(p);
-})
-.catch(err => {
-  document.getElementById("statusBox").className = "status invalid";
-  document.getElementById("statusBox").innerText = err.message;
-});
+    validatePass(p);
+  })
+  .catch(err => {
+    const box = document.getElementById("statusBox");
+    box.className = "status invalid";
+    box.innerText = err.message;
+  });
 
 /* ================= VALIDATION ================= */
 function validatePass(p) {
@@ -193,20 +191,31 @@ function validatePass(p) {
     "2026-02-08": "day3"
   };
 
-  const todayKey = DAY_MAP[new Date().toISOString().slice(0,10)];
+  const today = new Date().toISOString().slice(0, 10);
+  const todayKey = DAY_MAP[today];
+
   const selected = (p["Selected Days"] || "").toLowerCase();
   const starnite = p["Starnite"] === "YES";
 
   let valid = false;
   let reason = "Not valid today";
 
-  if (p["Pass Type"] === "Fest Pass") valid = true, reason = "Fest Pass";
-  else if (starnite && todayKey === "day3") valid = true, reason = "StarNite Access";
-  else if (selected.includes(todayKey)) valid = true, reason = "Valid for today";
+  if (p["Pass Type"] === "Fest Pass") {
+    valid = true;
+    reason = "Fest Pass";
+  } else if (starnite && todayKey === "day3") {
+    valid = true;
+    reason = "StarNite Access";
+  } else if (selected.includes(todayKey)) {
+    valid = true;
+    reason = "Valid for today";
+  }
 
   const box = document.getElementById("statusBox");
   box.className = "status " + (valid ? "valid" : "invalid");
-  box.innerHTML = (valid ? "✔ VALID FOR TODAY" : "✖ NOT VALID TODAY") + `<br><small>${reason}</small>`;
+  box.innerHTML =
+    (valid ? "✔ VALID FOR TODAY" : "✖ NOT VALID TODAY") +
+    `<br><small>${reason}</small>`;
 }
 </script>
 
