@@ -15,9 +15,15 @@
 
   <link rel="stylesheet" href="style.css" />
 
-  <script type="module" src="script.js" defer></script>
+  <script type="module">
+  import { initAuth } from "./auth.js";
+  initAuth(); 
+</script>
+
+<script type="module" src="script.js" defer></script>
 </head>
 
+<body style="color:#F5F8FA; font-family:'Exo 2', sans-serif;">
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const track = document.querySelector(".slider-track");
@@ -25,29 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
   slides.forEach(slide => track.appendChild(slide.cloneNode(true)));
 });
 </script>
-
-<body style="color:#F5F8FA; font-family:'Exo 2', sans-serif;">
-
-  <!-- 🔒 FIREBASE AUTH CHECK -->
-  <script type="module">
-    import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCbXKleOw4F46gFDXz2Wynl3YzPuHsVwh8",
-      authDomain: "pravaah-55b1d.firebaseapp.com",
-      projectId: "pravaah-55b1d",
-      storageBucket: "pravaah-55b1d.appspot.com",
-      messagingSenderId: "287687647267",
-      appId: "1:287687647267:web:7aecd603ee202779b89196"
-    };
-
-    const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-    const auth = getAuth(app);
-    onAuthStateChanged(auth, user => { if (!user) window.location.href = "index.html"; });
-  </script>
-
-  <!-- NAVBAR -->
+ <!-- NAVBAR -->
   <nav>
     <a href="https://www.iitbbs.ac.in/" class="iitbbs-logo" target="_blank">
       <img src="iitbbs-logo.png">
