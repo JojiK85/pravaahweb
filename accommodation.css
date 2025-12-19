@@ -1,14 +1,13 @@
-/* accommodation.css */
-/* 🏨 PRAVAAH — Accommodation Page Styling */
+/* 🏨 PRAVAAH — Accommodation Page Styling
+   Fully aligned with style.css (Fonts, Colors, Glow)
+*/
 
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
-
+/* ---------- PAGE BACKGROUND (SAME AS style.css) ---------- */
 body {
-  font-family: 'Orbitron', sans-serif;
   background: linear-gradient(120deg, #2c1a55, #3e5d75, #022c43, #5b2a86);
   background-size: 400% 400%;
   animation: gradientMove 15s ease infinite;
-  color: white;
+  color: var(--text);
   margin: 0;
   padding-top: 80px;
 }
@@ -40,17 +39,18 @@ body {
 
 .accommodation-content h1 {
   font-size: 3rem;
-  color: cyan;
-  text-shadow: 0 0 15px rgba(0,255,255,0.6);
+  color: var(--primary);
+  text-shadow: 0 0 14px var(--primary-soft);
 }
 
 .accommodation-content p {
   font-size: 1.1rem;
   margin: 20px 0;
-  color: #ddd;
+  color: var(--muted);
   line-height: 1.6;
 }
 
+/* ---------- HERO BUTTONS ---------- */
 .hero-buttons {
   display: flex;
   gap: 20px;
@@ -59,26 +59,27 @@ body {
 
 .hero-buttons button {
   padding: 12px 30px;
-  border: 2px solid cyan;
+  border: 2px solid var(--primary-border);
   border-radius: 30px;
   background: transparent;
-  color: cyan;
+  color: var(--primary);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .hero-buttons button:hover {
-  background: cyan;
-  color: black;
+  background: var(--primary);
+  color: #001c20;
   transform: scale(1.08);
-  box-shadow: 0 0 25px cyan;
+  box-shadow: 0 0 18px var(--primary-soft);
 }
 
+/* ---------- HERO IMAGE ---------- */
 .accommodation-content .image img {
   width: 420px;
   border-radius: 20px;
-  box-shadow: 0 0 25px rgba(0,255,255,0.4);
+  box-shadow: 0 0 22px var(--primary-soft);
 }
 
 /* 🧾 ACCOMMODATION CARDS */
@@ -94,34 +95,33 @@ body {
 .card {
   flex: 1 1 400px;
   max-width: 420px;
-  height: 500px; /* ⬆️ Increased from 420px */
-  background: rgba(0, 0, 0, 0.65);
+  height: 500px;
+  background: var(--surface-darker);
   border-radius: 20px;
-  border: 1px solid cyan;
-  box-shadow: 0 0 25px rgba(0,255,255,0.3);
+  border: 1px solid var(--primary-border);
+  box-shadow: 0 0 20px rgba(36,224,236,0.25);
   padding: 35px;
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
   text-align: justify;
   box-sizing: border-box;
 }
 
 .card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 0 35px rgba(0,255,255,0.6);
+  box-shadow: 0 0 30px var(--primary-soft);
 }
 
 .card h2 {
-  color: cyan;
+  color: var(--primary);
   text-align: center;
   font-size: 1.6rem;
   margin-bottom: 15px;
 }
 
 .card p {
-  color: #ddd;
+  color: var(--muted);
   font-size: 1.05rem;
   line-height: 1.6;
   margin: 8px 0;
@@ -134,9 +134,9 @@ body {
 }
 
 .accommodation-guidelines h2 {
-  color: cyan;
+  color: var(--primary);
   font-size: 2rem;
-  text-shadow: 0 0 10px cyan;
+  text-shadow: 0 0 10px var(--primary-soft);
   margin-bottom: 40px;
 }
 
@@ -152,33 +152,32 @@ body {
 .rule-card {
   flex: 1 1 400px;
   max-width: 420px;
-  height: 500px; /* ⬆️ Increased from 420px */
-  background: rgba(0, 0, 0, 0.65);
-  border: 1px solid cyan;
+  height: 500px;
+  background: var(--surface-darker);
+  border: 1px solid var(--primary-border);
   border-radius: 20px;
-  box-shadow: 0 0 25px rgba(0,255,255,0.3);
+  box-shadow: 0 0 20px rgba(36,224,236,0.25);
   padding: 35px;
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
   text-align: justify;
   box-sizing: border-box;
 }
 
 .rule-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 0 35px rgba(0,255,255,0.6);
+  box-shadow: 0 0 30px var(--primary-soft);
 }
 
 .rule-card i {
   font-size: 2.2rem;
-  color: cyan;
+  color: var(--primary);
   margin-bottom: 10px;
 }
 
 .rule-card h3 {
-  color: cyan;
+  color: var(--primary);
   font-size: 1.5rem;
   text-align: center;
   margin-bottom: 15px;
@@ -188,8 +187,7 @@ body {
   list-style: none;
   padding-left: 0;
   margin: 0;
-  color: #ddd;
-  text-align: justify;
+  color: var(--muted);
 }
 
 .rule-card li {
@@ -202,36 +200,27 @@ body {
 
 .rule-card li::before {
   content: "•";
-  color: cyan;
+  color: var(--primary);
   position: absolute;
   left: 0;
 }
 
-/* 🌐 RESPONSIVE DESIGN (MOBILE) */
+/* 🌐 RESPONSIVE DESIGN */
 @media (max-width: 900px) {
-  .accommodation-hero {
+  .accommodation-hero,
+  .accommodation-content {
     flex-direction: column;
     text-align: center;
     padding: 50px 4% 40px;
   }
 
-  .accommodation-content {
-    flex-direction: column;
-    text-align: center;
-    gap: 1.5rem;
-  }
-
   .accommodation-content h1 {
     font-size: 2.2rem;
-    line-height: 1.2;
-    word-wrap: break-word;
   }
 
   .accommodation-content p {
     font-size: 1rem;
-    margin: 10px auto;
     line-height: 1.5;
-    word-wrap: break-word;
   }
 
   .accommodation-content .image img {
@@ -240,7 +229,6 @@ body {
     margin-top: 15px;
   }
 
-  /* Buttons vertically stacked */
   .hero-buttons {
     flex-direction: column;
     align-items: center;
@@ -253,7 +241,6 @@ body {
     font-size: 0.9rem;
   }
 
-  /* Cards stacked vertically — uniform size */
   .accommodation-cards,
   .rules-container {
     flex-direction: column;
@@ -266,23 +253,8 @@ body {
   .rule-card {
     width: 95%;
     max-width: 600px;
-    height: 560px; /* ⬆️ Increased from 480px */
+    height: auto;
     padding: 30px 22px;
     font-size: 0.95rem;
-    text-align: justify;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-  }
-
-  .card h2,
-  .rule-card h3 {
-    font-size: 1.4rem;
-    margin-bottom: 10px;
-  }
-
-  .card p,
-  .rule-card li {
-    font-size: 0.95rem;
-    line-height: 1.5;
   }
 }
