@@ -2,9 +2,11 @@
  *  PRAVAAH 2026 — FINAL SCRIPT.JS
  *  (Complete working version)
  *******************************/
+
 import { auth } from "./auth.js";
-import { onAuthStateChanged } from
-  "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { onAuthStateChanged, signOut } 
+  from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
 
 const scriptURL = "/api/pravaah";
 
@@ -616,5 +618,6 @@ payBtn.addEventListener("click", async () => {
 
   rzp.open();
 });
+
 
 
