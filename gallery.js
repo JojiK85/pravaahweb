@@ -133,36 +133,31 @@ document.addEventListener("DOMContentLoaded", () => {
      📱 NAVBAR TOGGLE (UNCHANGED, SAFE)
   =========================================================== */
 
-  const menuToggle = document.getElementById("mobile-menu");
-  const navMenu = document.getElementById("menu");
+  /* ===========================================================
+   📱 NAVBAR TOGGLE (FIXED)
+=========================================================== */
 
-  if (menuToggle && navMenu) {
-    menuToggle.addEventListener("click", (e) => {
-      e.stopPropagation();
-      navMenu.classList.toggle("active");
-      const expanded =
-        menuToggle.getAttribute("aria-expanded") === "true";
-      menuToggle.setAttribute(
-        "aria-expanded",
-        (!expanded).toString()
-      );
-    });
+const menuToggle = document.getElementById("menuToggle");
+const navMenu = document.getElementById("menu");
 
-    document.addEventListener("click", (e) => {
-      if (
-        !navMenu.contains(e.target) &&
-        !menuToggle.contains(e.target)
-      ) {
-        navMenu.classList.remove("active");
-        menuToggle.setAttribute("aria-expanded", "false");
-      }
-    });
+if (menuToggle && navMenu) {
+  menuToggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    navMenu.classList.toggle("open");
+  });
 
-    navMenu.querySelectorAll("a").forEach((link) => {
-      link.addEventListener("click", () => {
-        navMenu.classList.remove("active");
-        menuToggle.setAttribute("aria-expanded", "false");
-      });
+  document.addEventListener("click", (e) => {
+    if (!navMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+      navMenu.classList.remove("open");
+    }
+  });
+
+  navMenu.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+      navMenu.classList.remove("open");
     });
-  }
+  });
+}
+
 });
+
