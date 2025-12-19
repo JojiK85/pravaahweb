@@ -331,4 +331,10 @@ body {
   text-shadow: 0 0 6px rgba(0, 255, 255, 0.6); /* 🔽 controlled glow */
   transform: scale(1.1);
 }
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 🔥 bigger boxes */
+  gap: 32px; /* slightly more breathing space */
+}
+
 
