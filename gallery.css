@@ -383,6 +383,16 @@ footer {
     padding: 12px 16px;
   }
 }
+/* ===============================
+   MOBILE: ALWAYS SHOW IMAGE TITLE
+=============================== */
+@media (max-width: 600px) {
+  .gallery-item::after {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+  }
+}
+
 
 
 
