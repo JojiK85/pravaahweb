@@ -165,7 +165,13 @@ const API_BASE = "/api/pravaah";
 /* ================= PARAMS ================= */
 const params = new URLSearchParams(location.search);
 const paymentId = params.get("paymentId");
-const scanner = params.get("scanner") || "WEB_ADMIN";
+const scanner = params.get("scanner");
+
+if (!scanner) {
+  alert("Scanner identity missing. Please scan again.");
+  location.href = "scan.html";
+}
+
 
 if (!paymentId) {
   alert("Invalid QR");
