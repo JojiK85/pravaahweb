@@ -283,6 +283,13 @@
   fileInput.addEventListener("change", () => {
     if (fileInput.files.length > 0) {
       selectedFile = fileInput.files[0];
+
+      if (selectedFile.size > 8 * 1024 * 1024) {
+        alert("File too large. Max 8 MB allowed.");
+        fileInput.value = "";
+        return;
+      }
+
       fileNameEl.textContent = selectedFile.name;
       filePreview.style.display = "flex";
 
@@ -302,7 +309,8 @@
     filePreview.style.display = "none";
   });
 
-  const scriptURL = "https://script.google.com/macros/s/AKfycbxRF637G8IMtRR5VXM7a5ZUvbKg3OU1IMDfy5pRFSg1A_21P-wmd2jwsw3UV4-naELosA/exec";
+  const scriptURL =
+    "https://script.google.com/macros/s/AKfycbxRF637G8IMtRR5VXM7a5ZUvbKg3OU1IMDfy5pRFSg1A_21P-wmd2jwsw3UV4-naELosA/exec";
 
   document.getElementById("sponsorForm").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -325,22 +333,39 @@
     try {
       const res = await fetch(scriptURL, {
         method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        mode: "cors",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
         body: JSON.stringify(payload)
       });
 
-      const result = await res.json();
+      const rawText = await res.text();
+      console.log("RAW RESPONSE:", rawText);
+
+      let result;
+      try {
+        result = JSON.parse(rawText);
+      } catch {
+        throw new Error("Server did not return JSON");
+      }
+
       if (result.status === "success") {
         statusEl.textContent = "✔ Submitted! Redirecting...";
-        setTimeout(() => location.href = "thankyou.html", 800);
+        setTimeout(() => {
+          window.location.href = "thankyou.html";
+        }, 800);
       } else {
-        statusEl.textContent = "⚠️ " + result.message;
+        statusEl.textContent = "⚠️ " + (result.message || "Submission failed");
       }
-    } catch {
-      statusEl.textContent = "❌ Network error. Please try again.";
+    } catch (err) {
+      console.error(err);
+      statusEl.textContent =
+        "❌ Submission failed. Please try again later.";
     }
   });
 </script>
+
 <script type="module">
   import { auth, initAuth } from "./auth.js";
   import { signOut } from
@@ -370,5 +395,6 @@
 
 </body>
 </html>
+
 
 
