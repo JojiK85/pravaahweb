@@ -103,42 +103,7 @@
     }
 
     /* ---------- FOOTER ---------- */
-    footer {
-      width: 100%;
-      background: rgba(0, 0, 0, 0.25);
-      padding: 1.6rem 1rem;
-      border-top: 1px solid rgba(36,224,236,0.3);
-      text-align: center;
-      color: #bbb;
-      font-size: 0.9rem;
-      backdrop-filter: blur(6px);
-    }
-
-    footer .footer-social {
-      margin: 1rem 0;
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-    }
-
-    footer .footer-social a {
-      color: #24E0EC;
-      font-size: 1.35rem;
-      transition: transform 0.25s ease;
-    }
-
-    footer .footer-social a:hover {
-      transform: scale(1.15);
-    }
-
-    .footer-line {
-      border: none;
-      height: 1px;
-      background: rgba(36,224,236,0.3);
-      margin: 1rem auto;
-      width: 80%;
-    }
-
+    
     /* ---------- MOBILE ---------- */
     @media (max-width: 768px) {
       .thankyou-box {
@@ -265,12 +230,13 @@
   initAuth({
     requireAuth: true,
     redirectTo: "index.html",
-    showDashboard: false
+    showDashboard: true
   });
 </script>
 
 </body>
 </html>
+
 
 
 
