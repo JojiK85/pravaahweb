@@ -1,73 +1,167 @@
-// 🌌 PRAVAAH — Gallery JavaScript
-document.addEventListener('DOMContentLoaded', () => {
-  // ----- 🖼️ LIGHTBOX -----
-  const items = document.querySelectorAll('.gallery-item img');
-  const lightbox = document.getElementById('lightbox');
-  const lightboxImg = document.getElementById('lightbox-img');
-  const closeBtn = document.querySelector('.close-btn');
-  const downloadBtn = document.querySelector('.download-btn');
+// 🌌 PRAVAAH — Gallery JavaScript (FINAL, GRID + ADVANCED LIGHTBOX)
 
-  if (items.length && lightbox && lightboxImg) {
-    items.forEach(img => {
-      img.addEventListener('click', () => {
-        lightboxImg.src = img.src;
-        lightbox.style.display = 'flex';
-        if (downloadBtn) downloadBtn.setAttribute('data-url', img.src);
-      });
-    });
+document.addEventListener("DOMContentLoaded", () => {
 
-    if (closeBtn) {
-      closeBtn.addEventListener('click', () => {
-        lightbox.style.display = 'none';
-      });
-    }
+  /* ===========================================================
+     📸 GALLERY DATA (FROM GRID)
+  =========================================================== */
 
-    if (downloadBtn) {
-      downloadBtn.addEventListener('click', () => {
-        const imageURL = downloadBtn.getAttribute('data-url');
-        const fileName = imageURL.split('/').pop();
-        const a = document.createElement('a');
-        a.href = imageURL;
-        a.download = fileName || 'image.jpg';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      });
-    }
+  const galleryItems = document.querySelectorAll(".gallery-item");
+  const galleryImages = Array.from(galleryItems).map((item, index) => {
+    const img = item.querySelector("img");
+    return {
+      src: img.src,
+      title: `PRAVAAH Moment ${index + 1}`,
+      desc: "Experience the Chronicles of Time — PRAVAAH 2K25."
+    };
+  });
 
-    // Close lightbox when clicking outside image
-    lightbox.addEventListener('click', (e) => {
-      if (e.target === lightbox) lightbox.style.display = 'none';
-    });
+  let currentIndex = 0;
+
+  /* ===========================================================
+     🔍 LIGHTBOX ELEMENTS
+  =========================================================== */
+
+  const lightbox = document.getElementById("lightbox");
+
+  // Inject advanced lightbox structure (same as Home)
+  lightbox.innerHTML = `
+    <div class="lightbox-top">
+      <span class="close-lightbox"><i class="fa-solid fa-xmark"></i></span>
+      <a id="downloadIcon" class="download-icon" download>
+        <i class="fa-solid fa-download"></i>
+      </a>
+    </div>
+
+    <div class="lb-arrow left"><i class="fa-solid fa-chevron-left"></i></div>
+
+    <img id="lightboxImg" />
+
+    <div class="lb-arrow right"><i class="fa-solid fa-chevron-right"></i></div>
+
+    <div class="lightbox-info">
+      <h3 id="lightboxTitle"></h3>
+      <p id="lightboxDesc"></p>
+    </div>
+  `;
+
+  const lbImg = document.getElementById("lightboxImg");
+  const lbTitle = document.getElementById("lightboxTitle");
+  const lbDesc = document.getElementById("lightboxDesc");
+  const downloadIcon = document.getElementById("downloadIcon");
+
+  const closeBtn = document.querySelector(".close-lightbox");
+  const leftArrow = document.querySelector(".lb-arrow.left");
+  const rightArrow = document.querySelector(".lb-arrow.right");
+
+  /* ===========================================================
+     🔄 FUNCTIONS
+  =========================================================== */
+
+  function showImage(index) {
+    lbImg.style.opacity = 0;
+
+    setTimeout(() => {
+      const item = galleryImages[index];
+      lbImg.src = item.src;
+      lbTitle.textContent = item.title;
+      lbDesc.textContent = item.desc;
+
+      downloadIcon.href = item.src;
+      downloadIcon.setAttribute(
+        "download",
+        item.title.replace(/\s+/g, "_") + ".jpg"
+      );
+
+      lbImg.style.opacity = 1;
+    }, 200);
   }
 
-  // ----- 📱 NAVBAR TOGGLE -----
-  const menuToggle = document.getElementById('mobile-menu');
- // ✅ fixed ID
-  const navMenu = document.getElementById('menu');
+  function openLightbox(index) {
+    currentIndex = index;
+    showImage(index);
+    lightbox.classList.remove("hidden");
+  }
+
+  function closeLightbox() {
+    lightbox.classList.add("hidden");
+  }
+
+  /* ===========================================================
+     🖱️ CLICK EVENTS (GRID + MAGNIFY ICON)
+  =========================================================== */
+
+  galleryItems.forEach((item, index) => {
+    item.addEventListener("click", () => openLightbox(index));
+  });
+
+  closeBtn.addEventListener("click", closeLightbox);
+
+  leftArrow.addEventListener("click", () => {
+    currentIndex =
+      (currentIndex - 1 + galleryImages.length) % galleryImages.length;
+    showImage(currentIndex);
+  });
+
+  rightArrow.addEventListener("click", () => {
+    currentIndex = (currentIndex + 1) % galleryImages.length;
+    showImage(currentIndex);
+  });
+
+  // Close when clicking background
+  lightbox.addEventListener("click", (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+
+  /* ===========================================================
+     📱 SWIPE SUPPORT (MOBILE)
+  =========================================================== */
+
+  let startX = 0;
+
+  lightbox.addEventListener("touchstart", (e) => {
+    startX = e.changedTouches[0].clientX;
+  });
+
+  lightbox.addEventListener("touchend", (e) => {
+    const endX = e.changedTouches[0].clientX;
+    if (startX - endX > 60) rightArrow.click();
+    if (endX - startX > 60) leftArrow.click();
+  });
+
+  /* ===========================================================
+     📱 NAVBAR TOGGLE (UNCHANGED, SAFE)
+  =========================================================== */
+
+  const menuToggle = document.getElementById("mobile-menu");
+  const navMenu = document.getElementById("menu");
 
   if (menuToggle && navMenu) {
-    // Toggle open/close
-    menuToggle.addEventListener('click', (e) => {
+    menuToggle.addEventListener("click", (e) => {
       e.stopPropagation();
-      navMenu.classList.toggle('active');
-      const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
-      menuToggle.setAttribute('aria-expanded', (!expanded).toString());
+      navMenu.classList.toggle("active");
+      const expanded =
+        menuToggle.getAttribute("aria-expanded") === "true";
+      menuToggle.setAttribute(
+        "aria-expanded",
+        (!expanded).toString()
+      );
     });
 
-    // Close when clicking outside menu
-    document.addEventListener('click', (e) => {
-      if (!navMenu.contains(e.target) && !menuToggle.contains(e.target)) {
-        navMenu.classList.remove('active');
-        menuToggle.setAttribute('aria-expanded', 'false');
+    document.addEventListener("click", (e) => {
+      if (
+        !navMenu.contains(e.target) &&
+        !menuToggle.contains(e.target)
+      ) {
+        navMenu.classList.remove("active");
+        menuToggle.setAttribute("aria-expanded", "false");
       }
     });
 
-    // Close when clicking a menu link
-    navMenu.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        navMenu.classList.remove('active');
-        menuToggle.setAttribute('aria-expanded', 'false');
+    navMenu.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => {
+        navMenu.classList.remove("active");
+        menuToggle.setAttribute("aria-expanded", "false");
       });
     });
   }
