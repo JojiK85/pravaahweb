@@ -7,6 +7,7 @@
 
   <!-- GLOBAL STYLES -->
   <link rel="stylesheet" href="style.css" />
+<script type="module" src="auth.js"></script>
 
   <!-- FONTS -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -340,7 +341,34 @@
     }
   });
 </script>
+<script type="module">
+  import { auth, initAuth } from "./auth.js";
+  import { signOut } from
+    "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+  /* 🔐 AUTH + ROLE CHECK */
+  initAuth({
+    requireAuth: true,
+    redirectTo: "index.html",
+    showDashboard: true
+  });
+
+  /* 🚪 LOGOUT */
+  document.addEventListener("DOMContentLoaded", () => {
+    const logoutDesktop = document.getElementById("logoutDesktop");
+    const logoutMobile  = document.querySelector(".mobile-only a");
+
+    const logout = async () => {
+      await signOut(auth);
+      window.location.href = "index.html";
+    };
+
+    logoutDesktop?.addEventListener("click", logout);
+    logoutMobile?.addEventListener("click", logout);
+  });
+</script>
 
 </body>
 </html>
+
 
