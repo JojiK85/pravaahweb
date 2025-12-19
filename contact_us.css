@@ -155,47 +155,61 @@ body {
 /* ===============================
    MOBILE VIEW
 =============================== */
+/* ===============================
+   📱 MOBILE VIEW (WIDER CARDS)
+=============================== */
 @media (max-width: 650px) {
+
   .pg-heading {
-    font-size: 2.2rem;
-    margin-top: 100px;
+    font-size: 2.3rem;
+    margin-top: 95px;
   }
 
   .pg-subtext {
-    font-size: 0.95rem;
-    margin-bottom: 25px;
+    font-size: 1rem;
+    margin-bottom: 28px;
   }
 
+  /* Stack cards vertically */
   .team-grid {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 0 8% 60px;
-    gap: 35px;
+    padding: 0 4% 60px;   /* 🔥 less side padding */
+    gap: 32px;
   }
 
+  /* 🔥 MAKE CARD WIDER */
   .team-card {
-    width: 95%;
-    max-width: 520px;
-    padding: 28px 22px;         /* 🔽 compact but wide */
-    box-shadow: 0 0 30px rgba(0,255,255,0.25);
+    width: 100%;         /* full available width */
+    max-width: 100%;     /* no restriction */
+    padding: 30px 22px;  /* balanced height */
+    border-radius: 22px;
   }
 
   .team-card img {
-    width: 125px;
-    height: 125px;
+    width: 135px;
+    height: 135px;
   }
 
   .team-card h3 {
-    font-size: 1.3rem;
+    font-size: 1.35rem;
   }
 
   .team-card p {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    text-align: center;
+  }
+
+  .card-actions {
+    margin-top: 18px;
   }
 
   .card-actions a {
-    font-size: 0.9rem;
-    padding: 8px 22px;
+    width: 70%;          /* 🔥 button looks strong */
+    padding: 10px 0;
+    font-size: 0.95rem;
   }
 }
+
+
