@@ -332,10 +332,11 @@ if (track) {
   track.style.setProperty("--distance", `-${totalWidth}px`);
 
   /* Speed logic: bigger content = slower & smoother */
-  track.style.setProperty("--duration", `${totalWidth / 80}s`);
+  track.style.setProperty("--duration", `${totalWidth / 100}s`);
 }
 
 });
+
 
 
 
