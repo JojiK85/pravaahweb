@@ -1541,6 +1541,27 @@ video:-webkit-full-screen {
     transform: scale(1) !important;
   }
 }
+/* FIX: let image decide height */
+.slide {
+  width: 400px;
+  height: auto;                 /* 🔑 remove fixed height */
+  aspect-ratio: 16 / 9;         /* consistent card ratio */
+  background: black;
+}
+
+.slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;          /* full image visible */
+  background: black;
+}
+@media (max-width: 650px) {
+  .slide {
+    width: 300px;
+    aspect-ratio: 16 / 9;
+  }
+}
+
 
 
 
