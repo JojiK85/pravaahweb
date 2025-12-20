@@ -137,21 +137,33 @@ button {
 </div>
 
 <script>
+/* ================= CONFIG ================= */
 const API_BASE = "/api/pravaah";
 
+/* ================= PARAMS ================= */
 const params = new URLSearchParams(location.search);
 const paymentId = params.get("paymentId");
-const scanner = params.get("scanner");
+const scanner   = params.get("scanner");
 
-if (!scanner || !paymentId) {
+if (!paymentId || !scanner) {
   alert("Invalid scan");
   location.href = "scan.html";
 }
 
+/* ================= DOM ================= */
+const statusBox  = document.getElementById("statusBox");
 const eventSelect = document.getElementById("eventSelect");
 const list = document.getElementById("list");
-const statusBox = document.getElementById("statusBox");
 
+/* ================= DAY MAP (ADMIN SAME) ================= */
+const DAY_MAP = {
+  "2026-02-05": "day0",
+  "2026-02-06": "day1",
+  "2026-02-07": "day2",
+  "2026-02-08": "day3"
+};
+
+/* ================= EVENTS ================= */
 const DAY_EVENTS = {
   day1: ["General Quiz", "Nukkad", "Robowars"],
   day2: ["Film Quiz", "Battle of Bands", "Roborace"],
@@ -160,6 +172,7 @@ const DAY_EVENTS = {
 
 let passData = null;
 let participants = [];
+let todayKey = null;
 
 /* ================= FETCH PASS ================= */
 fetch(`${API_BASE}?type=searchPass&query=${encodeURIComponent(paymentId)}`)
@@ -168,71 +181,74 @@ fetch(`${API_BASE}?type=searchPass&query=${encodeURIComponent(paymentId)}`)
     if (!rows.length) throw "Invalid pass";
     passData = rows[0];
     participants = rows;
-    validatePass();
+    validateLikeAdmin();
   })
   .catch(err => {
     statusBox.className = "status invalid";
     statusBox.textContent = err;
   });
 
-/* ================= VALIDATION ================= */
-function validatePass() {
-  const DAY_MAP = {
-    "2026-02-05": "day0",
-    "2025-12-20": "day1",
-    "2026-02-07": "day2",
-    "2026-02-08": "day3"
-  };
-
+/* ================= ADMIN-STYLE VALIDATION ================= */
+function validateLikeAdmin() {
   const today = new Date().toISOString().slice(0,10);
-  const todayKey = DAY_MAP[today];
+  todayKey = DAY_MAP[today];
+
+  const passType = passData["Pass Type"];
+  const selectedDays = String(passData["Selected Days"] || "").toLowerCase();
+  const starnite = passData["Starnite"] === "YES";
 
   let valid = false;
-  let reason = "Not valid today";
+  let reason = "Pass not valid today";
 
-  if (passData["Pass Type"] === "Fest Pass") {
-    valid = true; reason = "Fest Pass";
-  } else if ((passData["Selected Days"]||"").includes(todayKey)) {
-    valid = true; reason = "Valid for today";
+  if (passType === "Fest Pass") {
+    valid = true;
+    reason = "Fest Pass";
+  }
+  else if (passType === "Starnite Pass") {
+    valid = todayKey === "day3";
+    reason = valid ? "StarNite Access" : "StarNite valid only on Day 3";
+  }
+  else if (selectedDays.includes(todayKey)) {
+    valid = true;
+    reason = "Valid for today";
   }
 
   statusBox.className = "status " + (valid ? "valid" : "invalid");
-  statusBox.innerHTML = `${valid ? "✔ VALID" : "✖ INVALID"}<br><small>${reason}</small>`;
+  statusBox.innerHTML =
+    `${valid ? "✔ VALID FOR TODAY" : "✖ NOT VALID TODAY"}<br><small>${reason}</small>`;
 
   if (!valid) return;
 
-  DAY_EVENTS[todayKey]?.forEach(e => {
+  DAY_EVENTS[todayKey]?.forEach(ev => {
     const o = document.createElement("option");
-    o.value = e;
-    o.textContent = e;
+    o.value = ev;
+    o.textContent = ev;
     eventSelect.appendChild(o);
   });
 
   eventSelect.addEventListener("change", renderParticipants);
 }
 
-/* ================= PARTICIPANTS ================= */
+/* ================= PARTICIPANTS (ADMIN-STYLE) ================= */
 function renderParticipants() {
   list.innerHTML = "";
   if (!eventSelect.value) return;
 
   const eventName = eventSelect.value;
-  let registered = [];
+  let entered = false;
 
   try {
     const evObj = JSON.parse(passData.Events || "{}");
-    Object.values(evObj).forEach(arr => arr.forEach(e => {
-      if (e === eventName) registered.push(true);
-    }));
+    entered = evObj[todayKey]?.includes(eventName);
   } catch {}
 
-  participants.forEach((p, idx) => {
-    const entered = registered[idx] === true;
-
+  participants.forEach(p => {
     const row = document.createElement("div");
     row.className = "row" + (entered ? " disabled" : "");
+
     row.innerHTML = `
-      <input type="checkbox" ${entered ? "checked disabled" : "checked"}
+      <input type="checkbox"
+        ${entered ? "checked disabled" : "checked"}
         data-name="${p.Name}"
         data-email="${p.Email}"
         data-phone="${p.Phone}"
@@ -248,7 +264,7 @@ function submitEntry() {
   if (!eventSelect.value) return alert("Select event");
 
   const checked = [...document.querySelectorAll("input[type=checkbox]:checked:not(:disabled)")];
-  if (!checked.length) return alert("No new participants selected");
+  if (!checked.length) return alert("No new participants");
 
   const payloadParticipants = checked.map(cb => ({
     paymentId,
