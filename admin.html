@@ -159,26 +159,56 @@ setInterval(updateTime, 1000);
 /* ================= STATE ================= */
 let passData = null;
 let participants = [];
+let gateLogs = [];
+let participantState = {}; // name -> INSIDE / OUTSIDE
+
+const entryBtn = document.querySelector(".entry");
+const exitBtn  = document.querySelector(".exit");
 
 /* ================= LOAD PASS ================= */
-fetch(`${API_BASE}?type=searchPass&query=${encodeURIComponent(paymentId)}`)
-  .then(r => r.json())
-  .then(res => {
-    if (!Array.isArray(res) || !res.length) {
-      throw new Error("Invalid or unknown pass");
-    }
+Promise.all([
+  fetch(`${API_BASE}?type=searchPass&query=${encodeURIComponent(paymentId)}`).then(r=>r.json()),
+  fetch(`${API_BASE}?type=gatelogs&paymentId=${encodeURIComponent(paymentId)}`).then(r=>r.json())
+])
+.then(([passRes, logs]) => {
+  if (!Array.isArray(passRes) || !passRes.length) {
+    throw new Error("Invalid or unknown pass");
+  }
 
-    passData = res[0];
-    participants = res;
+  passData = passRes[0];
+  participants = passRes;
+  gateLogs = logs || [];
 
-    renderPass();
-    renderParticipants();
-  })
-  .catch(err => {
-    alert(err.message);
-    location.href = "scan.html";
+  computeParticipantState();
+  renderPass();
+  renderParticipants();
+})
+.catch(err => {
+  alert(err.message);
+  location.href = "scan.html";
+});
+
+/* ================= PARTICIPANT STATE ================= */
+function computeParticipantState() {
+  participantState = {};
+
+  participants.forEach(p => {
+    participantState[p.Name] = "OUTSIDE";
   });
 
+  gateLogs.slice().reverse().forEach(log => {
+    if (!log.Name || participantState[log.Name]) {
+      if (log.Action === "ENTRY" || log.Action === "AUTO_CARRY") {
+        participantState[log.Name] = "INSIDE";
+      }
+      if (log.Action === "EXIT" || log.Action === "AUTO_EXIT") {
+        participantState[log.Name] = "OUTSIDE";
+      }
+    }
+  });
+}
+
+/* ================= PASS INFO ================= */
 function renderPass() {
   document.getElementById("passInfo").innerHTML = `
     <p><strong>Payment ID:</strong> ${passData["Payment ID"]}</p>
@@ -186,45 +216,62 @@ function renderPass() {
     <p><strong>Selected Days:</strong> ${passData["Selected Days"] || "—"}</p>
     <p><strong>StarNite:</strong> ${passData["Starnite"] || "—"}</p>
   `;
-
-  // 🔍 VALIDATE GATE ACCESS
-  fetch(`${API_BASE}?type=validateGate&paymentId=${encodeURIComponent(paymentId)}`)
-    .then(r => r.json())
-    .then(v => {
-      const status = document.getElementById("statusBox");
-
-      if (!v.valid) {
-        status.className = "status invalid";
-        status.innerHTML = `✖ ACCESS DENIED<br><small>${v.reason}</small>`;
-        disableActions();
-      } else {
-        status.className = "status valid";
-        status.innerHTML = `✔ ACCESS GRANTED<br><small>${v.reason}</small>`;
-      }
-    });
 }
 
-
+/* ================= PARTICIPANTS ================= */
 function renderParticipants() {
   document.getElementById("participantsBox").innerHTML =
     "<h4>Select Participants</h4>" +
-    participants.map(p => `
+    participants.map(p => {
+      const state = participantState[p.Name];
+      const color = state === "INSIDE" ? "#ffb703" : "#00ffcc";
+      const label = state === "INSIDE" ? "INSIDE" : "OUTSIDE";
+
+      return `
       <div class="participant">
-        <input type="checkbox" checked
+        <input type="checkbox"
           data-name="${p.Name}"
           data-email="${p.Email}"
           data-phone="${p.Phone}"
-          data-college="${p.College}">
-        <span><strong>${p.Name}</strong><br>${p.Email}</span>
-      </div>
-    `).join("");
+          data-college="${p.College}"
+          data-state="${state}"
+          onchange="updateButtons()">
+        <span>
+          <strong>${p.Name}</strong><br>
+          ${p.Email}<br>
+          <small style="color:${color};font-weight:800">${label}</small>
+        </span>
+      </div>`;
+    }).join("");
+
+  updateButtons();
 }
-function disableActions() {
-  document.querySelectorAll(".btn").forEach(b => {
-    b.disabled = true;
-    b.style.opacity = "0.5";
-    b.style.cursor = "not-allowed";
-  });
+
+/* ================= BUTTON LOGIC ================= */
+function updateButtons() {
+  const selected = [...document.querySelectorAll("input[type=checkbox]:checked")];
+
+  if (!selected.length) {
+    entryBtn.disabled = true;
+    exitBtn.disabled = true;
+    return;
+  }
+
+  const states = new Set(selected.map(cb => cb.dataset.state));
+
+  if (states.size > 1) {
+    entryBtn.disabled = true;
+    exitBtn.disabled = true;
+    return;
+  }
+
+  if (states.has("INSIDE")) {
+    entryBtn.disabled = true;
+    exitBtn.disabled = false;
+  } else {
+    entryBtn.disabled = false;
+    exitBtn.disabled = true;
+  }
 }
 
 /* ================= SUBMIT ================= */
@@ -235,6 +282,23 @@ function submitAction(action) {
     return;
   }
 
+  const states = new Set(selected.map(cb => cb.dataset.state));
+
+  if (states.size > 1) {
+    alert("Cannot mix ENTRY and EXIT participants");
+    return;
+  }
+
+  if (action === "ENTRY" && states.has("INSIDE")) {
+    alert("Selected participants are already inside");
+    return;
+  }
+
+  if (action === "EXIT" && states.has("OUTSIDE")) {
+    alert("Selected participants are not inside campus");
+    return;
+  }
+
   Promise.all(
     selected.map(cb =>
       fetch(API_BASE, {
@@ -242,8 +306,8 @@ function submitAction(action) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           logType: action === "ENTRY" ? "GATE_ENTRY" : "GATE_EXIT",
-          action: action,                     // ENTRY / EXIT
-          paymentId: paymentId,
+          action,
+          paymentId,
           name: cb.dataset.name,
           email: cb.dataset.email,
           phone: cb.dataset.phone,
@@ -252,28 +316,20 @@ function submitAction(action) {
           scanner: "WEB_ADMIN",
           scanMode: "GATE"
         })
-      })
-      .then(r => r.json())   // ✅ parse response
+      }).then(r => r.json())
     )
   )
   .then(results => {
-    // ❌ If ANY participant failed, stop
     const failed = results.find(r => r.ok === false);
-    if (failed) {
-      throw new Error(failed.error || "Gate action denied");
-    }
+    if (failed) throw new Error(failed.error || "Gate action denied");
 
-    // ✅ All successful
-    alert(`Gate ${action} recorded successfully`);
+    alert(`Gate ${action} successful`);
     location.href = "dashboard.html";
   })
-  .catch(err => {
-    alert(err.message);
-  });
+  .catch(err => alert(err.message));
 }
-
-
 </script>
+
 
 </body>
 </html>
