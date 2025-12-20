@@ -307,3 +307,4 @@ document.addEventListener("DOMContentLoaded", () => {
     if (endX - startX > 60) leftArrow.click();
   });
 });
+
