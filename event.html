@@ -83,6 +83,26 @@ body{
 }
 .btn:disabled{opacity:.4;cursor:not-allowed}
 .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
+  .actions-vertical{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  margin-top:18px;
+}
+
+.actions-row{
+  display:flex;
+  gap:12px;
+}
+
+.btn.full{
+  width:100%;
+}
+
+.btn.half{
+  flex:1;
+}
+
 </style>
 </head>
 
@@ -191,16 +211,16 @@ async function renderParticipants(){
 
   const eventName = eventSelect.value;
 
-  // 🔹 FETCH EVENT REGISTRATIONS (Passes Spreadsheet)
-  const regRes = await fetch(
-    `${API}?type=eventRegistrations&event=${encodeURIComponent(eventName)}`
-  );
-  const registrations = await regRes.json();
+  // 🔹 FETCH EVENT REGISTRATIONS (Passes Spreadsheet)  
 
-  // 🔹 FETCH EVENT ENTRIES (GateLogs Spreadsheet)
-  const entryRes = await fetch(
-    `${API}?type=eventEntries&event=${encodeURIComponent(eventName)}`
-  );
+  const regRes = await fetch(
+  `${API}?type=eventRegistrations&event=${encodeURIComponent(eventName)}&paymentId=${encodeURIComponent(paymentId)}`
+);
+const registrations = await regRes.json();
+const entryRes = await fetch(
+  `${API}?type=eventEntries&event=${encodeURIComponent(eventName)}&paymentId=${encodeURIComponent(paymentId)}`
+);
+;
   const entries = await entryRes.json();
 
   // 🔹 REGISTERED (by Payment ID)
