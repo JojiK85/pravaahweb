@@ -22,9 +22,9 @@ const scriptURL = "/api/pravaah";
 ======================================= */
 const EVENTS = {
   day0: [],
-  day1: ["Event 1", "Event 2", "Event 3"],
-  day2: ["Event 1", "Event 2", "Event 3"],
-  day3: ["Event 1", "Event 2", "Event 3"]
+  day1: ["General Quiz", "Nukkad", "Robowars"],
+  day2: ["Film Quiz", "Battle of Bands", "Roborace"],
+  day3: ["Street Battle", "Enigma", "Trekkon"]
 };
 
 const PRICES = {
@@ -624,6 +624,7 @@ payBtn.addEventListener("click", async () => {
 
   rzp.open();
 });
+
 
 
 
