@@ -12,19 +12,16 @@
 
 body {
   margin: 0;
-  min-height: 100svh; /* mobile-safe viewport */
+  min-height: 100svh;
   background: linear-gradient(120deg,#2c1a55,#3e5d75,#022c43,#5b2a86);
   background-size: 400% 400%;
   animation: bgMove 15s ease infinite;
   color: #e6fbff;
-
   display: flex;
   justify-content: center;
   align-items: center;
-
   padding: 16px;
 }
-
 
 @keyframes bgMove {
   0% { background-position: 0% 50%; }
@@ -89,11 +86,6 @@ select {
   margin-bottom: 14px;
 }
 
-.section h4 {
-  color: #00ffcc;
-  margin-bottom: 6px;
-}
-
 .row {
   display: flex;
   align-items: center;
@@ -105,6 +97,10 @@ select {
 .row input {
   transform: scale(1.35);
   accent-color: cyan;
+}
+
+.row.disabled {
+  opacity: 0.45;
 }
 
 button {
@@ -120,19 +116,6 @@ button {
   box-shadow: 0 0 22px cyan;
   margin-top: 16px;
 }
-
-.footer {
-  margin-top: 12px;
-  text-align: center;
-  font-size: 0.7rem;
-  opacity: 0.6;
-}
-  @media (max-height: 700px) {
-  body {
-    align-items: flex-start;
-  }
-}
-
 </style>
 </head>
 
@@ -148,46 +131,31 @@ button {
     <option value="">Select Event</option>
   </select>
 
-  <div class="section">
-    <h4>Participants</h4>
-    <div id="list"></div>
-  </div>
+  <div id="list"></div>
 
   <button onclick="submitEntry()">Confirm Entry</button>
-
-  <div class="footer">Event Scanner • PRAVAAH ’26 • IIT Bhubaneswar</div>
 </div>
 
 <script>
-/* ================= CONFIG ================= */
 const API_BASE = "/api/pravaah";
 
-/* ================= PARAMS ================= */
 const params = new URLSearchParams(location.search);
 const paymentId = params.get("paymentId");
 const scanner = params.get("scanner");
 
-if (!scanner) {
-  alert("Scanner identity missing. Please scan again.");
+if (!scanner || !paymentId) {
+  alert("Invalid scan");
   location.href = "scan.html";
 }
 
-
-if (!paymentId) {
-  alert("Invalid QR");
-  location.href = "scan.html";
-}
-
-/* ================= DOM ================= */
 const eventSelect = document.getElementById("eventSelect");
 const list = document.getElementById("list");
 const statusBox = document.getElementById("statusBox");
 
-/* ================= EVENTS (EDIT AS REQUIRED) ================= */
 const DAY_EVENTS = {
-  day1: ["DAY1: Event 1", "DAY1: Event 2","DAY1: Event 3"],
-  day2: ["DAY2: Event 1", "DAY2: Event 2"],
-  day3: ["DAY3: Event 1", "DAY3: Event 2"]
+  day1: ["General Quiz", "Nukkad", "Robowars"],
+  day2: ["Film Quiz", "Battle of Bands", "Roborace"],
+  day3: ["Street Battle", "Enigma", "Trekkon"]
 };
 
 let passData = null;
@@ -197,69 +165,79 @@ let participants = [];
 fetch(`${API_BASE}?type=searchPass&query=${encodeURIComponent(paymentId)}`)
   .then(r => r.json())
   .then(rows => {
-    if (!rows || !rows.length) throw new Error("Invalid pass");
-
+    if (!rows.length) throw "Invalid pass";
     passData = rows[0];
     participants = rows;
-
-    validatePass(passData);
-    renderParticipants();
+    validatePass();
   })
   .catch(err => {
     statusBox.className = "status invalid";
-    statusBox.innerText = err.message;
+    statusBox.textContent = err;
   });
 
 /* ================= VALIDATION ================= */
-function validatePass(pass) {
+function validatePass() {
   const DAY_MAP = {
     "2026-02-05": "day0",
-    "2025-12-19": "day1",
+    "2026-02-06": "day1",
     "2026-02-07": "day2",
     "2026-02-08": "day3"
   };
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = new Date().toISOString().slice(0,10);
   const todayKey = DAY_MAP[today];
-
-  const selected = (pass["Selected Days"] || "").toLowerCase();
-  const starnite = pass["Starnite"] === "YES";
 
   let valid = false;
   let reason = "Not valid today";
 
-  if (pass["Pass Type"] === "Fest Pass") valid = true, reason = "Fest Pass";
-  else if (starnite && todayKey === "day3") valid = true, reason = "StarNite Access";
-  else if (selected.includes(todayKey)) valid = true, reason = "Valid for today";
+  if (passData["Pass Type"] === "Fest Pass") {
+    valid = true; reason = "Fest Pass";
+  } else if ((passData["Selected Days"]||"").includes(todayKey)) {
+    valid = true; reason = "Valid for today";
+  }
 
   statusBox.className = "status " + (valid ? "valid" : "invalid");
-  statusBox.innerHTML =
-    (valid ? "✔ VALID FOR TODAY" : "✖ NOT VALID TODAY") +
-    `<br><small>${reason}</small>`;
+  statusBox.innerHTML = `${valid ? "✔ VALID" : "✖ INVALID"}<br><small>${reason}</small>`;
 
-  if (valid && DAY_EVENTS[todayKey]) {
-    DAY_EVENTS[todayKey].forEach(e => {
-      const o = document.createElement("option");
-      o.value = e;
-      o.textContent = e;
-      eventSelect.appendChild(o);
-    });
-  }
+  if (!valid) return;
+
+  DAY_EVENTS[todayKey]?.forEach(e => {
+    const o = document.createElement("option");
+    o.value = e;
+    o.textContent = e;
+    eventSelect.appendChild(o);
+  });
+
+  eventSelect.addEventListener("change", renderParticipants);
 }
 
 /* ================= PARTICIPANTS ================= */
 function renderParticipants() {
   list.innerHTML = "";
-  participants.forEach(p => {
+  if (!eventSelect.value) return;
+
+  const eventName = eventSelect.value;
+  let registered = [];
+
+  try {
+    const evObj = JSON.parse(passData.Events || "{}");
+    Object.values(evObj).forEach(arr => arr.forEach(e => {
+      if (e === eventName) registered.push(true);
+    }));
+  } catch {}
+
+  participants.forEach((p, idx) => {
+    const entered = registered[idx] === true;
+
     const row = document.createElement("div");
-    row.className = "row";
+    row.className = "row" + (entered ? " disabled" : "");
     row.innerHTML = `
-      <input type="checkbox" checked
+      <input type="checkbox" ${entered ? "checked disabled" : "checked"}
         data-name="${p.Name}"
         data-email="${p.Email}"
         data-phone="${p.Phone}"
         data-college="${p.College}">
-      <span>${p.Name}</span>
+      <span>${p.Name} ${entered ? "(Entered)" : ""}</span>
     `;
     list.appendChild(row);
   });
@@ -269,8 +247,8 @@ function renderParticipants() {
 function submitEntry() {
   if (!eventSelect.value) return alert("Select event");
 
-  const checked = [...document.querySelectorAll("input[type=checkbox]:checked")];
-  if (!checked.length) return alert("Select participants");
+  const checked = [...document.querySelectorAll("input[type=checkbox]:checked:not(:disabled)")];
+  if (!checked.length) return alert("No new participants selected");
 
   const payloadParticipants = checked.map(cb => ({
     paymentId,
@@ -294,11 +272,11 @@ function submitEntry() {
   })
   .then(r => r.json())
   .then(res => {
-    if (!res.ok) throw new Error(res.reason || "Entry denied");
-    alert("Event entry successful");
+    if (!res.ok) throw res.reason;
+    alert("Entry recorded");
     location.reload();
   })
-  .catch(err => alert(err.message));
+  .catch(err => alert(err));
 }
 </script>
 
