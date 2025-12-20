@@ -8,110 +8,52 @@
 <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-* { box-sizing: border-box; font-family: 'Exo 2', sans-serif; }
-
-body {
-  margin: 0;
-  min-height: 100vh;
-  background: linear-gradient(120deg,#2c1a55,#3e5d75,#022c43,#5b2a86);
-  background-size: 400% 400%;
-  animation: bgMove 15s ease infinite;
-  color: #e6fbff;
-  padding: 14px;
+*{box-sizing:border-box;font-family:'Exo 2',sans-serif}
+body{
+  margin:0;min-height:100vh;
+  background:linear-gradient(120deg,#2c1a55,#3e5d75,#022c43,#5b2a86);
+  background-size:400% 400%;
+  animation:bgMove 15s ease infinite;
+  color:#e6fbff;padding:14px
 }
-
-@keyframes bgMove {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+@keyframes bgMove{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
 }
-
-.container {
-  max-width: 900px;
-  margin: auto;
-  background: rgba(0,0,0,0.75);
-  border: 2px solid cyan;
-  border-radius: 22px;
-  box-shadow: 0 0 35px rgba(0,255,255,0.45);
-  padding: 20px;
+.container{
+  max-width:900px;margin:auto;
+  background:rgba(0,0,0,.75);
+  border:2px solid cyan;border-radius:22px;
+  box-shadow:0 0 35px rgba(0,255,255,.45);
+  padding:20px
 }
-
-.title {
-  text-align: center;
-  font-size: 1.6rem;
-  font-weight: 800;
-  color: cyan;
-  text-shadow: 0 0 15px cyan;
+.title{text-align:center;font-size:1.6rem;font-weight:800;color:cyan}
+.meta{text-align:center;font-size:.8rem;opacity:.75;margin-bottom:14px}
+.status{
+  padding:12px;border-radius:14px;
+  font-weight:800;text-align:center;margin-bottom:16px
 }
-
-.meta {
-  text-align: center;
-  font-size: 0.8rem;
-  opacity: 0.75;
-  margin-bottom: 14px;
+.valid{color:#00ffcc;border:1.5px solid #00ffcc}
+.invalid{color:#ff6b6b;border:1.5px solid #ff6b6b}
+.box{
+  border:1px solid rgba(0,255,255,.4);
+  padding:14px;border-radius:16px;
+  background:rgba(0,0,0,.6);margin-bottom:16px
 }
-
-.status {
-  padding: 12px;
-  border-radius: 14px;
-  font-weight: 800;
-  text-align: center;
-  margin-bottom: 16px;
+.participant{
+  display:flex;gap:10px;padding:10px 0;
+  border-bottom:1px dashed rgba(0,255,255,.3)
 }
-
-.valid {
-  color: #00ffcc;
-  border: 1.5px solid #00ffcc;
-  box-shadow: 0 0 18px rgba(0,255,200,0.6);
+.participant input{transform:scale(1.3)}
+.actions{display:flex;gap:12px}
+.btn{
+  flex:1;padding:14px;border-radius:16px;
+  font-weight:800;border:none;font-size:1rem;cursor:pointer
 }
-
-.invalid {
-  color: #ff6b6b;
-  border: 1.5px solid #ff6b6b;
-  box-shadow: 0 0 18px rgba(255,107,107,0.6);
-}
-
-.box {
-  border: 1px solid rgba(0,255,255,0.4);
-  padding: 14px;
-  border-radius: 16px;
-  background: rgba(0,0,0,0.6);
-  margin-bottom: 16px;
-  font-size: 0.9rem;
-}
-
-.participant {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 0;
-  border-bottom: 1px dashed rgba(0,255,255,0.3);
-}
-
-.participant input { transform: scale(1.3); }
-
-.actions {
-  display: flex;
-  gap: 12px;
-}
-
-.btn {
-  flex: 1;
-  padding: 14px;
-  border-radius: 16px;
-  font-weight: 800;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.entry { background: #00ffcc; }
-.exit  { background: #ff5c5c; }
-
-@media (max-width: 600px) {
-  .actions { flex-direction: column; }
-}
-  
+.entry{background:#00ffcc}
+.exit{background:#ff5c5c}
+.btn:disabled{opacity:.4;cursor:not-allowed}
 </style>
 </head>
 
@@ -119,217 +61,142 @@ body {
 
 <div class="container">
   <div class="title">PRAVAAH 2026 — Main Gate</div>
-
-  <div class="meta">
-    ⏰ <span id="nowTime"></span>
-  </div>
+  <div class="meta">⏰ <span id="nowTime"></span></div>
 
   <div id="statusBox" class="status">Loading pass…</div>
-
   <div class="box" id="passInfo"></div>
   <div class="box" id="participantsBox"></div>
 
   <div class="actions">
-    <button class="btn entry" onclick="submitAction('ENTRY')">ALLOW ENTRY</button>
-    <button class="btn exit" onclick="submitAction('EXIT')">MARK EXIT</button>
+    <button class="btn entry" disabled onclick="submitAction('ENTRY')">ALLOW ENTRY</button>
+    <button class="btn exit" disabled onclick="submitAction('EXIT')">MARK EXIT</button>
+  </div>
+
+  <div style="margin-top:14px;text-align:center">
+    <button class="btn" style="background:#111;color:cyan;border:1px solid cyan"
+      onclick="location.href='admin.html'">← Back to Admin Dashboard</button>
   </div>
 </div>
 
 <script>
-/* ================= CONFIG ================= */
-const API_BASE = "/api/pravaah";
+const API="/api/pravaah";
+const pid=new URLSearchParams(location.search).get("paymentId");
+if(!pid){alert("Missing Payment ID");location.href="scan.html"}
 
-/* ================= URL PARAMS ================= */
-const params = new URLSearchParams(window.location.search);
-const paymentId = params.get("paymentId");
+const entryBtn=document.querySelector(".entry");
+const exitBtn=document.querySelector(".exit");
 
-if (!paymentId) {
-  alert("Missing Payment ID");
-  location.href = "scan.html";
+let passData,participants=[],logs=[],state={};
+
+const DAY_MAP={
+  "2026-02-05":"day0","2026-02-06":"day1",
+  "2026-02-07":"day2","2026-02-08":"day3"
+};
+
+function now(){
+  document.getElementById("nowTime").textContent=
+    new Date().toLocaleString("en-IN",{hour12:true});
+}
+now();setInterval(now,1000);
+
+function isEntryValidToday(){
+  const today=new Date().toLocaleDateString("en-CA",{timeZone:"Asia/Kolkata"});
+  const dayKey=DAY_MAP[today];
+  if(passData["Pass Type"]==="Fest Pass") return true;
+  if(!dayKey) return false;
+  return (passData["Selected Days"]||"").toLowerCase().includes(dayKey);
 }
 
-/* ================= CLOCK ================= */
-function updateTime() {
-  document.getElementById("nowTime").textContent =
-    new Date().toLocaleString("en-IN", { hour12: true });
-}
-updateTime();
-setInterval(updateTime, 1000);
-
-/* ================= STATE ================= */
-let passData = null;
-let participants = [];
-let gateLogs = [];
-let participantState = {}; // name -> INSIDE / OUTSIDE
-
-const entryBtn = document.querySelector(".entry");
-const exitBtn  = document.querySelector(".exit");
-
-/* ================= LOAD PASS ================= */
 Promise.all([
-  fetch(`${API_BASE}?type=searchPass&query=${encodeURIComponent(paymentId)}`).then(r=>r.json()),
-  fetch(`${API_BASE}?type=gatelogs&paymentId=${encodeURIComponent(paymentId)}`).then(r=>r.json())
-])
-.then(([passRes, logs]) => {
-  if (!Array.isArray(passRes) || !passRes.length) {
-    throw new Error("Invalid or unknown pass");
-  }
+  fetch(`${API}?type=searchPass&query=${pid}`).then(r=>r.json()),
+  fetch(`${API}?type=gatelogs&paymentId=${pid}`).then(r=>r.json())
+]).then(([p,l])=>{
+  passData=p[0];participants=p;logs=l||[];
+  resolveState();render();
+}).catch(e=>{alert(e.message);location.href="scan.html"});
 
-  passData = passRes[0];
-  participants = passRes;
-  gateLogs = logs || [];
-
-  computeParticipantState();
-  renderPass();
-  renderParticipants();
-})
-.catch(err => {
-  alert(err.message);
-  location.href = "scan.html";
-});
-
-/* ================= PARTICIPANT STATE ================= */
-function computeParticipantState() {
-  participantState = {};
-
-  participants.forEach(p => {
-    participantState[p.Name] = "OUTSIDE";
-  });
-
-  gateLogs.slice().reverse().forEach(log => {
-    if (!log.Name || participantState[log.Name]) {
-      if (log.Action === "ENTRY" || log.Action === "AUTO_CARRY") {
-        participantState[log.Name] = "INSIDE";
-      }
-      if (log.Action === "EXIT" || log.Action === "AUTO_EXIT") {
-        participantState[log.Name] = "OUTSIDE";
-      }
-    }
+function resolveState(){
+  participants.forEach(p=>state[p.Name]="OUTSIDE");
+  logs.slice().reverse().forEach(l=>{
+    if(!l.Name)return;
+    if(["ENTRY","AUTO_CARRY"].includes(l.Action)) state[l.Name]="INSIDE";
+    if(["EXIT","AUTO_EXIT"].includes(l.Action)) state[l.Name]="OUTSIDE";
   });
 }
 
-/* ================= PASS INFO ================= */
-function renderPass() {
-  document.getElementById("passInfo").innerHTML = `
-    <p><strong>Payment ID:</strong> ${passData["Payment ID"]}</p>
-    <p><strong>Pass Type:</strong> ${passData["Pass Type"]}</p>
-    <p><strong>Selected Days:</strong> ${passData["Selected Days"] || "—"}</p>
-    <p><strong>StarNite:</strong> ${passData["Starnite"] || "—"}</p>
+function render(){
+  document.getElementById("passInfo").innerHTML=`
+    <b>Payment ID:</b> ${passData["Payment ID"]}<br>
+    <b>Pass Type:</b> ${passData["Pass Type"]}<br>
+    <b>Selected Days:</b> ${passData["Selected Days"]||"—"}<br>
+    <b>StarNite:</b> ${passData["Starnite"]||"—"}
   `;
-}
 
-/* ================= PARTICIPANTS ================= */
-function renderParticipants() {
-  document.getElementById("participantsBox").innerHTML =
-    "<h4>Select Participants</h4>" +
-    participants.map(p => {
-      const state = participantState[p.Name];
-      const color = state === "INSIDE" ? "#ffb703" : "#00ffcc";
-      const label = state === "INSIDE" ? "INSIDE" : "OUTSIDE";
+  const valid=isEntryValidToday();
+  const sb=document.getElementById("statusBox");
+  sb.className="status "+(valid?"valid":"invalid");
+  sb.innerHTML=valid?"✔ Entry allowed today":"⚠ Entry expired — Exit allowed";
 
+  document.getElementById("participantsBox").innerHTML=
+    "<h4>Select Participants</h4>"+
+    participants.map(p=>{
+      const s=state[p.Name];
+      const disable=(s==="OUTSIDE"&&!valid)?"disabled":"";
       return `
       <div class="participant">
-        <input type="checkbox"
-          data-name="${p.Name}"
-          data-email="${p.Email}"
-          data-phone="${p.Phone}"
-          data-college="${p.College}"
-          data-state="${state}"
-          onchange="updateButtons()">
-        <span>
-          <strong>${p.Name}</strong><br>
-          ${p.Email}<br>
-          <small style="color:${color};font-weight:800">${label}</small>
+        <input type="checkbox" ${disable}
+          data-name="${p.Name}" data-state="${s}"
+          data-email="${p.Email}" data-phone="${p.Phone}"
+          data-college="${p.College}" onchange="updateButtons()">
+        <span><b>${p.Name}</b><br>${p.Email}<br>
+        <small style="color:${s==="INSIDE"?"#ffb703":"#00ffcc"}">${s}</small>
         </span>
       </div>`;
     }).join("");
-
-  updateButtons();
 }
 
-/* ================= BUTTON LOGIC ================= */
-function updateButtons() {
-  const selected = [...document.querySelectorAll("input[type=checkbox]:checked")];
+function updateButtons(){
+  const sel=[...document.querySelectorAll("input:checked")];
+  entryBtn.disabled=true;exitBtn.disabled=true;
+  if(!sel.length)return;
 
-  if (!selected.length) {
-    entryBtn.disabled = true;
-    exitBtn.disabled = true;
-    return;
-  }
+  const inside=sel.some(c=>c.dataset.state==="INSIDE");
+  const outside=sel.some(c=>c.dataset.state==="OUTSIDE");
 
-  const states = new Set(selected.map(cb => cb.dataset.state));
-
-  if (states.size > 1) {
-    entryBtn.disabled = true;
-    exitBtn.disabled = true;
-    return;
-  }
-
-  if (states.has("INSIDE")) {
-    entryBtn.disabled = true;
-    exitBtn.disabled = false;
-  } else {
-    entryBtn.disabled = false;
-    exitBtn.disabled = true;
-  }
+  if(inside&&outside)return;
+  if(inside) exitBtn.disabled=false;
+  if(outside&&isEntryValidToday()) entryBtn.disabled=false;
 }
 
-/* ================= SUBMIT ================= */
-function submitAction(action) {
-  const selected = [...document.querySelectorAll("input[type=checkbox]:checked")];
-  if (!selected.length) {
-    alert("Select at least one participant");
-    return;
-  }
+function submitAction(action){
+  const sel=[...document.querySelectorAll("input:checked")];
+  if(!sel.length)return alert("Select participants");
 
-  const states = new Set(selected.map(cb => cb.dataset.state));
+  const inside=sel.some(c=>c.dataset.state==="INSIDE");
+  const outside=sel.some(c=>c.dataset.state==="OUTSIDE");
+  if(inside&&outside)return alert("Cannot mix INSIDE & OUTSIDE");
 
-  if (states.size > 1) {
-    alert("Cannot mix ENTRY and EXIT participants");
-    return;
-  }
+  if(action==="ENTRY"&&!isEntryValidToday())return alert("Entry expired");
+  if(action==="ENTRY"&&inside)return alert("Already inside");
+  if(action==="EXIT"&&outside)return alert("Not inside");
 
-  if (action === "ENTRY" && states.has("INSIDE")) {
-    alert("Selected participants are already inside");
-    return;
-  }
-
-  if (action === "EXIT" && states.has("OUTSIDE")) {
-    alert("Selected participants are not inside campus");
-    return;
-  }
-
-  Promise.all(
-    selected.map(cb =>
-      fetch(API_BASE, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          logType: action === "ENTRY" ? "GATE_ENTRY" : "GATE_EXIT",
-          action,
-          paymentId,
-          name: cb.dataset.name,
-          email: cb.dataset.email,
-          phone: cb.dataset.phone,
-          college: cb.dataset.college,
-          passType: passData["Pass Type"],
-          scanner: "WEB_ADMIN",
-          scanMode: "GATE"
-        })
-      }).then(r => r.json())
-    )
-  )
-  .then(results => {
-    const failed = results.find(r => r.ok === false);
-    if (failed) throw new Error(failed.error || "Gate action denied");
-
+  Promise.all(sel.map(c=>fetch(API,{
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      logType:action==="ENTRY"?"GATE_ENTRY":"GATE_EXIT",
+      action,paymentId:pid,
+      name:c.dataset.name,email:c.dataset.email,
+      phone:c.dataset.phone,college:c.dataset.college,
+      passType:passData["Pass Type"],
+      scanner:"WEB_ADMIN",scanMode:"GATE"
+    })
+  }).then(r=>r.json())))
+  .then(r=>{
+    if(r.find(x=>x.ok===false)) throw new Error("Action denied");
     alert(`Gate ${action} successful`);
-    location.href = "dashboard.html";
-  })
-  .catch(err => alert(err.message));
+    location.href="admin.html";
+  }).catch(e=>alert(e.message));
 }
 </script>
-
-
 </body>
 </html>
