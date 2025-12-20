@@ -101,16 +101,21 @@ body{
 
   <div class="box" id="participantsBox"></div>
 
-  <button id="submitBtn" class="btn primary" disabled>
+  <div class="actions-vertical">
+  <button id="submitBtn" class="btn primary full" disabled>
     CONFIRM EVENT ENTRY
   </button>
 
-  <div class="actions">
-    <button class="btn secondary" onclick="goDashboard()">← Back to Dashboard</button>
-    <button class="btn secondary" onclick="goScanner()">
+  <div class="actions-row">
+    <button class="btn secondary half" onclick="goDashboard()">
+      ← Back to Dashboard
+    </button>
+    <button class="btn secondary half" onclick="goScanner()">
       <i class="fa-solid fa-qrcode"></i> Open Scanner
     </button>
   </div>
+</div>
+
 </div>
 
 <script>
