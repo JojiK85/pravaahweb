@@ -208,7 +208,18 @@ function validatePass(){
     return;
   }
 
-  setStatus("Select an event to continue", null);
+  const passType = passData["Pass Type"];
+
+if (passType === "Fest Pass") {
+  setStatus("Fest Pass — Event Entry Allowed", true);
+}
+else if (passType === "Starnite Pass") {
+  setStatus("StarNite Pass — Event Entry Allowed", true);
+}
+else {
+  setStatus("Valid Day Pass — Event Entry Allowed", true);
+}
+
 
   document.getElementById("passInfo").innerHTML = `
     <b>Payment ID:</b> ${passData["Payment ID"]}<br>
@@ -326,22 +337,24 @@ submitBtn.onclick = async()=>{
   if(!sel.length) return;
 
   await fetch(API,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({
-      type:"EVENT_SCAN",
-      eventName:eventSelect.value,
-      scanner,
-      participants:sel.map(c=>({
-        paymentId,
-        name:c.dataset.name,
-        email:c.dataset.email,
-        phone:c.dataset.phone,
-        college:c.dataset.college,
-        passType:passData["Pass Type"]
-      }))
-    })
-  });
+  method:"POST",
+  headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({
+    type:"EVENT_SCAN",
+    paymentId,                  // ✅ REQUIRED
+    eventName:eventSelect.value,
+    scanner,
+    participants:sel.map(c=>({
+      paymentId,
+      name:c.dataset.name,
+      email:c.dataset.email,
+      phone:c.dataset.phone,
+      college:c.dataset.college,
+      passType:passData["Pass Type"]
+    }))
+  })
+});
+
 
   alert("Event entry recorded");
   location.reload();
