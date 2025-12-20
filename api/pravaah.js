@@ -1,7 +1,7 @@
 // /api/pravaah.js
 export default async function handler(req, res) {
   const GAS_URL =
-    "https://script.google.com/macros/s/AKfycbxrkZyuNnmVyVY_6wcijBhd5urgJftu3aoxWUquOVk1A_k8UdzHDfDd0pzNqAZHu6XPdg/exec";
+    "https://script.google.com/macros/s/AKfycbzv18ZtTyl9RP_BiqO61aCcRLTZP4Oi4zXAqm3IVRre9XZsvLnCwwcigM5c-PdSKZ3A_A/exec";
 
   try {
     // ✅ Allow only GET & POST
