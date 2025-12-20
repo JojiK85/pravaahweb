@@ -5,6 +5,7 @@
 <title>PRAVAAH — Main Gate</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
 <style>
 *{box-sizing:border-box;font-family:'Exo 2',sans-serif}
 body{
@@ -70,58 +71,45 @@ body{
   </div>
 
   <div style="margin-top:14px;text-align:center">
-    <button class="btn" style="background:#111;color:cyan;border:1px solid cyan"
-      onclick="location.href='dashboard.html'">← Back to Admin Dashboard</button>
+    <button class="btn"
+      style="background:#111;color:cyan;border:1px solid cyan"
+      onclick="goBack()">← Back to Admin Dashboard</button>
   </div>
 </div>
 
 <script>
 const API="/api/pravaah";
-const pid=new URLSearchParams(location.search).get("paymentId");
-if(!pid){alert("Missing Payment ID");location.href="scan.html"}
+const params = new URLSearchParams(location.search);
+
+const paymentId = params.get("paymentId");
+const scannerEmail = params.get("scanner");
+
+if(!paymentId){ alert("Missing Payment ID"); location.href="scan.html"; }
+if(!scannerEmail){ alert("Scanner identity missing"); location.href="admin.html"; }
 
 const entryBtn=document.querySelector(".entry");
 const exitBtn=document.querySelector(".exit");
 
 let passData,participants=[],logs=[],state={};
 
-const DAY_MAP={
-  "2026-02-05":"day0","2025-12-20":"day1",
-  "2026-02-07":"day2","2026-02-08":"day3"
-};
-
 function now(){
-  document.getElementById("nowTime").textContent=
+  document.getElementById("nowTime").textContent =
     new Date().toLocaleString("en-IN",{hour12:true});
 }
-now();setInterval(now,1000);
-
-/* ---------- FEST STATUS ---------- */
-function getFestStatus(){
-  const today=new Date().toLocaleDateString("en-CA",{timeZone:"Asia/Kolkata"});
-  const festDays=Object.keys(DAY_MAP).sort();
-  const start=festDays[0], end=festDays[festDays.length-1];
-  const dayKey=DAY_MAP[today];
-  const type=passData["Pass Type"];
-  const sel=(passData["Selected Days"]||"").toLowerCase();
-
-  if(today<start) return {text:"⚠ Fest not started yet",entry:false};
-  if(today>end) return {text:"⛔ Pass expired — Exit allowed",entry:false};
-  if(type==="Fest Pass") return {text:"✔ Entry allowed today",entry:true};
-  if(!dayKey) return {text:"⚠ Fest not active today",entry:false};
-  if(sel.includes(dayKey)) return {text:"✔ Entry allowed today",entry:true};
-  return {text:"⚠ Pass not valid today",entry:false};
-}
+now(); setInterval(now,1000);
 
 /* ---------- LOAD DATA ---------- */
 function loadData(){
   Promise.all([
-    fetch(`${API}?type=searchPass&query=${pid}`).then(r=>r.json()),
-    fetch(`${API}?type=gatelogs&paymentId=${pid}`).then(r=>r.json())
+    fetch(`${API}?type=searchPass&query=${paymentId}`).then(r=>r.json()),
+    fetch(`${API}?type=gatelogs&paymentId=${paymentId}`).then(r=>r.json())
   ]).then(([p,l])=>{
-    passData=p[0];participants=p;logs=l||[];
-    resolveState();render();
-  }).catch(e=>alert(e.message));
+    passData=p[0];
+    participants=p;
+    logs=l||[];
+    resolveState();
+    render();
+  });
 }
 loadData();
 
@@ -130,9 +118,9 @@ function resolveState(){
   state={};
   participants.forEach(p=>state[p.Name]="OUTSIDE");
   logs.slice().reverse().forEach(l=>{
-    if(!l.Name)return;
-    if(["ENTRY","AUTO_CARRY"].includes(l.Action)) state[l.Name]="INSIDE";
-    if(["EXIT","AUTO_EXIT"].includes(l.Action)) state[l.Name]="OUTSIDE";
+    if(!l.Name) return;
+    if(l.Action==="ENTRY") state[l.Name]="INSIDE";
+    if(l.Action==="EXIT")  state[l.Name]="OUTSIDE";
   });
 }
 
@@ -145,64 +133,78 @@ function render(){
     <b>StarNite:</b> ${passData["Starnite"]||"—"}
   `;
 
-  const fest=getFestStatus();
-  const sb=document.getElementById("statusBox");
-  sb.className="status "+(fest.entry?"valid":"invalid");
-  sb.innerHTML=fest.text;
-
-  document.getElementById("participantsBox").innerHTML=
-    "<h4>Select Participants</h4>"+
+  document.getElementById("participantsBox").innerHTML =
+    "<h4>Select Participants</h4>" +
     participants.map(p=>{
       const s=state[p.Name];
-      const disable=(s==="OUTSIDE"&&!fest.entry)?"disabled":"";
       return `
       <div class="participant">
-        <input type="checkbox" ${disable}
-          data-name="${p.Name}" data-state="${s}"
-          data-email="${p.Email}" data-phone="${p.Phone}"
-          data-college="${p.College}" onchange="updateButtons()">
-        <span><b>${p.Name}</b><br>${p.Email}<br>
-        <small style="color:${s==="INSIDE"?"#ffb703":"#00ffcc"}">${s}</small>
+        <input type="checkbox"
+          data-name="${p.Name}"
+          data-state="${s}"
+          data-email="${p.Email}"
+          data-phone="${p.Phone}"
+          data-college="${p.College}"
+          onchange="updateButtons()">
+        <span>
+          <b>${p.Name}</b><br>${p.Email}<br>
+          <small style="color:${s==="INSIDE"?"#ffb703":"#00ffcc"}">${s}</small>
         </span>
       </div>`;
     }).join("");
+
   updateButtons();
 }
 
 /* ---------- BUTTON LOGIC ---------- */
 function updateButtons(){
   const sel=[...document.querySelectorAll("input:checked")];
-  entryBtn.disabled=true;exitBtn.disabled=true;
-  if(!sel.length)return;
+  entryBtn.disabled=true;
+  exitBtn.disabled=true;
+  if(!sel.length) return;
 
-  const inside=sel.some(c=>c.dataset.state==="INSIDE");
-  const outside=sel.some(c=>c.dataset.state==="OUTSIDE");
-  const fest=getFestStatus();
+  const inside = sel.every(c=>c.dataset.state==="INSIDE");
+  const outside= sel.every(c=>c.dataset.state==="OUTSIDE");
 
-  if(inside&&outside)return;
   if(inside) exitBtn.disabled=false;
-  if(outside&&fest.entry) entryBtn.disabled=false;
+  if(outside) entryBtn.disabled=false;
 }
 
 /* ---------- SUBMIT ---------- */
 function submitAction(action){
   const sel=[...document.querySelectorAll("input:checked")];
-  if(!sel.length)return alert("Select participants");
+  if(!sel.length) return;
 
-  Promise.all(sel.map(c=>fetch(API,{
-    method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({
-      logType:action==="ENTRY"?"GATE_ENTRY":"GATE_EXIT",
-      action,paymentId:pid,
-      name:c.dataset.name,email:c.dataset.email,
-      phone:c.dataset.phone,college:c.dataset.college,
-      passType:passData["Pass Type"],
-      scanner:"WEB_ADMIN",scanMode:"GATE"
-    })
-  }).then(r=>r.json())))
+  Promise.all(sel.map(c=>
+    fetch(API,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        logType: action==="ENTRY"?"GATE_ENTRY":"GATE_EXIT",
+        action,
+        paymentId,
+        name:c.dataset.name,
+        email:c.dataset.email,
+        phone:c.dataset.phone,
+        college:c.dataset.college,
+        passType:passData["Pass Type"],
+        scanner: scannerEmail,
+        scanMode:"GATE"
+      })
+    }).then(r=>r.json())
+  ))
   .then(()=>{
-    loadData(); // ✅ STAY ON PAGE & REFRESH
-  }).catch(e=>alert(e.message));
+    const sb=document.getElementById("statusBox");
+    sb.className="status valid";
+    sb.innerHTML=`✅ Gate logs updated — ${action==="ENTRY"?"Entry allowed":"Exit marked"}`;
+    loadData();
+  });
+}
+
+/* ---------- BACK ---------- */
+function goBack(){
+  location.href =
+    "dashboard.html?scanner=" + encodeURIComponent(scannerEmail);
 }
 </script>
 </body>
