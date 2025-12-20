@@ -28,7 +28,7 @@ body{
   padding:20px
 }
 .title{text-align:center;font-size:1.6rem;font-weight:800;color:cyan}
-.meta{text-align:center;font-size:.8rem;opacity:.75;margin-bottom:14px}
+.meta{text-align:center;font-size:.85rem;opacity:.8;margin-bottom:14px}
 .status{
   padding:12px;border-radius:14px;
   font-weight:800;text-align:center;margin-bottom:16px
@@ -62,6 +62,7 @@ body{
   <div class="meta">⏰ <span id="nowTime"></span></div>
 
   <div id="statusBox" class="status">Loading pass…</div>
+
   <div class="box" id="passInfo"></div>
   <div class="box" id="participantsBox"></div>
 
@@ -70,28 +71,24 @@ body{
     <button class="btn exit" disabled onclick="submitAction('EXIT')">MARK EXIT</button>
   </div>
 
-  <div style="margin-top:14px;text-align:center">
-    <button class="btn"
-      style="background:#111;color:cyan;border:1px solid cyan"
-      onclick="goBack()">← Back to Admin Dashboard</button>
+  <div style="margin-top:14px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+    <button class="btn" style="background:#111;color:cyan;border:1px solid cyan" onclick="goBack()">
+      ← Back to Admin Dashboard
+    </button>
+    <button class="btn" style="background:black;color:#00ffcc;border:1px solid #00ffcc" onclick="goScanner()">
+      📷 Open Scanner
+    </button>
   </div>
 </div>
 
 <script>
 const API="/api/pravaah";
-const params = new URLSearchParams(location.search);
+const params=new URLSearchParams(location.search);
+const paymentId=params.get("paymentId");
+const scannerEmail=params.get("scanner");
 
-const paymentId = params.get("paymentId");
-const scannerEmail = params.get("scanner");
-
-if(!paymentId){
-  alert("Missing Payment ID");
-  location.href="scan.html";
-}
-if(!scannerEmail){
-  alert("Scanner identity missing");
-  location.href="admin.html";
-}
+if(!paymentId){alert("Missing Payment ID");location.href="scan.html";}
+if(!scannerEmail){alert("Scanner identity missing");location.href="dashboard.html";}
 
 const entryBtn=document.querySelector(".entry");
 const exitBtn=document.querySelector(".exit");
@@ -99,66 +96,73 @@ const statusBox=document.getElementById("statusBox");
 
 let passData,participants=[],logs=[],state={};
 
+/* -------- FEST MAP -------- */
+const DAY_MAP={
+  "2026-02-05":"day0",
+  "2026-02-06":"day1",
+  "2026-02-07":"day2",
+  "2026-02-08":"day3"
+};
+
+/* -------- TIME -------- */
 function now(){
-  document.getElementById("nowTime").textContent =
+  document.getElementById("nowTime").textContent=
     new Date().toLocaleString("en-IN",{hour12:true});
 }
-now(); setInterval(now,1000);
+now();setInterval(now,1000);
 
-/* ---------- LOAD DATA ---------- */
+/* -------- FEST STATUS -------- */
+function festStatus(){
+  const today=new Date().toLocaleDateString("en-CA",{timeZone:"Asia/Kolkata"});
+  const days=Object.keys(DAY_MAP).sort();
+  const start=days[0], end=days[days.length-1];
+  const dayKey=DAY_MAP[today];
+  const sel=(passData["Selected Days"]||"").toLowerCase();
+  const type=passData["Pass Type"];
+
+  if(today<start) return {ok:false,text:"⚠ Fest not started yet"};
+  if(today>end) return {ok:false,text:"⛔ Pass expired — Exit allowed"};
+  if(type==="Fest Pass") return {ok:true,text:"✔ Entry allowed today"};
+  if(!dayKey) return {ok:false,text:"⚠ Fest not active today"};
+  if(sel.includes(dayKey)) return {ok:true,text:"✔ Entry allowed today"};
+  return {ok:false,text:"⚠ Pass not valid today"};
+}
+
+/* -------- LOAD -------- */
 async function loadData(){
   statusBox.className="status";
-  statusBox.innerHTML="Loading pass…";
-
+  statusBox.textContent="Loading pass…";
   try{
-    const [pRes,lRes] = await Promise.all([
-      fetch(`${API}?type=searchPass&query=${paymentId}`),
-      fetch(`${API}?type=gatelogs&paymentId=${paymentId}`)
+    const [p,l]=await Promise.all([
+      fetch(`${API}?type=searchPass&query=${paymentId}`).then(r=>r.json()),
+      fetch(`${API}?type=gatelogs&paymentId=${paymentId}`).then(r=>r.json())
     ]);
-
-    if(!pRes.ok || !lRes.ok){
-      throw new Error("Failed to fetch pass data");
-    }
-
-    const p = await pRes.json();
-    const l = await lRes.json();
-
-    if(!Array.isArray(p) || !p.length){
-      throw new Error("Invalid or unknown pass");
-    }
-
-    passData = p[0];
-    participants = p;
-    logs = l || [];
-
-    resolveState();
-    render();
-
-    statusBox.className="status valid";
-    statusBox.innerHTML="✔ Pass loaded successfully";
-
-  }catch(err){
+    if(!p.length) throw Error("Invalid pass");
+    passData=p[0];participants=p;logs=l||[];
+    resolveState();render();
+  }catch(e){
     statusBox.className="status invalid";
-    statusBox.innerHTML="❌ "+err.message;
-    entryBtn.disabled=true;
-    exitBtn.disabled=true;
+    statusBox.textContent="❌ "+e.message;
   }
 }
 loadData();
 
-/* ---------- STATE ---------- */
+/* -------- STATE -------- */
 function resolveState(){
   state={};
   participants.forEach(p=>state[p.Name]="OUTSIDE");
   logs.slice().reverse().forEach(l=>{
-    if(!l.Name) return;
     if(l.Action==="ENTRY") state[l.Name]="INSIDE";
-    if(l.Action==="EXIT")  state[l.Name]="OUTSIDE";
+    if(l.Action==="EXIT") state[l.Name]="OUTSIDE";
   });
 }
 
-/* ---------- RENDER ---------- */
+/* -------- RENDER -------- */
 function render(){
+  const fest=festStatus();
+  statusBox.className="status "+(fest.ok?"valid":"invalid");
+  statusBox.textContent=fest.text;
+
   document.getElementById("passInfo").innerHTML=`
     <b>Payment ID:</b> ${passData["Payment ID"]}<br>
     <b>Pass Type:</b> ${passData["Pass Type"]}<br>
@@ -166,88 +170,65 @@ function render(){
     <b>StarNite:</b> ${passData["Starnite"]||"—"}
   `;
 
-  document.getElementById("participantsBox").innerHTML =
-    "<h4>Select Participants</h4>" +
+  document.getElementById("participantsBox").innerHTML=
+    "<h4>Select Participants</h4>"+
     participants.map(p=>{
       const s=state[p.Name];
+      const disable=(s==="OUTSIDE"&&!fest.ok)?"disabled":"";
       return `
       <div class="participant">
-        <input type="checkbox"
-          data-name="${p.Name}"
-          data-state="${s}"
-          data-email="${p.Email}"
-          data-phone="${p.Phone}"
-          data-college="${p.College}"
-          onchange="updateButtons()">
-        <span>
-          <b>${p.Name}</b><br>${p.Email}<br>
-          <small style="color:${s==="INSIDE"?"#ffb703":"#00ffcc"}">${s}</small>
+        <input type="checkbox" ${disable}
+          data-name="${p.Name}" data-state="${s}"
+          data-email="${p.Email}" data-phone="${p.Phone}"
+          data-college="${p.College}" onchange="updateButtons()">
+        <span><b>${p.Name}</b><br>${p.Email}<br>
+        <small style="color:${s==="INSIDE"?"#ffb703":"#00ffcc"}">${s}</small>
         </span>
       </div>`;
     }).join("");
-
   updateButtons();
 }
 
-/* ---------- BUTTON LOGIC ---------- */
+/* -------- BUTTONS -------- */
 function updateButtons(){
   const sel=[...document.querySelectorAll("input:checked")];
-  entryBtn.disabled=true;
-  exitBtn.disabled=true;
+  entryBtn.disabled=true;exitBtn.disabled=true;
   if(!sel.length) return;
-
-  const inside = sel.every(c=>c.dataset.state==="INSIDE");
-  const outside= sel.every(c=>c.dataset.state==="OUTSIDE");
-
+  const inside=sel.every(c=>c.dataset.state==="INSIDE");
+  const outside=sel.every(c=>c.dataset.state==="OUTSIDE");
+  const fest=festStatus();
   if(inside) exitBtn.disabled=false;
-  if(outside) entryBtn.disabled=false;
+  if(outside&&fest.ok) entryBtn.disabled=false;
 }
 
-/* ---------- SUBMIT ---------- */
+/* -------- SUBMIT -------- */
 async function submitAction(action){
   const sel=[...document.querySelectorAll("input:checked")];
   if(!sel.length) return;
 
   statusBox.className="status";
-  statusBox.innerHTML="⏳ Updating gate logs…";
+  statusBox.textContent="⏳ Updating gate logs…";
 
-  try{
-    await Promise.all(sel.map(c=>
-      fetch(API,{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({
-          logType: action==="ENTRY"?"GATE_ENTRY":"GATE_EXIT",
-          action,
-          paymentId,
-          name:c.dataset.name,
-          email:c.dataset.email,
-          phone:c.dataset.phone,
-          college:c.dataset.college,
-          passType:passData["Pass Type"],
-          scanner: scannerEmail,
-          scanMode:"GATE"
-        })
-      }).then(r=>r.json())
-    ));
+  await Promise.all(sel.map(c=>fetch(API,{
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      logType:action==="ENTRY"?"GATE_ENTRY":"GATE_EXIT",
+      action,paymentId,
+      name:c.dataset.name,email:c.dataset.email,
+      phone:c.dataset.phone,college:c.dataset.college,
+      passType:passData["Pass Type"],
+      scanner:scannerEmail,scanMode:"GATE"
+    })
+  })));
 
-    statusBox.className="status valid";
-    statusBox.innerHTML =
-      `✅ Gate logs updated — ${action==="ENTRY"?"Entry allowed":"Exit marked"}`;
-
-    loadData();
-
-  }catch(err){
-    statusBox.className="status invalid";
-    statusBox.innerHTML="❌ Failed to update gate logs";
-  }
+  statusBox.className="status valid";
+  statusBox.textContent=`✅ Gate logs updated — ${action==="ENTRY"?"Entry allowed":"Exit marked"}`;
+  loadData();
 }
 
-/* ---------- BACK ---------- */
-function goBack(){
-  location.href="dashboard.html";
-}
+/* -------- NAV -------- */
+function goBack(){location.href="dashboard.html";}
+function goScanner(){location.href=`scan.html?scanner=${encodeURIComponent(scannerEmail)}`;}
 </script>
-
 </body>
 </html>
