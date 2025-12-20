@@ -4,9 +4,7 @@
 <meta charset="UTF-8">
 <title>PRAVAAH — Main Gate</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-
 <style>
 *{box-sizing:border-box;font-family:'Exo 2',sans-serif}
 body{
@@ -58,7 +56,6 @@ body{
 </head>
 
 <body>
-
 <div class="container">
   <div class="title">PRAVAAH 2026 — Main Gate</div>
   <div class="meta">⏰ <span id="nowTime"></span></div>
@@ -99,23 +96,38 @@ function now(){
 }
 now();setInterval(now,1000);
 
-function isEntryValidToday(){
+/* ---------- FEST STATUS ---------- */
+function getFestStatus(){
   const today=new Date().toLocaleDateString("en-CA",{timeZone:"Asia/Kolkata"});
+  const festDays=Object.keys(DAY_MAP).sort();
+  const start=festDays[0], end=festDays[festDays.length-1];
   const dayKey=DAY_MAP[today];
-  if(passData["Pass Type"]==="Fest Pass") return true;
-  if(!dayKey) return false;
-  return (passData["Selected Days"]||"").toLowerCase().includes(dayKey);
+  const type=passData["Pass Type"];
+  const sel=(passData["Selected Days"]||"").toLowerCase();
+
+  if(today<start) return {text:"⚠ Fest not started yet",entry:false};
+  if(today>end) return {text:"⛔ Pass expired — Exit allowed",entry:false};
+  if(type==="Fest Pass") return {text:"✔ Entry allowed today",entry:true};
+  if(!dayKey) return {text:"⚠ Fest not active today",entry:false};
+  if(sel.includes(dayKey)) return {text:"✔ Entry allowed today",entry:true};
+  return {text:"⚠ Pass not valid today",entry:false};
 }
 
-Promise.all([
-  fetch(`${API}?type=searchPass&query=${pid}`).then(r=>r.json()),
-  fetch(`${API}?type=gatelogs&paymentId=${pid}`).then(r=>r.json())
-]).then(([p,l])=>{
-  passData=p[0];participants=p;logs=l||[];
-  resolveState();render();
-}).catch(e=>{alert(e.message);location.href="scan.html"});
+/* ---------- LOAD DATA ---------- */
+function loadData(){
+  Promise.all([
+    fetch(`${API}?type=searchPass&query=${pid}`).then(r=>r.json()),
+    fetch(`${API}?type=gatelogs&paymentId=${pid}`).then(r=>r.json())
+  ]).then(([p,l])=>{
+    passData=p[0];participants=p;logs=l||[];
+    resolveState();render();
+  }).catch(e=>alert(e.message));
+}
+loadData();
 
+/* ---------- STATE ---------- */
 function resolveState(){
+  state={};
   participants.forEach(p=>state[p.Name]="OUTSIDE");
   logs.slice().reverse().forEach(l=>{
     if(!l.Name)return;
@@ -124,6 +136,7 @@ function resolveState(){
   });
 }
 
+/* ---------- RENDER ---------- */
 function render(){
   document.getElementById("passInfo").innerHTML=`
     <b>Payment ID:</b> ${passData["Payment ID"]}<br>
@@ -132,16 +145,16 @@ function render(){
     <b>StarNite:</b> ${passData["Starnite"]||"—"}
   `;
 
-  const valid=isEntryValidToday();
+  const fest=getFestStatus();
   const sb=document.getElementById("statusBox");
-  sb.className="status "+(valid?"valid":"invalid");
-  sb.innerHTML=valid?"✔ Entry allowed today":"⚠ Entry expired — Exit allowed";
+  sb.className="status "+(fest.entry?"valid":"invalid");
+  sb.innerHTML=fest.text;
 
   document.getElementById("participantsBox").innerHTML=
     "<h4>Select Participants</h4>"+
     participants.map(p=>{
       const s=state[p.Name];
-      const disable=(s==="OUTSIDE"&&!valid)?"disabled":"";
+      const disable=(s==="OUTSIDE"&&!fest.entry)?"disabled":"";
       return `
       <div class="participant">
         <input type="checkbox" ${disable}
@@ -153,8 +166,10 @@ function render(){
         </span>
       </div>`;
     }).join("");
+  updateButtons();
 }
 
+/* ---------- BUTTON LOGIC ---------- */
 function updateButtons(){
   const sel=[...document.querySelectorAll("input:checked")];
   entryBtn.disabled=true;exitBtn.disabled=true;
@@ -162,23 +177,17 @@ function updateButtons(){
 
   const inside=sel.some(c=>c.dataset.state==="INSIDE");
   const outside=sel.some(c=>c.dataset.state==="OUTSIDE");
+  const fest=getFestStatus();
 
   if(inside&&outside)return;
   if(inside) exitBtn.disabled=false;
-  if(outside&&isEntryValidToday()) entryBtn.disabled=false;
+  if(outside&&fest.entry) entryBtn.disabled=false;
 }
 
+/* ---------- SUBMIT ---------- */
 function submitAction(action){
   const sel=[...document.querySelectorAll("input:checked")];
   if(!sel.length)return alert("Select participants");
-
-  const inside=sel.some(c=>c.dataset.state==="INSIDE");
-  const outside=sel.some(c=>c.dataset.state==="OUTSIDE");
-  if(inside&&outside)return alert("Cannot mix INSIDE & OUTSIDE");
-
-  if(action==="ENTRY"&&!isEntryValidToday())return alert("Entry expired");
-  if(action==="ENTRY"&&inside)return alert("Already inside");
-  if(action==="EXIT"&&outside)return alert("Not inside");
 
   Promise.all(sel.map(c=>fetch(API,{
     method:"POST",headers:{"Content-Type":"application/json"},
@@ -191,10 +200,8 @@ function submitAction(action){
       scanner:"WEB_ADMIN",scanMode:"GATE"
     })
   }).then(r=>r.json())))
-  .then(r=>{
-    if(r.find(x=>x.ok===false)) throw new Error("Action denied");
-    alert(`Gate ${action} successful`);
-    location.href="admin.html";
+  .then(()=>{
+    loadData(); // ✅ STAY ON PAGE & REFRESH
   }).catch(e=>alert(e.message));
 }
 </script>
