@@ -688,6 +688,26 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
   cursor: pointer;
   z-index: 1;
 }
+/* ===============================
+   🟡 PHOTO PREVIEW (NOT SAVED YET)
+   =============================== */
+
+.profile-photo.preview img {
+  outline: 3px dashed #ffcc00;
+  outline-offset: 6px;
+}
+
+.profile-photo.preview::after {
+  content: "Preview";
+  position: absolute;
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  color: #ffcc00;
+  letter-spacing: 1px;
+}
+
 
 
 
