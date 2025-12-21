@@ -707,14 +707,16 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
   color: #ffcc00;
   letter-spacing: 1px;
 }
+/* Camera hidden by default */
+.photo-overlay {
+  opacity: 0;
+  pointer-events: none;
+}
 
-
-
-
-
-
-
-
-
-
-
+/* Camera ONLY when editing + hover */
+.profile-container.is-edit .photo-wrapper:hover .photo-overlay {
+  opacity: 1;
+  background: rgba(0, 255, 255, 0.35);
+  pointer-events: auto;
+  cursor: pointer;
+}
