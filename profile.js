@@ -19,7 +19,8 @@ let userPhoto;
 let userPhoneInput;
 let userCollegeInput;
 let baseScale = 1;
-;
+let imageReady = false;
+
 
 
 async function fetchImageAsBase64(url) {
@@ -162,6 +163,9 @@ qrBox.addEventListener("click", () => {
 
   });
 }
+window.addEventListener("wheel", e => {
+  if (e.ctrlKey) e.preventDefault();
+}, { passive: false });
 
 /* ---------- Main ---------- */
 onAuthStateChanged(auth, async (user) => {
@@ -190,17 +194,20 @@ photoOverlay.onclick = async () => {
     return;
   }
 
-  scale = 1;
-  rotation = 0;
-  pos = { x: 0, y: 0 };
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  imageReady = false;
 
   editor.classList.remove("hidden");
 
-  const base64 = await fetchImageAsBase64(userPhoto.src);
-  img.src = base64;
+  try {
+    const base64 = await fetchImageAsBase64(userPhoto.src);
+    img.src = base64;
+  } catch (err) {
+    console.error(err);
+    showToast("Unable to load image editor", "error");
+    editor.classList.add("hidden");
+  }
 };
+
 
 
 
@@ -442,6 +449,8 @@ const CIRCLE_RADIUS = canvas.width / 2;
 
 
 let img = new Image();
+img.crossOrigin = "anonymous";
+
 let scale = 1;
 let rotation = 0;
 let pos = { x: 0, y: 0 };
@@ -472,6 +481,8 @@ function computeBaseScale() {
 
 
 img.onload = () => {
+  imageReady = true;
+
   rotation = 0;
   scale = 1;
   pos = { x: 0, y: 0 };
@@ -479,6 +490,12 @@ img.onload = () => {
   computeBaseScale();
   draw();
 };
+
+img.onerror = () => {
+  imageReady = false;
+  showToast("Failed to load image", "error");
+};
+
 
 function clamp(val, min, max) {
   return Math.max(min, Math.min(max, val));
@@ -499,6 +516,8 @@ function clampPosition() {
 
 
 function draw() {
+  if (!imageReady) return;
+
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.save();
 
@@ -512,14 +531,21 @@ function draw() {
   const finalScale = baseScale * scale;
   ctx.scale(finalScale, finalScale);
 
+  const rotated = Math.abs(rotation / (Math.PI / 2)) % 2 === 1;
+  const drawW = rotated ? img.height : img.width;
+  const drawH = rotated ? img.width  : img.height;
+
   ctx.drawImage(
     img,
-    -img.width / 2,
-    -img.height / 2
+    -drawW / 2,
+    -drawH / 2,
+    drawW,
+    drawH
   );
 
   ctx.restore();
 }
+
 
 
 
@@ -672,6 +698,7 @@ document.getElementById("applyCrop").onclick = async () => {
   editor.classList.add("hidden");
   showToast("Photo updated!", "success");
 };
+
 
 
 
