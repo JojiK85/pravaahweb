@@ -572,4 +572,41 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
   display: none !important;
 }
 
+/* ======================================================
+   CAMERA ICON — ONLY IN EDIT MODE
+====================================================== */
+
+/* ❌ Hide camera overlay by default */
+.photo-overlay {
+  display: none;
+  pointer-events: none;
+}
+
+/* ✅ Show camera ONLY when profile is in edit mode */
+.profile-container.is-edit .photo-overlay {
+  display: flex;
+  pointer-events: auto;
+}
+
+/* Fade-in effect on hover (edit mode only) */
+.profile-container.is-edit .photo-wrapper:hover .photo-overlay {
+  opacity: 1;
+}
+
+/* ======================================================
+   CAMERA HOVER TOOLTIP (LIKE EDIT PEN)
+====================================================== */
+
+.photo-overlay[title] {
+  cursor: pointer;
+}
+
+/* ======================================================
+   PREVENT CAMERA IN VIEW MODE INTERACTION
+====================================================== */
+
+.profile-container:not(.is-edit) .photo-wrapper {
+  cursor: default;
+}
+
 
