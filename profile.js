@@ -19,9 +19,7 @@ let userPhoto;
 let userPhoneInput;
 let userCollegeInput;
 let baseScale = 1;
-document.addEventListener("mouseup", () => {
-  dragging = false;
-});
+;
 
 
 async function fetchImageAsBase64(url) {
@@ -448,6 +446,9 @@ let scale = 1;
 let rotation = 0;
 let pos = { x: 0, y: 0 };
 let dragging = false;
+document.addEventListener("mouseup", () => {
+  dragging = false;
+})
 let start = { x: 0, y: 0 };
 
 /* OPEN EDITOR ONLY IN EDIT MODE */
@@ -523,7 +524,18 @@ canvas.onmouseup = () => dragging = false;
 /* ZOOM */
 document.getElementById("zoomSlider").oninput = e => {
   scale = Math.max(1, Number(e.target.value));
-  draw();
+
+const halfW = (img.width * baseScale * scale) / 2;
+const halfH = (img.height * baseScale * scale) / 2;
+
+const maxX = Math.max(0, halfW - CIRCLE_RADIUS);
+const maxY = Math.max(0, halfH - CIRCLE_RADIUS);
+
+pos.x = clamp(pos.x, -maxX, maxX);
+pos.y = clamp(pos.y, -maxY, maxY);
+
+draw();
+
 };
 
 /* ===== TOUCH DRAG (MOBILE) ===== */
@@ -606,6 +618,9 @@ function getDistance(t1, t2) {
 /* ROTATE */
 document.getElementById("rotateBtn").onclick = () => {
   rotation += Math.PI / 2;
+pos = { x: 0, y: 0 }; // reset position to keep circle safe
+draw();
+
   draw();
 };
 
@@ -652,6 +667,7 @@ document.getElementById("applyCrop").onclick = async () => {
   editor.classList.add("hidden");
   showToast("Photo updated!", "success");
 };
+
 
 
 
