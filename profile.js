@@ -175,8 +175,6 @@ onAuthStateChanged(auth, async (user) => {
   const logoutMobile = document.getElementById("logoutMobile");
 const cameraBtn = document.getElementById("cameraBtn");
 
-const cameraBtn = document.getElementById("cameraBtn");
-
 if (cameraBtn) {
   cameraBtn.addEventListener("click", () => {
     if (!isEditing) {
@@ -603,6 +601,7 @@ document.getElementById("cancelCrop").onclick = () => {
   editor.classList.add("hidden");
   showToast("Photo edit cancelled", "info");
 };
+
 
 
 
