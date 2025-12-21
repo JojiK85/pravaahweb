@@ -627,5 +627,21 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
   border-radius: 8px;
   font-weight: bold;
 }
+/* Camera hidden by default */
+.photo-overlay {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Show camera ONLY when editing + hovering */
+.profile-container.is-edit .photo-wrapper:hover .photo-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+.profile-container.is-edit .photo-overlay {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
 
 
