@@ -450,19 +450,25 @@ document.addEventListener("mouseup", () => {
   dragging = false;
 })
 let start = { x: 0, y: 0 };
+function getEffectiveSize() {
+  const rotated = Math.abs(rotation / (Math.PI / 2)) % 2 === 1;
+
+  return {
+    w: rotated ? img.height : img.width,
+    h: rotated ? img.width  : img.height
+  };
+}
 
 /* OPEN EDITOR ONLY IN EDIT MODE */
 function computeBaseScale() {
-  const rotated = Math.abs(rotation / (Math.PI / 2)) % 2 === 1;
-
-  const w = rotated ? img.height : img.width;
-  const h = rotated ? img.width  : img.height;
+  const { w, h } = getEffectiveSize();
 
   baseScale = Math.max(
     (CIRCLE_RADIUS * 2) / w,
     (CIRCLE_RADIUS * 2) / h
   );
 }
+
 
 
 img.onload = () => {
@@ -478,6 +484,18 @@ function clamp(val, min, max) {
   return Math.max(min, Math.min(max, val));
 }
 
+function clampPosition() {
+  const { w, h } = getEffectiveSize();
+
+  const halfW = (w * baseScale * scale) / 2;
+  const halfH = (h * baseScale * scale) / 2;
+
+  const maxX = Math.max(0, halfW - CIRCLE_RADIUS);
+  const maxY = Math.max(0, halfH - CIRCLE_RADIUS);
+
+  pos.x = clamp(pos.x, -maxX, maxX);
+  pos.y = clamp(pos.y, -maxY, maxY);
+}
 
 
 function draw() {
@@ -516,17 +534,10 @@ canvas.onmousemove = e => {
   pos.x = e.offsetX - start.x;
   pos.y = e.offsetY - start.y;
 
-  const halfW = (img.width * baseScale * scale) / 2;
-  const halfH = (img.height * baseScale * scale) / 2;
-
-  const maxX = Math.max(0, halfW - CIRCLE_RADIUS);
-  const maxY = Math.max(0, halfH - CIRCLE_RADIUS);
-
-  pos.x = clamp(pos.x, -maxX, maxX);
-  pos.y = clamp(pos.y, -maxY, maxY);
-
+  clampPosition();
   draw();
 };
+
 
 
 canvas.onmouseup = () => dragging = false;
@@ -535,18 +546,10 @@ canvas.onmouseup = () => dragging = false;
 document.getElementById("zoomSlider").oninput = e => {
   scale = Math.max(1, Number(e.target.value));
 
-const halfW = (img.width * baseScale * scale) / 2;
-const halfH = (img.height * baseScale * scale) / 2;
-
-const maxX = Math.max(0, halfW - CIRCLE_RADIUS);
-const maxY = Math.max(0, halfH - CIRCLE_RADIUS);
-
-pos.x = clamp(pos.x, -maxX, maxX);
-pos.y = clamp(pos.y, -maxY, maxY);
-
-draw();
-
+  clampPosition();
+  draw();
 };
+
 
 /* ===== TOUCH DRAG (MOBILE) ===== */
 let lastTouch = null;
@@ -567,41 +570,28 @@ canvas.addEventListener("touchstart", e => {
 
 
 canvas.addEventListener("touchmove", e => {
+  e.preventDefault();
+
   if (e.touches.length === 1 && lastTouch) {
-    e.preventDefault();
-
     const t = e.touches[0];
-    const dx = t.clientX - lastTouch.x;
-    const dy = t.clientY - lastTouch.y;
-
-    pos.x += dx;
-    pos.y += dy;
-
-    const halfW = (img.width * baseScale * scale) / 2;
-    const halfH = (img.height * baseScale * scale) / 2;
-
-    const maxX = Math.max(0, halfW - CIRCLE_RADIUS);
-    const maxY = Math.max(0, halfH - CIRCLE_RADIUS);
-
-    pos.x = clamp(pos.x, -maxX, maxX);
-    pos.y = clamp(pos.y, -maxY, maxY);
+    pos.x += t.clientX - lastTouch.x;
+    pos.y += t.clientY - lastTouch.y;
 
     lastTouch = { x: t.clientX, y: t.clientY };
+
+    clampPosition();
     draw();
   }
 
   if (e.touches.length === 2) {
-    e.preventDefault();
-
     const dist = getDistance(e.touches[0], e.touches[1]);
-    scale = Math.max(
-      1,
-      Math.min(4, pinchStartScale * (dist / pinchStartDist))
-    );
+    scale = Math.max(1, Math.min(4, pinchStartScale * (dist / pinchStartDist)));
 
+    clampPosition();
     draw();
   }
 }, { passive: false });
+
 
 
 
@@ -629,12 +619,14 @@ function getDistance(t1, t2) {
 document.getElementById("rotateBtn").onclick = () => {
   rotation = (rotation + Math.PI / 2) % (Math.PI * 2);
 
-  scale = 1;              // reset relative zoom
-  pos = { x: 0, y: 0 };   // center image
+  scale = 1;
+  pos = { x: 0, y: 0 };
 
-  computeBaseScale();     // 🔥 IMPORTANT
+  computeBaseScale();
+  clampPosition();
   draw();
 };
+
 
 
 /* CANCEL */
@@ -680,6 +672,7 @@ document.getElementById("applyCrop").onclick = async () => {
   editor.classList.add("hidden");
   showToast("Photo updated!", "success");
 };
+
 
 
 
