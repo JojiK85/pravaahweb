@@ -492,25 +492,46 @@ document.getElementById("zoomSlider").oninput = e => {
 /* ===== TOUCH DRAG (MOBILE) ===== */
 let lastTouch = null;
 
+/* ===== TOUCH START (DRAG + PINCH) ===== */
 canvas.addEventListener("touchstart", e => {
   if (e.touches.length === 1) {
     const t = e.touches[0];
     lastTouch = { x: t.clientX, y: t.clientY };
   }
+
+  if (e.touches.length === 2) {
+    pinchStartDist = getDistance(e.touches[0], e.touches[1]);
+    pinchStartScale = scale;
+    lastTouch = null; // disable drag during pinch
+  }
 }, { passive: false });
+
 
 canvas.addEventListener("touchmove", e => {
   if (e.touches.length === 1 && lastTouch) {
     e.preventDefault();
+
     const t = e.touches[0];
+    const rect = canvas.getBoundingClientRect();
 
-    pos.x += t.clientX - lastTouch.x;
-    pos.y += t.clientY - lastTouch.y;
+    const x = t.clientX - rect.left;
+    const y = t.clientY - rect.top;
 
-    lastTouch = { x: t.clientX, y: t.clientY };
+    pos.x += x - lastTouch.x;
+    pos.y += y - lastTouch.y;
+
+    lastTouch = { x, y };
+    draw();
+  }
+
+  if (e.touches.length === 2) {
+    e.preventDefault();
+    const dist = getDistance(e.touches[0], e.touches[1]);
+    scale = Math.min(4, Math.max(0.4, pinchStartScale * (dist / pinchStartDist)));
     draw();
   }
 }, { passive: false });
+
 
 canvas.addEventListener("touchend", () => {
   lastTouch = null;
@@ -525,21 +546,7 @@ function getDistance(t1, t2) {
   return Math.sqrt(dx * dx + dy * dy);
 }
 
-canvas.addEventListener("touchstart", e => {
-  if (e.touches.length === 2) {
-    pinchStartDist = getDistance(e.touches[0], e.touches[1]);
-    pinchStartScale = scale;
-  }
-}, { passive: false });
 
-canvas.addEventListener("touchmove", e => {
-  if (e.touches.length === 2) {
-    e.preventDefault();
-    const dist = getDistance(e.touches[0], e.touches[1]);
-    scale = Math.min(4, Math.max(0.4, pinchStartScale * (dist / pinchStartDist)));
-    draw();
-  }
-}, { passive: false });
 
 /* ROTATE */
 document.getElementById("rotateBtn").onclick = () => {
@@ -590,6 +597,7 @@ document.getElementById("applyCrop").onclick = async () => {
   editor.classList.add("hidden");
   showToast("Photo updated!", "success");
 };
+
 
 
 
