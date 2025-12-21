@@ -329,26 +329,48 @@ else {
 
   /* -------- DRIVE PHOTO UPLOAD -------- */
   driveUploadBtn.onclick = async () => {
-    if (!isEditing) return showToast("Tap ✏️ to edit", "info");
+  if (!isEditing) return showToast("Tap ✏️ to edit", "info");
 
-    const link = prompt("Paste Google Drive image link");
-    const id = link?.match(/[-\w]{25,}/)?.[0];
-    if (!id) return showToast("Invalid link", "error");
+  const link = prompt("Paste Google Drive image link");
+  if (!link) return;
 
-    const direct = `https://drive.google.com/uc?export=view&id=${id}`;
-    userPhoto.src = direct;
+  // 🔍 Extract file ID from ANY Drive link format
+  const match = link.match(
+    /(?:id=|\/d\/)([-\w]{25,})/
+  );
 
-    await updateProfile(user, { photoURL: direct });
-    await saveProfileToSheet({
-      name: user.displayName,
-      email: user.email,
-      phone: userPhoneInput.value,
-      college: userCollegeInput.value,
-      photo: direct
-    });
+  if (!match) {
+    showToast("Invalid Google Drive link", "error");
+    return;
+  }
 
-    showToast("Photo updated!", "success");
+  const fileId = match[1];
+
+  // ✅ Convert to IMAGE CDN (works everywhere)
+  const cdnUrl = `https://lh3.googleusercontent.com/d/${fileId}=w512-h512`;
+
+  // 1️⃣ Preview immediately
+  userPhoto.src = cdnUrl;
+
+  // 2️⃣ Save to Firebase (important)
+  await updateProfile(user, { photoURL: cdnUrl });
+
+  // 3️⃣ Save to Sheet
+  await saveProfileToSheet({
+    name: user.displayName,
+    email: user.email,
+    phone: userPhoneInput.value,
+    college: userCollegeInput.value,
+    photo: cdnUrl
+  });
+
+  userPhoto.onload = () => {
+    userPhoto.classList.add("has-photo");
   };
+
+  showToast("Photo updated!", "success");
+};
+
 
   /* Logout */
   const logout = async () => {
@@ -376,6 +398,7 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+
 
 
 
