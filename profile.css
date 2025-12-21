@@ -122,7 +122,7 @@ body {
   pointer-events: none;
 }
 .photo-overlay i { color: cyan; font-size: 2rem; }
-.photo-wrapper:hover .photo-overlay { opacity: 1; background: rgba(0, 255, 255, 0.35); }
+
 
 /* ✏️ EDIT PEN */
 .edit-pen {
@@ -639,6 +639,20 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
   pointer-events: auto;
 }
 .profile-container.is-edit .photo-overlay {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* Camera hidden by default */
+.photo-overlay {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Camera only in edit mode + hover */
+.profile-container.is-edit .photo-wrapper:hover .photo-overlay {
+  opacity: 1;
+  background: rgba(0, 255, 255, 0.35);
   pointer-events: auto;
   cursor: pointer;
 }
