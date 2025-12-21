@@ -173,6 +173,15 @@ onAuthStateChanged(auth, async (user) => {
   const editActions = document.getElementById("editActions");
   const logoutDesktop = document.getElementById("logoutDesktop");
   const logoutMobile = document.getElementById("logoutMobile");
+const cameraBtn = document.getElementById("cameraBtn");
+
+cameraBtn.onclick = () => {
+  if (!isEditing) {
+    showToast("Tap ✏️ to edit profile first", "info");
+    return;
+  }
+  uploadPhotoInput.click(); // 🔥 open file picker
+};
 
   /* Prefill */
   /* Prefill basic info */
@@ -270,11 +279,37 @@ userPhoto.onload = () => {
 
   const reader = new FileReader();
 
-  reader.onload = async () => {
+ reader.onload = async () => {
   log("Base64 generated");
 
+  /* =================================================
+     1️⃣ LOAD IMAGE INTO EDITOR (CRITICAL FIX)
+  ================================================= */
+  img.onload = () => {
+    imageReady = true;
+
+    // reset editor state
+    rotation = 0;
+    scale = 1;
+    pos = { x: 0, y: 0 };
+
+    computeBaseScale();
+    draw();
+
+    // 🔥 OPEN PHOTO EDITOR
+    editor.classList.remove("hidden");
+  };
+
+  img.src = reader.result; // ❗ THIS LINE WAS MISSING
+
+  /* =================================================
+     2️⃣ PREVIEW ON PROFILE IMAGE
+  ================================================= */
   userPhoto.src = reader.result;
 
+  /* =================================================
+     3️⃣ UPLOAD TO BACKEND
+  ================================================= */
   const base64 = reader.result.split(",")[1];
 
   const payload = {
@@ -284,12 +319,6 @@ userPhoto.onload = () => {
     file: base64
   };
 
-  log("Upload payload summary:", {
-    email: payload.email,
-    mimetype: payload.mimetype,
-    base64Length: base64.length
-  });
-
   try {
     const r = await fetch(scriptURL, {
       method: "POST",
@@ -297,37 +326,31 @@ userPhoto.onload = () => {
       body: JSON.stringify(payload)
     });
 
-    log("Upload response status:", r.status);
-
     const out = await r.json();
-    log("Upload response JSON:", out);
-if (out.ok) {
-  // 🔥 Cache-busted URL so browser reloads image
-  const finalPhoto = out.photo + "&t=" + Date.now();
 
-  // 1️⃣ Update image immediately
-  userPhoto.src = finalPhoto;
+    if (out.ok) {
+      const finalPhoto = out.photo + "&t=" + Date.now();
 
-  // 2️⃣ Persist in Firebase (CRITICAL FIX)
-  await updateProfile(user, {
-    photoURL: finalPhoto
-  });
+      userPhoto.src = finalPhoto;
 
-  // 3️⃣ Hide placeholder text once image loads
-  userPhoto.onload = () => {
-    userPhoto.classList.add("has-photo");
-  };
+      await updateProfile(user, {
+        photoURL: finalPhoto
+      });
 
-  showToast("Photo updated!", "success");
-}
-else {
+      userPhoto.onload = () => {
+        userPhoto.classList.add("has-photo");
+      };
+
+      showToast("Adjust photo & click Done", "success");
+    } else {
       showToast("Upload failed", "error");
     }
   } catch (err) {
-    console.error("UPLOAD ERROR:", err);
+    console.error(err);
     showToast("Upload error", "error");
   }
 };
+
 
 
   reader.readAsDataURL(file);
@@ -561,26 +584,7 @@ function applyTransform(img, t) {
     rotate(${t.rotation}rad)
   `;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+document.getElementById("cancelCrop").onclick = () => {
+  editor.classList.add("hidden");
+  showToast("Photo edit cancelled", "info");
+};
