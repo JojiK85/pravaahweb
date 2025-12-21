@@ -68,14 +68,24 @@ function getTouchAngle(t1, t2) {
 
 function setEditMode(on, ctx) {
   isEditing = on;
+
   ctx.container.classList.toggle("is-edit", on);
   ctx.editActions.style.display = on ? "flex" : "none";
 
+  // Upload buttons
   ctx.uploadOptions.classList.toggle("hidden", !on);
   ctx.uploadOptions.style.display = on ? "flex" : "none";
 
+  // Photo outline
   ctx.userPhoto.style.outline = on ? "2px dashed cyan" : "none";
   ctx.userPhoto.style.outlineOffset = "6px";
+
+  // 🔥 SHOW / HIDE PHOTO CONTROLS
+  const controls = document.getElementById("photoControls");
+  if (controls) {
+    controls.classList.toggle("hidden", !on);
+    controls.style.display = on ? "flex" : "none";
+  }
 }
 
 /* ---------- Save Profile ---------- */
@@ -507,3 +517,4 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+
