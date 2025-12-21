@@ -94,16 +94,21 @@ body {
 }
 
 .profile-photo img {
-  display: block;
+  position: absolute;        /* 🔒 critical */
+  inset: 0;
+
   width: 100%;
   height: 100%;
-  border-radius: 50%;
   object-fit: cover;
+
+  border-radius: 50%;
+  transform-origin: center center;
+  will-change: transform;
   cursor: pointer;
-  transition: transform .25s ease;
-  position: relative;
+
   z-index: 1;
 }
+
 
 .profile-photo img:hover { transform: scale(1.03); }
 
@@ -672,6 +677,16 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
 
 .profile-photo img {
   transform-origin: center center;
+}
+
+.photo-wrapper {
+  position: relative;
+  width: 150px;
+  height: 150px;
+
+  border-radius: 50%;
+  overflow: hidden;          /* 🔒 HARD CLIP — REQUIRED */
+  isolation: isolate;        /* 🔒 Prevent transform bleed */
 }
 
 
