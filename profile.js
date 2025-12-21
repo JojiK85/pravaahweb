@@ -19,6 +19,7 @@ let userPhoto;
 let userPhoneInput;
 let userCollegeInput;
 let baseScale = 1;
+const CIRCLE_RADIUS = canvas.width / 2;
 
 async function fetchImageAsBase64(url) {
   const r = await fetch(
@@ -447,14 +448,19 @@ let start = { x: 0, y: 0 };
 
 
 img.onload = () => {
-  baseScale = Math.min(
-    canvas.width / img.width,
-    canvas.height / img.height
+  baseScale = Math.max(
+    (CIRCLE_RADIUS * 2) / img.width,
+    (CIRCLE_RADIUS * 2) / img.height
   );
-  scale = 1;
+
+  scale = 1; // relative scale
   pos = { x: 0, y: 0 };
   draw();
 };
+function clamp(val, min, max) {
+  return Math.max(min, Math.min(max, val));
+}
+
 
 
 function draw() {
@@ -489,10 +495,19 @@ canvas.onmousedown = e => {
 };
 canvas.onmousemove = e => {
   if (!dragging) return;
+
   pos.x = e.offsetX - start.x;
   pos.y = e.offsetY - start.y;
+
+  const maxX = (img.width * baseScale * scale) / 2 - CIRCLE_RADIUS;
+  const maxY = (img.height * baseScale * scale) / 2 - CIRCLE_RADIUS;
+
+  pos.x = clamp(pos.x, -maxX, maxX);
+  pos.y = clamp(pos.y, -maxY, maxY);
+
   draw();
 };
+
 canvas.onmouseup = () => dragging = false;
 
 /* ZOOM */
@@ -523,25 +538,34 @@ canvas.addEventListener("touchmove", e => {
     e.preventDefault();
 
     const t = e.touches[0];
-    const rect = canvas.getBoundingClientRect();
 
-    const x = t.clientX - rect.left;
-    const y = t.clientY - rect.top;
+    // movement delta (viewport based – stable)
+    const dx = t.clientX - lastTouch.x;
+    const dy = t.clientY - lastTouch.y;
 
-    pos.x += x - lastTouch.x;
-    pos.y += y - lastTouch.y;
+    pos.x += dx;
+    pos.y += dy;
 
-    lastTouch = { x, y };
-    draw();
-  }
+    // image half size after scale
+    const halfW = (img.width * baseScale * scale) / 2;
+    const halfH = (img.height * baseScale * scale) / 2;
 
-  if (e.touches.length === 2) {
-    e.preventDefault();
-    const dist = getDistance(e.touches[0], e.touches[1]);
-    scale = Math.min(4, Math.max(0.4, pinchStartScale * (dist / pinchStartDist)));
+    // clamp limits (never negative)
+    const maxX = Math.max(0, halfW - CIRCLE_RADIUS);
+    const maxY = Math.max(0, halfH - CIRCLE_RADIUS);
+
+    pos.x = clamp(pos.x, -maxX, maxX);
+    pos.y = clamp(pos.y, -maxY, maxY);
+
+    lastTouch = {
+      x: t.clientX,
+      y: t.clientY
+    };
+
     draw();
   }
 }, { passive: false });
+
 
 
 canvas.addEventListener("touchend", () => {
@@ -608,6 +632,7 @@ document.getElementById("applyCrop").onclick = async () => {
   editor.classList.add("hidden");
   showToast("Photo updated!", "success");
 };
+
 
 
 
