@@ -1218,6 +1218,101 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
 .profile-container:not(.is-edit) .photo-wrapper {
   cursor: default;
 }
+/* ======================================================
+   CIRCULAR CROP PREVIEW RING
+====================================================== */
+
+.crop-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 4;
+
+  /* Dark outside mask */
+  box-shadow:
+    0 0 0 9999px rgba(0,0,0,0.55),
+    inset 0 0 0 2px cyan;
+}
+/* ======================================================
+   PHOTO TRANSFORM BEHAVIOR
+====================================================== */
+
+.photo-wrapper {
+  overflow: hidden;
+  touch-action: none; /* REQUIRED for pinch & rotate */
+}
+
+#userPhoto {
+  transform-origin: center center;
+  will-change: transform;
+}
+/* ======================================================
+   PHOTO EDIT CONTROLS (ZOOM / ROTATE / RESET)
+====================================================== */
+
+.photo-controls {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 14px;
+
+  background: rgba(0,0,0,0.65);
+  border: 1px solid cyan;
+  box-shadow: 0 0 14px rgba(0,255,255,0.35);
+}
+
+.profile-container.is-edit .photo-controls {
+  display: flex;
+}
+
+.photo-controls label {
+  font-size: 0.8rem;
+  color: cyan;
+}
+
+.photo-controls input[type="range"] {
+  width: 100%;
+}
+
+.photo-controls input[type="number"] {
+  background: transparent;
+  border: 1px solid cyan;
+  color: cyan;
+  padding: 6px;
+  border-radius: 6px;
+  width: 90px;
+}
+
+#resetPhotoBtn {
+  margin-top: 6px;
+  background: transparent;
+  border: 1px solid cyan;
+  color: cyan;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#resetPhotoBtn:hover {
+  background: cyan;
+  color: black;
+}
+/* ======================================================
+   TOUCH SAFETY (MOBILE + TRACKPAD)
+====================================================== */
+
+.profile-container.is-edit {
+  overscroll-behavior: contain;
+}
+
+body.is-photo-editing {
+  touch-action: none;
+  overscroll-behavior: contain;
+}
+
 
 
 
