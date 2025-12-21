@@ -569,7 +569,7 @@ payBtn.addEventListener("click", async () => {
 
   const payload = {
     type: "PASS_REGISTRATION",
-    registeredEmail: participants[0].email,
+    registeredEmail: auth.currentUser.email,
     passType: currentPassType,
     totalAmount: currentTotal,
     participants,
@@ -587,67 +587,60 @@ payBtn.addEventListener("click", async () => {
     description: `${currentPassType} — Registration`,
 
     handler: async function (response) {
-      payload.paymentId = response.razorpay_payment_id;
+  payload.paymentId = response.razorpay_payment_id;
 
-      try {
-        const res = await fetch(scriptURL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-
-        const result = await res.json();
-
-        if (!result || result.error) {
-          throw new Error("Backend save failed");
-        }
-
-        window.location.replace("payment_success.html");
-        import { getAuth } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-
-const auth = getAuth();
-const user = auth.currentUser;
-
-if (user && user.email) {
-  const loggedEmail = user.email.toLowerCase().trim();
-  const loggedName = (user.displayName || "").toLowerCase().trim();
-
-  // 🔍 STRICT MATCH: name + email
-  const matchedParticipant = participants.find(p =>
-    p.email &&
-    p.name &&
-    p.email.toLowerCase().trim() === loggedEmail &&
-    p.name.toLowerCase().trim() === loggedName
-  );
-
-  // ✅ Update profile ONLY if match found
-  if (matchedParticipant) {
-    await fetch(scriptURL, {
+  try {
+    // 1️⃣ Save pass registration
+    const res = await fetch(scriptURL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: matchedParticipant.email,
-        name: matchedParticipant.name,
-        phone: matchedParticipant.phone,
-        college: matchedParticipant.college
-      })
+      body: JSON.stringify(payload)
     });
+
+    const result = await res.json();
+    if (!result || result.error) {
+      throw new Error("Backend save failed");
+    }
+
+    // 2️⃣ UPDATE PROFILE (STRICT MATCH)
+    const user = auth.currentUser;
+
+    if (user && user.email) {
+      const loggedEmail = user.email.toLowerCase().trim();
+const loggedName = (user.displayName || "").toLowerCase().trim();
+
+const matchedParticipant = participants.find(p =>
+  p.email &&
+  p.name &&
+  p.email.toLowerCase().trim() === loggedEmail &&
+  p.name.toLowerCase().trim() === loggedName
+);
+
+
+      if (matchedParticipant) {
+        await fetch(scriptURL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: matchedParticipant.email,
+            name: matchedParticipant.name,
+            phone: matchedParticipant.phone,
+            college: matchedParticipant.college
+          })
+        });
+      }
+    }
+
+    // 3️⃣ Redirect AFTER everything is saved
+    window.location.replace("payment_success.html");
+
+  } catch (e) {
+    console.error(e);
+    alert("Payment succeeded but saving failed. Contact support.");
+    window.location.replace("payment_failure.html");
   }
 }
 
-      } catch (e) {
-        console.error(e);
-        alert("Payment succeeded but saving failed. Contact support.");
-        window.location.replace("payment_failure.html");
-      }
-    },
-
-    modal: {
-      ondismiss: function () {
-        paying = false;
-        window.location.replace("payment_failure.html");
-      }
-    }
   });
 
   rzp.on("payment.failed", function () {
@@ -657,6 +650,7 @@ if (user && user.email) {
 
   rzp.open();
 });
+
 
 
 
