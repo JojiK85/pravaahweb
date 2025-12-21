@@ -18,6 +18,8 @@ const log = (...args) => {
 let userPhoto;
 let userPhoneInput;
 let userCollegeInput;
+let baseScale = 1;
+
 async function fetchImageAsBase64(url) {
   const r = await fetch(
     `${scriptURL}?type=imageToBase64&url=${encodeURIComponent(url)}`
@@ -444,31 +446,40 @@ let start = { x: 0, y: 0 };
 /* OPEN EDITOR ONLY IN EDIT MODE */
 
 
-img.onload = () => draw();
+img.onload = () => {
+  baseScale = Math.min(
+    canvas.width / img.width,
+    canvas.height / img.height
+  );
+  scale = 1;
+  pos = { x: 0, y: 0 };
+  draw();
+};
+
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.save();
 
-  ctx.translate(canvas.width / 2 + pos.x, canvas.height / 2 + pos.y);
-  ctx.rotate(rotation);
-  ctx.scale(scale, scale);
-
-  const ratio = Math.min(
-    canvas.width / img.width,
-    canvas.height / img.height
+  ctx.translate(
+    canvas.width / 2 + pos.x,
+    canvas.height / 2 + pos.y
   );
+
+  ctx.rotate(rotation);
+
+  const finalScale = baseScale * scale;
+  ctx.scale(finalScale, finalScale);
 
   ctx.drawImage(
     img,
-    -img.width * ratio / 2,
-    -img.height * ratio / 2,
-    img.width * ratio,
-    img.height * ratio
+    -img.width / 2,
+    -img.height / 2
   );
 
   ctx.restore();
 }
+
 
 
 /* DRAG */
@@ -597,6 +608,7 @@ document.getElementById("applyCrop").onclick = async () => {
   editor.classList.add("hidden");
   showToast("Photo updated!", "success");
 };
+
 
 
 
