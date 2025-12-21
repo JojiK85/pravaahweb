@@ -32,60 +32,17 @@ function showToast(message, type = "info") {
 /* ---------- State ---------- */
 let isEditing = false;
 let originalProfile = { phone: "", college: "" };
-let photoState = { x: 0, y: 0, scale: 1, rotate: 0 };
-let originalPhotoState = null;
-let dragging = false;
-let dragStart = { x: 0, y: 0 };
-let initialTouchDistance = 0;
-let initialTouchAngle = 0;
-let initialScale = 1;
-let initialRotate = 0;
-
-function applyPhotoTransform(img) {
-  img.style.transform =
-    `translate(${photoState.x}px, ${photoState.y}px)
-     scale(${photoState.scale})
-     rotate(${photoState.rotate}deg)`;
-}
-
-function resetPhotoTransform(img) {
-  photoState = { x: 0, y: 0, scale: 1, rotate: 0 };
-  applyPhotoTransform(img);
-}
-function getTouchDistance(t1, t2) {
-  return Math.hypot(
-    t2.clientX - t1.clientX,
-    t2.clientY - t1.clientY
-  );
-}
-
-function getTouchAngle(t1, t2) {
-  return Math.atan2(
-    t2.clientY - t1.clientY,
-    t2.clientX - t1.clientX
-  ) * 180 / Math.PI;
-}
 
 function setEditMode(on, ctx) {
   isEditing = on;
-
   ctx.container.classList.toggle("is-edit", on);
   ctx.editActions.style.display = on ? "flex" : "none";
 
-  // Upload buttons
   ctx.uploadOptions.classList.toggle("hidden", !on);
   ctx.uploadOptions.style.display = on ? "flex" : "none";
 
-  // Photo outline
   ctx.userPhoto.style.outline = on ? "2px dashed cyan" : "none";
   ctx.userPhoto.style.outlineOffset = "6px";
-
-  // 🔥 SHOW / HIDE PHOTO CONTROLS
-  const controls = document.getElementById("photoControls");
-  if (controls) {
-    controls.classList.toggle("hidden", !on);
-    controls.style.display = on ? "flex" : "none";
-  }
 }
 
 /* ---------- Save Profile ---------- */
@@ -197,76 +154,6 @@ onAuthStateChanged(auth, async (user) => {
 
   const container = document.querySelector(".profile-container");
   const userPhoto = document.getElementById("userPhoto");
-   /* ===============================
-   TOUCH GESTURES (DRAG / PINCH / ROTATE)
-   =============================== */
-
-userPhoto.addEventListener("touchstart", e => {
-  if (!isEditing) return;
-
-  if (e.touches.length === 1) {
-    // 🖐️ single finger drag
-    dragging = true;
-    const t = e.touches[0];
-    dragStart.x = t.clientX - photoState.x;
-    dragStart.y = t.clientY - photoState.y;
-  }
-
-  if (e.touches.length === 2) {
-    // ✌️ two finger rotate + pinch
-    dragging = false;
-
-    initialTouchDistance = getTouchDistance(e.touches[0], e.touches[1]);
-    initialTouchAngle = getTouchAngle(e.touches[0], e.touches[1]);
-
-    initialScale = photoState.scale;
-    initialRotate = photoState.rotate;
-  }
-});
-
-userPhoto.addEventListener("touchmove", e => {
-  if (!isEditing) return;
-
-  // 🖐️ drag
-  if (e.touches.length === 1 && dragging) {
-    const t = e.touches[0];
-    photoState.x = t.clientX - dragStart.x;
-    photoState.y = t.clientY - dragStart.y;
-    applyPhotoTransform(userPhoto);
-  }
-
-  // ✌️ rotate + pinch zoom
-  if (e.touches.length === 2) {
-    e.preventDefault(); // 🚫 stop page zoom
-
-    const newDistance = getTouchDistance(e.touches[0], e.touches[1]);
-    const newAngle = getTouchAngle(e.touches[0], e.touches[1]);
-
-    // 🔄 rotation
-    let newRotate =
-  initialRotate + (newAngle - initialTouchAngle);
-
-// 🔒 Clamp between -180 and +180
-if (newRotate > 180) newRotate = 180;
-if (newRotate < -180) newRotate = -180;
-
-photoState.rotate = newRotate;
-
-
-    // 🔍 pinch zoom (clamped)
-    photoState.scale =
-      Math.min(3, Math.max(0.5,
-        initialScale * (newDistance / initialTouchDistance)
-      ));
-
-    applyPhotoTransform(userPhoto);
-  }
-}, { passive: false });
-
-userPhoto.addEventListener("touchend", () => {
-  dragging = false;
-});
-
   const uploadPhotoInput = document.getElementById("uploadPhoto");
   const uploadOptions = document.getElementById("uploadOptions");
   const driveUploadBtn = document.getElementById("driveUploadBtn");
@@ -326,7 +213,6 @@ userPhoto.onload = () => {
 
   /* Edit toggle */
   document.getElementById("editPen").onclick = () => {
-     originalPhotoState = JSON.parse(JSON.stringify(photoState));
     originalProfile = { phone: userPhoneInput.value, college: userCollegeInput.value };
     setEditMode(!isEditing, { container, uploadOptions, userPhoto, editActions });
   };
@@ -352,11 +238,6 @@ userPhoto.onload = () => {
     userCollegeInput.value = originalProfile.college;
     phoneSpan.textContent = originalProfile.phone || "-";
     collegeSpan.textContent = originalProfile.college || "-";
-     if (originalPhotoState) {
-  photoState = originalPhotoState;
-  applyPhotoTransform(userPhoto);
-}
-
     setEditMode(false, { container, uploadOptions, userPhoto, editActions });
   };
 
@@ -517,4 +398,24 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
