@@ -181,9 +181,11 @@ if (cameraBtn) {
       showToast("Tap ✏️ to edit profile first", "info");
       return;
     }
-    uploadPhotoInput.click(); // open file picker
+
+    openPhotoEditorFromExisting(); // ✅ ONLY opens editor
   });
 }
+
 
 
   /* Prefill */
@@ -601,6 +603,42 @@ document.getElementById("cancelCrop").onclick = () => {
   editor.classList.add("hidden");
   showToast("Photo edit cancelled", "info");
 };
+function openPhotoEditorFromExisting() {
+  // 🚫 No photo → do nothing
+  if (!userPhoto.src || userPhoto.src.includes("default-avatar")) {
+    showToast("Upload a photo first", "info");
+    return;
+  }
+
+  img.onload = () => {
+    imageReady = true;
+
+    // ✅ If transform exists → reuse
+    if (photoTransform && Object.keys(photoTransform).length) {
+      rotation = photoTransform.rotation || 0;
+      scale    = photoTransform.zoom || 1;
+      pos = {
+        x: photoTransform.x || 0,
+        y: photoTransform.y || 0
+      };
+    }
+    // ✅ Else → fresh zero editor
+    else {
+      rotation = 0;
+      scale = 1;
+      pos = { x: 0, y: 0 };
+    }
+
+    computeBaseScale();
+    clampPosition();
+    draw();
+
+    editor.classList.remove("hidden");
+  };
+
+  img.src = userPhoto.src;
+}
+
 
 
 
