@@ -9,7 +9,7 @@ import { onAuthStateChanged, signOut, updateProfile } from
 const FRONTEND_BASE = "https://pravaahweb1.vercel.app";
 
 /* ---------- Backend Script URL ---------- */
-const scriptURL = "https://script.google.com/macros/s/AKfycbwjVgX_Ph43dN2JIMYhjxiOCgNY-HswrcRU8WO5DRc-oJo7mVKAjt-qjslf-9j5W4Ee/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbwPItdXLlsTKoy5CAHH98TYjlfNy3w1MY9J1vztQ2jie11Y-aze6cyb_jMyh-5ajJdHlQ/exec";
 /* ---------- DEBUG ---------- */
 const DEBUG_PROFILE = true;
 const log = (...args) => {
@@ -561,6 +561,7 @@ function applyTransform(img, t) {
     rotate(${t.rotation}rad)
   `;
 }
+
 
 
 
