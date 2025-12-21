@@ -553,15 +553,18 @@ function applyTransform(img, t) {
   if (!t) return;
 
   img.style.transform = `
+    translate(-50%, -50%)
     translate(${t.x}px, ${t.y}px)
     scale(${t.zoom})
     rotate(${t.rotation}rad)
   `;
 }
 
+
 function resetPhotoTransform(img) {
-  img.style.transform = "translate(0px, 0px) scale(1) rotate(0rad)";
+  img.style.transform = "translate(-50%, -50%) scale(1) rotate(0rad)";
 }
+
 
 
 document.getElementById("cancelCrop").onclick = () => {
@@ -604,3 +607,4 @@ function openPhotoEditorFromExisting() {
   img.src = userPhoto.src + "&editor=" + Date.now();
 
 }
+
