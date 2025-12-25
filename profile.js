@@ -49,7 +49,6 @@ async function saveProfileToSheet(profile) {
   } else {
     await fetch(scriptURL, {
       method: "POST",
-       mode: "no-cors",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: payload
     });
@@ -283,7 +282,6 @@ setTimeout(()=>openEditor(),300);   // ⭐ AUTO OPEN EDITOR
   try {
     const r = await fetch(scriptURL, {
       method: "POST",
-       mode: "no-cors",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify(payload)
     });
@@ -631,6 +629,7 @@ window.addEventListener("load", ()=>{
       }
     });
 });
+
 
 
 
