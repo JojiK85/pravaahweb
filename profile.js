@@ -9,7 +9,7 @@ import { onAuthStateChanged, signOut, updateProfile } from
 const FRONTEND_BASE = "https://pravaahweb1.vercel.app";
 
 /* ---------- Backend Script URL ---------- */
-const scriptURL = "https://script.google.com/macros/s/AKfycbwjVgX_Ph43dN2JIMYhjxiOCgNY-HswrcRU8WO5DRc-oJo7mVKAjt-qjslf-9j5W4Ee/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbyVo8D7KxauDBHl3ErJt_E97trRoQU2-0LNN8rFyjCpogy2Jwdgsk1PwrtmZyE7O6Up/exec";
 /* ---------- DEBUG ---------- */
 const DEBUG_PROFILE = true;
 const log = (...args) => {
@@ -218,19 +218,46 @@ userPhoto.onload = () => {
   };
 
   /* Save */
-  document.getElementById("saveProfileBtn").onclick = async () => {
-    await saveProfileToSheet({
-      name: user.displayName,
-      email: user.email,
-      phone: userPhoneInput.value,
-      college: userCollegeInput.value,
-      photo: userPhoto.src
+  document.getElementById("saveProfileBtn").onclick = async ()=>{
+
+    let finalPhotoURL=document.getElementById("userPhoto").src;
+
+    // If edited → upload to backend
+    if(previewPhotoSrc && pendingTransform){
+        const r = await fetch(scriptURL,{
+          method:"POST",
+          headers:{ "Content-Type":"application/json"},
+          body:JSON.stringify({
+            type:"saveFinalPhoto",
+            base64:previewPhotoSrc.split(",")[1]
+          })
+        }).then(r=>r.json());
+
+        if(r.ok){
+            finalPhotoURL=r.url;
+            savedTransform=pendingTransform;
+            pendingTransform=null; 
+            previewPhotoSrc=null;
+        } else return showToast("Save failed","error");
+    }
+
+    // SAVE to Sheet with transform
+    await fetch(scriptURL,{
+      method:"POST",
+      headers:{ "Content-Type":"application/json"},
+      body:JSON.stringify({
+        email:auth.currentUser.email,
+        phone:userPhone.value,
+        college:userCollege.value,
+        photo:finalPhotoURL,
+        transform:savedTransform ?? null  // <-- FIX APPLIED
+      })
     });
-    phoneSpan.textContent = userPhoneInput.value || "-";
-    collegeSpan.textContent = userCollegeInput.value || "-";
-    showToast("Profile updated!", "success");
-    setEditMode(false, { container, uploadOptions, userPhoto, editActions });
-  };
+
+    showToast("Profile Updated","success");
+    setTimeout(()=>location.reload(),800);
+};
+
 
   /* Cancel */
   document.getElementById("cancelEditBtn").onclick = () => {
@@ -398,3 +425,171 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+/* ==========================================================
+   🖼 FINAL PHOTO TRANSFORM + SAVE SYSTEM (FULL WORKING)
+========================================================== */
+
+let originalPhotoSrc = null;
+let previewPhotoSrc = null;
+let pendingTransform = null;
+let savedTransform = null;
+
+const editor = document.getElementById("photoEditor");
+const canvas = document.getElementById("cropCanvas");
+const ctx2 = canvas.getContext("2d");
+
+const zoomRange = document.getElementById("zoomSlider");
+const rotateBtn2 = document.getElementById("rotateBtn");
+const cropApply = document.getElementById("applyCrop");
+const cropCancel = document.getElementById("cancelCrop");
+
+let img2 = new Image();
+img2.crossOrigin = "anonymous";
+
+let scaleV = 1;
+let rotV = 0;
+let offset = { x:0, y:0 };
+let baseFit = 1;
+const RING = canvas.width/2;
+let drag=false, startPos={x:0,y:0};
+
+function baseScaleCalc(){
+    baseFit = Math.max((RING*2)/img2.width , (RING*2)/img2.height);
+}
+
+function clampXY(){
+  const hw = (img2.width * baseFit * scaleV)/2;
+  const hh = (img2.height* baseFit * scaleV)/2;
+  offset.x = Math.max(-(hw-RING), Math.min(hw-RING, offset.x));
+  offset.y = Math.max(-(hh-RING), Math.min(hh-RING, offset.y));
+}
+
+function redraw(){
+  ctx2.clearRect(0,0,260,260);
+  ctx2.save();
+  ctx2.translate(130+offset.x ,130+offset.y);
+  ctx2.rotate(rotV);
+  ctx2.scale(baseFit*scaleV ,baseFit*scaleV);
+  ctx2.drawImage(img2,-img2.width/2,-img2.height/2);
+  ctx2.restore();
+}
+
+/* Load editor */
+cameraBtn.onclick = ()=>{
+  if(!isEditing) return showToast("Tap ✏️ first","info");
+
+  originalPhotoSrc=document.getElementById("userPhoto").src;
+  img2.src = originalPhotoSrc+"?t="+Date.now();
+
+  img2.onload = ()=>{
+      scaleV=savedTransform?.zoom||1;
+      rotV=(savedTransform?.rotation||0)*Math.PI/180;
+      offset.x=savedTransform?.x||0;
+      offset.y=savedTransform?.y||0;
+
+      baseScaleCalc(); clampXY(); redraw();
+      editor.classList.remove("hidden");
+  };
+};
+
+/* Zoom */
+zoomRange.oninput=(e)=>{ scaleV=parseFloat(e.target.value); clampXY(); redraw(); }
+
+/* Rotate */
+rotateBtn2.onclick=()=>{ rotV+=Math.PI/2; redraw(); }
+
+/* Drag Move */
+canvas.onmousedown=e=>{ drag=true; startPos={x:e.offsetX-offset.x,y:e.offsetY-offset.y}; }
+canvas.onmousemove=e=>{ 
+    if(!drag) return; 
+    offset.x=e.offsetX-startPos.x; offset.y=e.offsetY-startPos.y; 
+    clampXY(); redraw(); 
+};
+canvas.onmouseup=()=>drag=false;
+
+
+/* Apply Preview */
+cropApply.onclick=()=>{
+    pendingTransform={
+      x:offset.x,y:offset.y,
+      zoom:scaleV,
+      rotation:(rotV*180/Math.PI)%360
+    };
+
+    previewPhotoSrc = canvas.toDataURL("image/png");
+    document.getElementById("userPhoto").src=previewPhotoSrc;
+
+    editor.classList.add("hidden");
+    showToast("Photo ready — click SAVE PROFILE to store","info");
+};
+
+/* Cancel Edit */
+cropCancel.onclick=()=>{
+   document.getElementById("userPhoto").src=originalPhotoSrc;
+   pendingTransform=null; previewPhotoSrc=null;
+   editor.classList.add("hidden");
+};
+
+
+/* ------------- MODIFY SAVE BUTTON ------------- */
+document.getElementById("saveProfileBtn").onclick = async ()=>{
+
+    let finalPhotoURL=document.getElementById("userPhoto").src;
+
+    /* If user edited image → upload BASE64 */
+    if(previewPhotoSrc && pendingTransform){
+        const r = await fetch(scriptURL,{
+          method:"POST",
+          headers:{ "Content-Type":"application/json"},
+          body:JSON.stringify({
+            type:"saveFinalPhoto",
+            base64:previewPhotoSrc.split(",")[1]
+          })
+        }).then(r=>r.json());
+
+        if(r.ok){
+            finalPhotoURL=r.url;
+            savedTransform=pendingTransform;
+            pendingTransform=null; previewPhotoSrc=null;
+        } else return showToast("Save failed","error");
+    }
+
+    /* SAVE TO SHEET */
+    await fetch(scriptURL,{
+      method:"POST",
+      headers:{ "Content-Type":"application/json"},
+      body:JSON.stringify({
+        email:auth.currentUser.email,
+        phone:userPhone.value,
+        college:userCollege.value,
+        photo:finalPhotoURL,
+        transform:savedTransform?JSON.stringify(savedTransform):null
+      })
+    });
+
+    showToast("Profile Updated","success");
+    location.reload();
+};
+
+
+/* -------- Load transform on startup -------- */
+window.addEventListener("load", ()=>{
+  fetch(`${scriptURL}?type=profile&email=${auth.currentUser?.email}`)
+    .then(r=>r.json())
+    .then(p=>{
+      if(p?.transform){
+        savedTransform = typeof p.transform==="string"
+          ? JSON.parse(p.transform)
+          : p.transform;
+
+        let img = document.getElementById("userPhoto");
+        img.style.transform = 
+          `translate(-50%,-50%) 
+           translate(${savedTransform.x}px,${savedTransform.y}px) 
+           scale(${savedTransform.zoom}) 
+           rotate(${savedTransform.rotation}deg)`;
+      }
+    });
+});
+
+
