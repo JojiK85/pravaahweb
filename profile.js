@@ -9,7 +9,7 @@ import { onAuthStateChanged, signOut, updateProfile } from
 const FRONTEND_BASE = "https://pravaahweb1.vercel.app";
 
 /* ---------- Backend Script URL ---------- */
-const scriptURL = "https://script.google.com/macros/s/AKfycbyVo8D7KxauDBHl3ErJt_E97trRoQU2-0LNN8rFyjCpogy2Jwdgsk1PwrtmZyE7O6Up/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbxNMykNedjBmoP6qjm6g-yE0W_lw9VHvHGoADu8xS0z1ZpbxHrDXK6iw_FLZpKCWdgt5A/exec";
 /* ---------- DEBUG ---------- */
 const DEBUG_PROFILE = true;
 const log = (...args) => {
@@ -36,24 +36,20 @@ let originalProfile = { phone: "", college: "" };
 
 /* ---------- Save Profile ---------- */
 async function saveProfileToSheet(profile) {
-  const payload = JSON.stringify({
-    name: profile.name || "",
-    email: profile.email || "",
-    phone: profile.phone || "",
-    college: profile.college || "",
-    photo: profile.photo || ""
+  await fetch(scriptURL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      type: "saveProfile",
+      name: profile.name || "",
+      email: profile.email || "",
+      phone: profile.phone || "",
+      college: profile.college || "",
+      photo: profile.photo || ""
+    })
   });
-
-  if (navigator.sendBeacon) {
-    navigator.sendBeacon(scriptURL, new Blob([payload], { type: "text/plain" }));
-  } else {
-    await fetch(scriptURL, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: payload
-    });
-  }
 }
+
 
 /* ---------- Field Text ---------- */
 function ensureFieldSpan(input, id) {
@@ -280,11 +276,11 @@ setTimeout(()=>openEditor(),300);   // ⭐ AUTO OPEN EDITOR
   });
 
   try {
-    const r = await fetch(scriptURL, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(payload)
-    });
+    const r = await fetch(scriptURL,{
+  method:"POST",
+  headers:{ "Content-Type":"application/json" },
+  body: JSON.stringify(payload)
+});
 
     log("Upload response status:", r.status);
 
@@ -629,6 +625,7 @@ window.addEventListener("load", ()=>{
       }
     });
 });
+
 
 
 
