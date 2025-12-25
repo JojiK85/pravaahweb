@@ -9,7 +9,7 @@ import { onAuthStateChanged, signOut, updateProfile } from
 const FRONTEND_BASE = "https://pravaahweb1.vercel.app";
 
 /* ---------- Backend Script URL ---------- */
-const scriptURL = "https://script.google.com/macros/s/AKfycbzeQupPOwo5NqmEINSmdQmWjF5AYQlcZ4dIe4cM2wkAY2i7mGdEo0W5BqHbgqZmdFad0w/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbwvAim6xP581wOVp5I8E4ADpvq2KUi8VaHxxKl622Jus05c5ElQDly7rjPtU3HQ19vWQA/exec";
 /* ---------- DEBUG ---------- */
 const DEBUG_PROFILE = true;
 const log = (...args) => {
@@ -664,6 +664,7 @@ window.addEventListener("load", ()=>{
       }
     });
 });
+
 
 
 
