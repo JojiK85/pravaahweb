@@ -501,44 +501,83 @@ cropCancel.onclick=()=>{
 
 
   document.getElementById("saveProfileBtn").onclick = async ()=>{
-    let finalPhotoURL=document.getElementById("userPhoto").src;
 
-    if(previewPhotoSrc && pendingTransform){
-       const r = await fetch(scriptURL,{
-          method:"POST",
-          headers:{ "Content-Type":"application/json"},
-          body:JSON.stringify({
-            type:"saveFinalPhoto",
-            base64:previewPhotoSrc.split(",")[1]
-          })
-        });
+  console.log("=== SAVE PROFILE START ===");
+  console.log("scriptURL =", scriptURL);
 
-        let out;
-        try{ out = await r.json(); } catch(e){ out=null; }
+  let finalPhotoURL = document.getElementById("userPhoto").src;
 
-        if(out && out.ok){
-            finalPhotoURL = out.url;
-            savedTransform = pendingTransform;
-            pendingTransform=null; previewPhotoSrc=null;
-        } else return showToast("Save failed","error");
+  // -------------------------
+  // 1. Upload cropped final image (if edited)
+  // -------------------------
+  if(previewPhotoSrc && pendingTransform){
+    console.log("Sending cropped image to server...");
+
+    try{
+      const r = await fetch(scriptURL,{
+        method:"POST",
+        headers:{ "Content-Type":"application/json"},
+        body:JSON.stringify({
+          type:"saveFinalPhoto",
+          base64:previewPhotoSrc.split(",")[1]
+        })
+      });
+
+      console.log("saveFinalPhoto status:", r.status);
+
+      const out = await r.json();
+      console.log("saveFinalPhoto result:", out);
+
+      if(out.ok){
+        finalPhotoURL = out.url;
+        savedTransform = pendingTransform;
+        pendingTransform = null;
+        previewPhotoSrc = null;
+      } else {
+        showToast("Photo save failed","error");
+        return;
+      }
+
+    }catch(err){
+      console.error("❌ Error uploading photo:", err);
+      showToast("Upload failed","error");
+      return;
     }
+  }
 
-    await fetch(scriptURL,{
+  // -------------------------
+  // 2. Save profile fields + photo + transform
+  // -------------------------
+
+  console.log("Saving profile...");
+
+  try{
+    const saveRes = await fetch(scriptURL,{
       method:"POST",
       headers:{ "Content-Type":"application/json"},
       body:JSON.stringify({
-         type:"saveProfile",
-         email:auth.currentUser.email,
-         phone:userPhoneInput.value,
-         college:userCollegeInput.value,
-         photo:finalPhotoURL,
-         transform:savedTransform ? JSON.stringify(savedTransform) : null
+        type:"saveProfile",
+        email:auth.currentUser.email,
+        phone:userPhoneInput.value,
+        college:userCollegeInput.value,
+        photo:finalPhotoURL,
+        transform:savedTransform ? JSON.stringify(savedTransform) : null
       })
     });
 
-    showToast("Profile Updated","success");
-    setTimeout(()=>location.reload(),800);
+    console.log("saveProfile status:", saveRes.status);
+    console.log("saveProfile response:", await saveRes.text());
+
+  }catch(err){
+    console.error("❌ Save profile request failed:", err);
+    showToast("Save Failed","error");
+    return;
+  }
+
+  showToast("Profile Updated","success");
+  setTimeout(()=>location.reload(),800);
 };
+
 
 /* Drag Move (Mouse) */
 canvas.onmousedown = e => { drag=true; startPos={x:e.offsetX-offset.x,y:e.offsetY-offset.y}; }
@@ -625,6 +664,7 @@ window.addEventListener("load", ()=>{
       }
     });
 });
+
 
 
 
