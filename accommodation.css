@@ -357,5 +357,253 @@ body {
     font-size: 1rem;
   }
 }
+/* ==============================
+   ACCOMMODATION FORM LAYOUT
+============================== */
+
+/* Room & Day grids */
+#roomGrid,
+#dayGrid {
+  display: grid;
+  gap: 16px;
+}
+
+/* Mobile: 2 per row */
+#dayGrid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* Desktop: 4 per row */
+@media (min-width: 900px) {
+  #dayGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Smooth hide/show */
+#roomGrid,
+#dayGrid {
+  transition: all 0.3s ease;
+}
+
+/* Student form */
+.participant-card {
+  background: var(--surface-darker);
+  border: 1px solid var(--primary-border);
+  border-radius: 14px;
+  padding: 16px;
+  margin-top: 16px;
+  box-shadow: 0 0 15px rgba(36,224,236,0.25);
+}
+
+.participant-card input {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--primary-border);
+  background: transparent;
+  color: var(--text);
+}
+
+/* Make buttons & grids stack nicely on mobile */
+@media (max-width: 600px) {
+  .passes-box {
+    padding: 20px 12px;
+  }
+
+  .pass-card {
+    font-size: 0.9rem;
+  }
+}
+/* DAYS GRID RESPONSIVE LAYOUT */
+
+
+/* ==============================
+   FINAL GRID ALIGNMENT (ADD LAST)
+============================== */
+
+/* Center all grids */
+#genderGrid,
+#roomGrid,
+#dayGrid {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  margin: 0 auto 30px auto;
+}
+
+/* PC layout */
+#genderGrid,
+#roomGrid {
+  grid-template-columns: repeat(2, minmax(240px, 1fr));
+  max-width: 600px;
+}
+
+
+
+/* ==============================
+   FINAL GRID ALIGNMENT (ADD LAST)
+============================== */
+
+/* Center all grids */
+#genderGrid,
+#roomGrid,
+#dayGrid {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  margin: 0 auto 30px auto;
+}
+
+/* PC layout → 2 per row */
+#genderGrid,
+#roomGrid,
+#dayGrid {
+  grid-template-columns: repeat(2, minmax(260px, 1fr));
+  max-width: 700px;
+}
+
+/* Center text inside cards */
+.pass-card {
+  text-align: center;
+}
+
+/* 📱 Mobile → 1 per row */
+@media (max-width: 600px) {
+  #genderGrid,
+  #roomGrid,
+  #dayGrid {
+    grid-template-columns: 1fr;
+    max-width: 95%;
+  }
+}
+
+/* Add spacing between section titles and grids */
+.passes-box h3 {
+  margin-top: 30px;
+  margin-bottom: 18px;   /* space between text and boxes */
+  text-align: center;
+}
+
+/* Extra top spacing for grids */
+#genderGrid,
+#roomGrid,
+#dayGrid {
+  margin-top: 10px;
+}
+
+/* ==============================
+   FINAL GRID ALIGNMENT (FIXED)
+============================== */
+
+/* Center all grids */
+#genderGrid,
+#roomGrid,
+#dayGrid {
+  display: grid;
+  justify-content: center;      /* centers grid */
+  justify-items: center;        /* centers cards */
+  gap: 24px;
+  margin: 0 auto 30px auto;
+}
+
+/* Desktop → exactly 2 cards per row */
+#genderGrid,
+#roomGrid,
+#dayGrid {
+  grid-template-columns: repeat(2, 260px);  /* FIXED WIDTH */
+  max-width: fit-content;                   /* shrink to content */
+}
+
+/* 📱 Mobile → 1 per row */
+@media (max-width: 600px) {
+  #genderGrid,
+  #roomGrid,
+  #dayGrid {
+    grid-template-columns: 1fr;
+    max-width: 95%;
+  }
+}
+
+/* Center text inside cards */
+.pass-card {
+  text-align: center;
+}
+
+/* Spacing between heading and grid */
+.passes-box h3 {
+  margin-top: 30px;
+  margin-bottom: 18px;
+  text-align: center;
+}
+/* ==============================
+   ACCOMMODATION SELECTION GRIDS
+============================== */
+
+#genderGrid,
+#roomGrid,
+#dayGrid {
+  display: grid;
+  justify-content: center;
+  justify-items: center;
+  gap: 24px;
+  margin: 10px auto 30px auto;
+}
+
+/* Desktop → 2 per row */
+#genderGrid,
+#roomGrid,
+#dayGrid {
+  grid-template-columns: repeat(2, 260px);
+}
+
+/* Mobile → 1 per row */
+@media (max-width: 600px) {
+  #genderGrid,
+  #roomGrid,
+  #dayGrid {
+    grid-template-columns: 1fr;
+    max-width: 95%;
+  }
+}
+
+/* Card text center */
+.pass-card {
+  text-align: center;
+}
+
+/* Spacing between heading and grid */
+.passes-box h3 {
+  margin-top: 30px;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+#genderGrid,
+#roomGrid,
+#dayGrid {
+  display: grid;
+  justify-content: center;
+  justify-items: center;
+  gap: 24px;
+  margin: 10px auto 30px auto;
+
+  /* IMPORTANT FIX */
+  grid-template-columns: repeat(2, minmax(280px, 1fr));
+  max-width: 700px;
+}
+
+@media (max-width: 600px) {
+  #genderGrid,
+  #roomGrid,
+  #dayGrid {
+    grid-template-columns: 1fr;
+    max-width: 95%;
+  }
+}
+
 
 
