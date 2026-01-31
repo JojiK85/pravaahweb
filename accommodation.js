@@ -8,6 +8,16 @@ initAuth({
   showDashboard: true
 });
 
+const roomGrid = document.getElementById("roomGrid");
+const dayGrid = document.getElementById("dayGrid");
+const roomTitle = document.getElementById("roomTitle");
+const dayTitle = document.getElementById("dayTitle");
+
+roomGrid.style.display = "none";
+dayGrid.style.display = "none";
+roomTitle.style.display = "none";
+dayTitle.style.display = "none";
+
 
 /* ---------- LOGOUT ---------- */
 document.addEventListener("DOMContentLoaded", () => {
@@ -84,16 +94,16 @@ document.querySelectorAll(".card").forEach(card => {
 
 const PRICES = {
   single: {
-    1: 1,
-    2: 2,
-    3: 3,
-    4: 4
+    1: 1199,
+    2: 1999,
+    3: 2799,
+    4: 3599
   },
   common: {
-    1: 1,
-    2: 2,
-    3: 3,
-    4: 4
+    1: 799,
+    2: 1399,
+    3: 1999,
+    4: 2499
   }
 };
 
@@ -107,7 +117,6 @@ function isIITBBSUser() {
 let selectedGender = null;
 let selectedRoom = null;
 let selectedDays = [];
-let participantsCount = 0;
 
 const totalAmountEl = document.getElementById("totalAmount");
 const payBtn = document.getElementById("payBtn");
@@ -137,8 +146,28 @@ function setupSingleSelect(attr, setter) {
   });
 }
 
-setupSingleSelect("data-gender", (val) => selectedGender = val);
-setupSingleSelect("data-room", (val) => selectedRoom = val);
+
+setupSingleSelect("data-gender", (val) => {
+  selectedGender = val;
+
+  roomGrid.style.display = "grid";
+  roomTitle.style.display = "block";
+
+  dayGrid.style.display = "none";
+  dayTitle.style.display = "none";
+
+  selectedRoom = null;
+  selectedDays = [];
+});
+
+
+setupSingleSelect("data-room", (val) => {
+  selectedRoom = val;
+
+  dayGrid.style.display = "grid";
+  dayTitle.style.display = "block";
+});
+
 
 /* ---------- MULTI SELECT (Days) ---------- */
 document.querySelectorAll("[data-day]").forEach(card => {
@@ -157,45 +186,56 @@ document.querySelectorAll("[data-day]").forEach(card => {
   });
 });
 
-/* ---------- PARTICIPANTS ---------- */
-const numInput = document.getElementById("numParticipants");
-const incBtn = document.getElementById("incPart");
-const decBtn = document.getElementById("decPart");
 const participantsContainer = document.getElementById("participantsContainer");
 
-incBtn.addEventListener("click", () => {
-  let v = +numInput.value || 0;
-  if (v < 10) v++;
-  numInput.value = v;
-  buildParticipantForms(v);
-});
-
-decBtn.addEventListener("click", () => {
-  let v = +numInput.value || 0;
-  if (v > 0) v--;
-  numInput.value = v;
-  buildParticipantForms(v);
-});
-
-function buildParticipantForms(count) {
-  participantsCount = count;
-  participantsContainer.innerHTML = "";
-
-  for (let i = 1; i <= count; i++) {
-    const div = document.createElement("div");
-    div.className = "participant-card";
-    div.innerHTML = `
-      <h4>Participant ${i}</h4>
+function buildSingleParticipantForm() {
+  participantsContainer.innerHTML = `
+    <div class="participant-card">
+      <h4>Student Details</h4>
       <input class="pname" placeholder="Full Name">
       <input class="pemail" placeholder="Email">
       <input class="pphone" placeholder="Phone">
       <input class="pcollege" placeholder="College">
-    `;
-    participantsContainer.appendChild(div);
-  }
-
-  calculateTotal();
+    </div>
+  `;
 }
+buildSingleParticipantForm();
+
+
+
+// 🔁 PROFILE AUTOFILL (NAME → ALL DETAILS)
+const profile = JSON.parse(localStorage.getItem("user_profile") || "{}");
+
+const card = document.querySelector(".participant-card");
+const nameInput = card.querySelector(".pname");
+const emailInput = card.querySelector(".pemail");
+const phoneInput = card.querySelector(".pphone");
+const collegeInput = card.querySelector(".pcollege");
+
+// When user types NAME → autofill other fields
+nameInput.addEventListener("input", () => {
+  if (!profile.name) return;
+
+  if (nameInput.value.trim().toLowerCase() === profile.name.toLowerCase()) {
+    emailInput.value   = profile.email   || "";
+    phoneInput.value   = profile.phone   || "";
+    collegeInput.value = profile.college || "";
+  }
+});
+
+// Save profile whenever user edits
+[nameInput, emailInput, phoneInput, collegeInput].forEach(input => {
+  input.addEventListener("input", () => {
+    localStorage.setItem("user_profile", JSON.stringify({
+      name: nameInput.value.trim(),
+      email: emailInput.value.trim(),
+      phone: phoneInput.value.trim(),
+      college: collegeInput.value.trim()
+    }));
+  });
+});
+
+
 
 /* ---------- TOTAL CALCULATION ---------- */
 function calculateTotal() {
@@ -206,9 +246,7 @@ function calculateTotal() {
 
   const dayCount = selectedDays.length;
   const priceForRoom = PRICES[selectedRoom][dayCount] || 0;
-  const total = priceForRoom * participantsCount;
-
-  totalAmountEl.textContent = `Total: ₹${total}`;
+  totalAmountEl.textContent = `Total: ₹${priceForRoom}`;
 }
 
 
@@ -219,40 +257,50 @@ payBtn.addEventListener("click", () => {
     return;
   }
 
-  if (participantsCount <= 0) {
-    alert("Please add at least 1 participant.");
+  const card = document.querySelector(".participant-card");
+
+  const name = card.querySelector(".pname").value.trim();
+  const email = card.querySelector(".pemail").value.trim();
+  const phone = card.querySelector(".pphone").value.trim();
+  const college = card.querySelector(".pcollege").value.trim();
+
+  if (!name || !email || !phone || !college) {
+    alert("Fill all fields.");
     return;
   }
 
-  const cards = document.querySelectorAll(".participant-card");
-  const participants = [];
+  const participants = [{ name, email, phone, college }];
 
-  cards.forEach(c => {
-    const name = c.querySelector(".pname")?.value.trim();
-    const email = c.querySelector(".pemail")?.value.trim();
-    const phone = c.querySelector(".pphone")?.value.trim();
-    const college = c.querySelector(".pcollege")?.value.trim();
-
-    if (!name || !email || !phone || !college) {
-      alert("Fill all participant fields.");
-      throw new Error("Missing fields");
-    }
-
-    participants.push({ name, email, phone, college });
-  });
+  const dayCount = selectedDays.length;
+  const priceForRoom = PRICES[selectedRoom][dayCount] || 0;
 
   const session = {
+    sessionId: "ACC_" + Date.now(),
+    passType: "Accommodation",
+    totalAmount: priceForRoom,   // ✅ NUMBER ONLY
     gender: selectedGender,
     roomType: selectedRoom,
     days: selectedDays,
     participants,
-    total: totalAmountEl.textContent,
     registeredEmail: auth.currentUser.email
   };
 
-  localStorage.setItem("accommodation_payment", JSON.stringify(session));
-  window.location.href = "accommodation_payment.html";
+  // ✅ MUST match UPI page
+  localStorage.setItem("pravaah_payment", JSON.stringify(session));
+
+  window.location.href = "upi-payment.html";
 });
+;
+
+
+
+
+
+
+
+
+
+
 
 
 
