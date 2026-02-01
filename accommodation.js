@@ -251,7 +251,7 @@ function calculateTotal() {
 
 
 /* ---------- PAY BUTTON ---------- */
-payBtn.addEventListener("click", () => {
+payBtn.addEventListener("click", async () => {
   if (!selectedGender || !selectedRoom || selectedDays.length === 0) {
     alert("Please select gender, room type and days.");
     return;
@@ -269,6 +269,22 @@ payBtn.addEventListener("click", () => {
     return;
   }
 
+  // 🔒 CAPACITY CHECK
+  for (let dayKey of selectedDays) {
+    const stats = await getAccommodationStats(dayKey);
+
+    const block =
+      (selectedGender === "boys" && selectedRoom === "single" && stats.boys.single.used >= stats.boys.single.total) ||
+      (selectedGender === "boys" && selectedRoom === "common" && stats.boys.common.used >= stats.boys.common.total) ||
+      (selectedGender === "girls" && selectedRoom === "single" && stats.girls.single.used >= stats.girls.single.total) ||
+      (selectedGender === "girls" && selectedRoom === "common" && stats.girls.common.used >= stats.girls.common.total);
+
+    if (block) {
+      alert(`Accommodation FULL for ${dayKey}`);
+      return;
+    }
+  }
+
   const participants = [{ name, email, phone, college }];
 
   const dayCount = selectedDays.length;
@@ -277,7 +293,7 @@ payBtn.addEventListener("click", () => {
   const session = {
     sessionId: "ACC_" + Date.now(),
     passType: "Accommodation",
-    totalAmount: priceForRoom,   // ✅ NUMBER ONLY
+    totalAmount: priceForRoom,
     gender: selectedGender,
     roomType: selectedRoom,
     days: selectedDays,
@@ -285,12 +301,11 @@ payBtn.addEventListener("click", () => {
     registeredEmail: auth.currentUser.email
   };
 
-  // ✅ MUST match UPI page
   localStorage.setItem("pravaah_payment", JSON.stringify(session));
-
   window.location.href = "upi-payment.html";
 });
-;
+
+
 
 
 
