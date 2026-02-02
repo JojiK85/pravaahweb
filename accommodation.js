@@ -204,36 +204,54 @@ buildSingleParticipantForm();
 
 
 // 🔁 PROFILE AUTOFILL (NAME → ALL DETAILS)
-const profile = JSON.parse(localStorage.getItem("user_profile") || "{}");
+// 🔁 PROFILE AUTOFILL (FROM profileData)
+function setupAutofill() {
+  const profile = JSON.parse(localStorage.getItem("profileData") || "{}");
 
-const card = document.querySelector(".participant-card");
-const nameInput = card.querySelector(".pname");
-const emailInput = card.querySelector(".pemail");
-const phoneInput = card.querySelector(".pphone");
-const collegeInput = card.querySelector(".pcollege");
+  const card = document.querySelector(".participant-card");
+  if (!card) return;
 
-// When user types NAME → autofill other fields
-nameInput.addEventListener("input", () => {
-  if (!profile.name) return;
+  const nameInput = card.querySelector(".pname");
+  const emailInput = card.querySelector(".pemail");
+  const phoneInput = card.querySelector(".pphone");
+  const collegeInput = card.querySelector(".pcollege");
 
-  if (nameInput.value.trim().toLowerCase() === profile.name.toLowerCase()) {
-    emailInput.value   = profile.email   || "";
-    phoneInput.value   = profile.phone   || "";
-    collegeInput.value = profile.college || "";
-  }
-});
+  if (!nameInput) return;
 
-// Save profile whenever user edits
-[nameInput, emailInput, phoneInput, collegeInput].forEach(input => {
-  input.addEventListener("input", () => {
-    localStorage.setItem("user_profile", JSON.stringify({
-      name: nameInput.value.trim(),
-      email: emailInput.value.trim(),
-      phone: phoneInput.value.trim(),
-      college: collegeInput.value.trim()
-    }));
+  nameInput.addEventListener("input", () => {
+    const nameVal = nameInput.value.trim();
+
+    // clear if empty
+    if (!nameVal) {
+      emailInput.value = "";
+      phoneInput.value = "";
+      collegeInput.value = "";
+      return;
+    }
+
+    // match profile name
+    if (
+      profile.name &&
+      nameVal.toLowerCase() === profile.name.toLowerCase()
+    ) {
+      emailInput.value   = profile.email   || "";
+      phoneInput.value   = profile.phone   || "";
+      collegeInput.value = profile.college || "";
+    }
   });
-});
+
+  // save edits back to cache
+  [nameInput, emailInput, phoneInput, collegeInput].forEach(input => {
+    input.addEventListener("input", () => {
+      localStorage.setItem("profileData", JSON.stringify({
+        name: nameInput.value.trim(),
+        email: emailInput.value.trim(),
+        phone: phoneInput.value.trim(),
+        college: collegeInput.value.trim()
+      }));
+    });
+  });
+}
 
 
 
@@ -304,6 +322,7 @@ payBtn.addEventListener("click", async () => {
   localStorage.setItem("pravaah_payment", JSON.stringify(session));
   window.location.href = "upi-payment.html";
 });
+
 
 
 
