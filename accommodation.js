@@ -94,16 +94,16 @@ document.querySelectorAll(".card").forEach(card => {
 
 const PRICES = {
   single: {
-    1: 1199,
-    2: 1999,
-    3: 2799,
-    4: 3599
+    1: 999,
+    2: 1799,
+    3: 2499,
+    4: 3199
   },
   common: {
-    1: 799,
-    2: 1399,
-    3: 1999,
-    4: 2499
+    1: 649,
+    2: 1299,
+    3: 1699,
+    4: 2199
   }
 };
 
@@ -304,6 +304,7 @@ payBtn.addEventListener("click", async () => {
   localStorage.setItem("pravaah_payment", JSON.stringify(session));
   window.location.href = "upi-payment.html";
 });
+
 
 
 
