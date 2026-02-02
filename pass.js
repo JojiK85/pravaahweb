@@ -311,9 +311,14 @@ function renderSelectionArea() {
 
       // ✅ SHOW COUNTER ONLY IF DAY SELECTED
       const pBox = document.getElementById("participantBox");
-      if (pBox) {
-        pBox.style.display = currentDayPassDays.length > 0 ? "block" : "none";
-      }
+if (pBox) {
+  if (isIITBBSUser()) {
+    pBox.style.display = "none";
+  } else {
+    pBox.style.display = currentDayPassDays.length > 0 ? "block" : "none";
+  }
+}
+
     })
   );
 }
@@ -364,44 +369,65 @@ function renderSelectionArea() {
 
       // ✅ SHOW COUNTER ONLY IF DAY SELECTED
       const pBox = document.getElementById("participantBox");
-      if (pBox) {
-        pBox.style.display = currentVisitorDays.length > 0 ? "block" : "none";
-      }
+if (pBox) {
+  if (isIITBBSUser()) {
+    pBox.style.display = "none";
+  } else {
+    pBox.style.display = currentVisitorDays.length > 0 ? "block" : "none";
+  }
+}
+
     })
   );
 }
 
   /* ---------- FEST PASS ---------- */
-  if (currentPassType === "Fest Pass") {
-    participantForm.innerHTML = `
-    <div class="participant-card"><h4>Fest Pass (All Days)</h4></div>
-<div id="eventHint" style="display:none;text-align:center;margin-top:10px;font-weight:600;color:#4cff88;">
-  Select the events
-</div>
+if (currentPassType === "Fest Pass") {
 
-    <!-- EVENTS FIRST -->
+  // 🔒 IITBBS USERS — NO PARTICIPANT COUNTER
+  if (isIITBBSUser()) {
+    participantForm.innerHTML = `
+      <div class="participant-card"><h4>Fest Pass (All Days)</h4></div>
+
+      <div id="eventHint" style="display:block;text-align:center;margin-top:10px;font-weight:600;color:#4cff88;">
+        Select the events
+      </div>
+
+      <div id="festEventsContainer"></div>
+
+      <div id="participantsContainerPlaceholder"></div>
+    `;
+    renderFestEvents();
+    participantsCount = 1;
+    buildParticipantForms(1);
+    return;
+  }
+
+  // 👤 NON-IITBBS USERS
+  participantForm.innerHTML = `
+    <div class="participant-card"><h4>Fest Pass (All Days)</h4></div>
+
+    <div id="eventHint" style="display:block;text-align:center;margin-top:10px;font-weight:600;color:#4cff88;">
+      Select the events
+    </div>
+
     <div id="festEventsContainer"></div>
 
-    <!-- PARTICIPANTS BELOW -->
     <div style="text-align:center;margin-top:18px;">
       <h3>Number of Participants</h3>
       <div class="custom-number-box">
         <button type="button" class="num-btn" id="decPart">−</button>
-<input type="number" id="numParticipants" value="0" min="0" max="10">
-<button type="button" class="num-btn" id="incPart">+</button>
-
+        <input type="number" id="numParticipants" value="0" min="0" max="10">
+        <button type="button" class="num-btn" id="incPart">+</button>
       </div>
     </div>
 
     <div id="participantsContainerPlaceholder"></div>
   `;
-const hint = document.getElementById("eventHint");
-if (hint) {
-  hint.style.display = currentDayPassDays.length > 0 ? "block" : "none";
+
+  renderFestEvents();
 }
 
-    renderFestEvents();
-  }
 
   /* ---------- STARNITE PASS ---------- */
   if (currentPassType === "Starnite Pass") {
@@ -892,6 +918,7 @@ if (isIITBBSUser()) {
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
