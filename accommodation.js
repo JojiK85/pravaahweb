@@ -146,27 +146,48 @@ function setupSingleSelect(attr, setter) {
   });
 }
 
-
 setupSingleSelect("data-gender", (val) => {
   selectedGender = val;
 
+  // show room selection
   roomGrid.style.display = "grid";
   roomTitle.style.display = "block";
 
+  // hide day selection
   dayGrid.style.display = "none";
   dayTitle.style.display = "none";
 
+  // 🔁 RESET EVERYTHING BELOW
   selectedRoom = null;
   selectedDays = [];
+
+  // remove room selections
+  document.querySelectorAll("[data-room]").forEach(c => c.classList.remove("selected"));
+
+  // remove day selections
+  document.querySelectorAll("[data-day]").forEach(c => c.classList.remove("selected"));
+
+  calculateTotal();
 });
+
 
 
 setupSingleSelect("data-room", (val) => {
   selectedRoom = val;
 
+  // show day selection
   dayGrid.style.display = "grid";
   dayTitle.style.display = "block";
+
+  // 🔁 RESET DAYS
+  selectedDays = [];
+
+  // remove old day selections from UI
+  document.querySelectorAll("[data-day]").forEach(c => c.classList.remove("selected"));
+
+  calculateTotal();
 });
+;
 
 
 /* ---------- MULTI SELECT (Days) ---------- */
@@ -267,7 +288,11 @@ function calculateTotal() {
   totalAmountEl.textContent = `Total: ₹${priceForRoom}`;
 }
 
-
+async function getAccommodationStats(dayKey) {
+  const res = await fetch(`/api/pravaah?type=accommodationStats&day=${dayKey}`);
+  const data = await res.json();
+  return data;
+}
 /* ---------- PAY BUTTON ---------- */
 payBtn.addEventListener("click", async () => {
   if (!selectedGender || !selectedRoom || selectedDays.length === 0) {
@@ -322,6 +347,7 @@ payBtn.addEventListener("click", async () => {
   localStorage.setItem("pravaah_payment", JSON.stringify(session));
   window.location.href = "upi-payment.html";
 });
+
 
 
 
