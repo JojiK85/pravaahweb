@@ -165,6 +165,15 @@ function setupSingleSelect(attr, setter) {
 setupSingleSelect("data-gender", (val) => {
   selectedGender = val;
 
+  const singleDesc = document.getElementById("singleRoomDesc");
+  if (singleDesc) {
+    if (val === "female") {
+      singleDesc.textContent = "Triple Occupancy";
+    } else {
+      singleDesc.textContent = "Double Occupancy";
+    }
+  }
+
   roomGrid.style.display = "grid";
   roomTitle.style.display = "block";
 
@@ -177,18 +186,9 @@ setupSingleSelect("data-gender", (val) => {
   document.querySelectorAll("[data-room]").forEach(c => c.classList.remove("selected"));
   document.querySelectorAll("[data-day]").forEach(c => c.classList.remove("selected"));
 
-  // 🔁 CHANGE LABEL FOR GIRLS SINGLE
-  const singleCard = document.querySelector('[data-room="single"]');
-  if (singleCard) {
-    if (val === "girls") {
-      singleCard.textContent = "Single Room (Triple Occupancy)";
-    } else {
-      singleCard.textContent = "Single Room";
-    }
-  }
-
   calculateTotal();
 });
+
 
 
 
@@ -370,6 +370,7 @@ payBtn.addEventListener("click", async () => {
   localStorage.setItem("pravaah_payment", JSON.stringify(session));
   window.location.href = "upi-payment.html";
 });
+
 
 
 
