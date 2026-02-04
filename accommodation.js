@@ -305,7 +305,8 @@ function calculateTotal() {
   const dayCount = selectedDays.length;
 
   const priceForRoom =
-    PRICES[selectedGender]?.[selectedRoom]?.[dayCount] || 0;
+  PRICES[selectedGender]?.[selectedRoom]?.[dayCount] || 0;
+
 
   totalAmountEl.textContent = `Total: ₹${priceForRoom}`;
 }
@@ -370,6 +371,7 @@ payBtn.addEventListener("click", async () => {
   localStorage.setItem("pravaah_payment", JSON.stringify(session));
   window.location.href = "upi-payment.html";
 });
+
 
 
 
