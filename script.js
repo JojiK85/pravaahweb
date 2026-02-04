@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   { img: "51hr flimmaking events.avif", name: "51-Hour Short Film", text: "Create,Shoot,Edit.", time: "8:00 AM" },
    { img: "monoct events.jpeg", name: "Monoact", text: "Solo story performance",time: "8:00 AM",locationLink:"https://maps.app.goo.gl/Kj77m4LAc68SfaXf8" },
-  { img: "WEB HACKTHON.jpg", name: "Web Hackathon", text: "Build,Deploy,Innovate", time: "8:00 AM",locationLink:"https://maps.app.goo.gl/n6YXxLQmicNHihqi7" },
+  { img: "WEB HACKTHON.jpg", name: "Web Hackathon", text: "Build,Deploy,Innovate", time: "10:00 AM",locationLink:"https://maps.app.goo.gl/n6YXxLQmicNHihqi7" },
   { img: "data sceince event.jpg", name: "Science & Technology Quiz", text: "Where minds compete", time: "9:00 AM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
   { img: "Enigma_gallery.JPG", name: "Enigma – Round 1", text: "Crack the mystery", time: "10:00 AM" ,locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28"},
    { img: "blastoff event.jpg", name: "Blast Off", text: "Ignite,Launch,Celebrate.", time: "10:00 AM",locationLink:"https://maps.app.goo.gl/RUXkuHvS72VWrdku5" },
@@ -463,6 +463,7 @@ window.addEventListener("blur", () => {
 window.addEventListener("beforeunload", () => {
   stopYouTubeVideo();
 });
+
 
 
 
