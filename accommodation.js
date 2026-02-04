@@ -93,17 +93,33 @@ document.querySelectorAll(".card").forEach(card => {
 ===================================== */
 
 const PRICES = {
-  single: {
-    1: 999,
-    2: 1799,
-    3: 2499,
-    4: 3199
+  boys: {
+    single: {
+      1: 999,
+      2: 1799,
+      3: 2499,
+      4: 3199
+    },
+    common: {
+      1: 649,
+      2: 1299,
+      3: 1699,
+      4: 2199
+    }
   },
-  common: {
-    1: 649,
-    2: 1299,
-    3: 1699,
-    4: 2199
+  girls: {
+    single: {
+      1: 799,
+      2: 1399,
+      3: 1999,
+      4: 2599
+    },
+    common: {
+      1: 649,
+      2: 1299,
+      3: 1699,
+      4: 2199
+    }
   }
 };
 
@@ -149,23 +165,27 @@ function setupSingleSelect(attr, setter) {
 setupSingleSelect("data-gender", (val) => {
   selectedGender = val;
 
-  // show room selection
   roomGrid.style.display = "grid";
   roomTitle.style.display = "block";
 
-  // hide day selection
   dayGrid.style.display = "none";
   dayTitle.style.display = "none";
 
-  // 🔁 RESET EVERYTHING BELOW
   selectedRoom = null;
   selectedDays = [];
 
-  // remove room selections
   document.querySelectorAll("[data-room]").forEach(c => c.classList.remove("selected"));
-
-  // remove day selections
   document.querySelectorAll("[data-day]").forEach(c => c.classList.remove("selected"));
+
+  // 🔁 CHANGE LABEL FOR GIRLS SINGLE
+  const singleCard = document.querySelector('[data-room="single"]');
+  if (singleCard) {
+    if (val === "girls") {
+      singleCard.textContent = "Single Room (Triple Occupancy)";
+    } else {
+      singleCard.textContent = "Single Room";
+    }
+  }
 
   calculateTotal();
 });
@@ -187,7 +207,6 @@ setupSingleSelect("data-room", (val) => {
 
   calculateTotal();
 });
-;
 
 
 /* ---------- MULTI SELECT (Days) ---------- */
@@ -278,15 +297,19 @@ function setupAutofill() {
 
 /* ---------- TOTAL CALCULATION ---------- */
 function calculateTotal() {
-  if (!selectedRoom || selectedDays.length === 0) {
+  if (!selectedGender || !selectedRoom || selectedDays.length === 0) {
     totalAmountEl.textContent = "Total: ₹0";
     return;
   }
 
   const dayCount = selectedDays.length;
-  const priceForRoom = PRICES[selectedRoom][dayCount] || 0;
+
+  const priceForRoom =
+    PRICES[selectedGender]?.[selectedRoom]?.[dayCount] || 0;
+
   totalAmountEl.textContent = `Total: ₹${priceForRoom}`;
 }
+
 
 async function getAccommodationStats(dayKey) {
   const res = await fetch(`/api/pravaah?type=accommodationStats&day=${dayKey}`);
@@ -347,6 +370,7 @@ payBtn.addEventListener("click", async () => {
   localStorage.setItem("pravaah_payment", JSON.stringify(session));
   window.location.href = "upi-payment.html";
 });
+
 
 
 
