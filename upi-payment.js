@@ -215,3 +215,9 @@ document.getElementById("cancelBtn").onclick = () => {
   localStorage.removeItem(SESSION_KEY);
   window.location.replace("registrationPravaah.html");
 };
+const contactLink = document.querySelector('a[href^="mailto:"]');
+if (contactLink) {
+  contactLink.addEventListener("click", () => {
+    allowExit = true;
+  });
+}
