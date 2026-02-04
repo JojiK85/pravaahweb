@@ -44,13 +44,13 @@ document.addEventListener("DOMContentLoaded", () => {
  
   { img: "WEB HACKTHON.jpg", name: "Data Science Hackathon", text: "Code,Analyze,Innovate.", time: "9:00 AM" ,locationLink:"https://maps.app.goo.gl/n6YXxLQmicNHihqi7"},
   { img: "Film Quiz_events.JPG", name: "General Quiz", text: "Test your knowledge", time: "9:00 AM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
- 
+ { img: "abhinay event.jpeg", name: "Abhinay", text: "Act,Express,Perform.", time: "9:00 AM" ,locationLink:"https://maps.app.goo.gl/h175EDFX6i3GMWbt9" },
   { img: "Marcatus.JPG", name: "Marcatus – Round 1", text: "Business minds battle", time: "10:00 AM" ,locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
      { img: "Guest Talk.JPG", name: "Guest Talk – 1", text: "Inspiring expert insights", time: "12:00 PM" ,locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
      { img: "fashionshow_gallery.jpg", name: "Fashion Show", text: "Style meets confidence", time: "2:00 PM",locationLink:"https://maps.app.goo.gl/BDz4WQp2ZXHVktaR9" },
     { img: "startup expo event.jpg", name: "Startup Expo", text: "Ideas meet investors", time: "2:00 PM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
       { img: "robo soccor.JPG", name: "Robo Soccer", text: "Robots,Goals,Glory", time: "2:00 PM",locationLink:"https://maps.app.goo.gl/jDQyDv2pJuNpothj7" },
-      { img: "abhinay event.jpeg", name: "Abhinay", text: "Act,Express,Perform.", time: "9:00 AM" ,locationLink:"https://maps.app.goo.gl/h175EDFX6i3GMWbt9" },
+      
     { img: "Marcatus.JPG", name: "Marcatus – Round 2", text: "Business minds battle", time: "2:30 PM" ,locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28"},
   { img: "informal night.JPG", name: "Informal Night", text: "Fun without filters", time: "6:00 PM",locationLink:"https://maps.app.goo.gl/jDQyDv2pJuNpothj7" },
   { img: "face painting events.webp", name: "Face Painting", text: "Colors come alive", time: "6:00 PM" ,locationLink:"https://maps.app.goo.gl/jDQyDv2pJuNpothj7" },
@@ -463,6 +463,7 @@ window.addEventListener("blur", () => {
 window.addEventListener("beforeunload", () => {
   stopYouTubeVideo();
 });
+
 
 
 
