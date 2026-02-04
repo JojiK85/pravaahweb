@@ -163,7 +163,7 @@ function setupSingleSelect(attr, setter) {
 }
 
 setupSingleSelect("data-gender", (val) => {
-  selectedGender = val;
+  selectedGender = (val === "male") ? "boys" : "girls";
 
   const singleDesc = document.getElementById("singleRoomDesc");
   if (singleDesc) {
@@ -370,6 +370,7 @@ payBtn.addEventListener("click", async () => {
   localStorage.setItem("pravaah_payment", JSON.stringify(session));
   window.location.href = "upi-payment.html";
 });
+
 
 
 
