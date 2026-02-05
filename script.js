@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
  
   { img: "Tamasha_gallery.jpg", name: "Tamasha", text: "Drama and entertainment", time: "3:00 PM" ,locationLink:"https://maps.app.goo.gl/Kj77m4LAc68SfaXf8"},
-  { img: "Pravaah logo.png", name: "Comedy Night", text: "Laughs all-around", time: "6:30 PM" ,locationLink:"https://maps.app.goo.gl/jDQyDv2pJuNpothj7" }
+  { img: "Comedy night.png", name: "Comedy Night", text: "Laughs all-around", time: "6:30 PM" ,locationLink:"https://maps.app.goo.gl/HPdDFeoawhiqCPTb8" }
 ],
 
 
@@ -463,6 +463,7 @@ window.addEventListener("blur", () => {
 window.addEventListener("beforeunload", () => {
   stopYouTubeVideo();
 });
+
 
 
 
