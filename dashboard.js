@@ -485,9 +485,10 @@ const payload = {
     const r = await res.json();
     alert(r.message || "Capacity saved");
 
-    if (CURRENT_ACC_DAY === accControlDay.value) {
-      loadAccommodationStats();
-    }
+    if (CURRENT_ACC_DAY === normalizeDayValue(accControlDay.value)) {
+  loadAccommodationStats();
+}
+
   };
 }
 
