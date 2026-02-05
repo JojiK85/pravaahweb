@@ -141,9 +141,10 @@ onAuthStateChanged(auth, async (user) => {
 
 if (accDayDropdown) {
   CURRENT_ACC_DAY = normalizeDayValue(accDayDropdown.value);
-  if (CURRENT_ACC_DAY) {
-    loadAccommodationStats();
-  }
+  if (CURRENT_ACC_DAY === normalizeDayValue(accControlDay.value)) {
+  loadAccommodationStats();
+}
+
 }
 
 
@@ -200,7 +201,6 @@ applyRoleVisibility();
 
   
 loadDashboardStats();
-  updateOfflineCount();
   startAutoRefresh();
 });
 const menuToggle = document.getElementById("menuToggle");
@@ -467,12 +467,13 @@ const total = Number(accCapacityInput.value || 0);
 
 const payload = {
   type: "setAccommodationCapacity",
-  day: accControlDay.value,
+  day: normalizeDayValue(accControlDay.value), // ✅ FIX
   gender,
   room,
   total,
   email: auth.currentUser.email
 };
+
 
 
     const res = await fetch(API, {
