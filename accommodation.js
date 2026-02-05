@@ -355,7 +355,14 @@ payBtn.addEventListener("click", async () => {
   const participants = [{ name, email, phone, college }];
 
   const dayCount = selectedDays.length;
-  const priceForRoom = PRICES[selectedRoom][dayCount] || 0;
+  const priceForRoom =
+  PRICES[selectedGender]?.[selectedRoom]?.[dayCount];
+
+if (!priceForRoom) {
+  alert("Price calculation failed. Please reselect options.");
+  return;
+}
+
 
   const session = {
     sessionId: "ACC_" + Date.now(),
@@ -371,6 +378,7 @@ payBtn.addEventListener("click", async () => {
   localStorage.setItem("pravaah_payment", JSON.stringify(session));
   window.location.href = "upi-payment.html";
 });
+
 
 
 
