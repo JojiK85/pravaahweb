@@ -123,15 +123,29 @@ async function loadDashboardStats() {
     console.error("Dashboard stats fetch failed, using cache", err);
   }
 }
+function normalizeDayValue(v) {
+  if (!v) return "";
+  v = String(v).toLowerCase().trim();
+
+  // already correct
+  if (v.startsWith("day")) return v;
+
+  // extract number (Day 2 / 2 / day 2 etc)
+  const m = v.match(/\d/);
+  return m ? "day" + m[0] : "";
+}
 
 /* ================= AUTH ================= */
 onAuthStateChanged(auth, async (user) => {
   if (!user) return location.href = "login.html";
 
-if (accDayDropdown && accDayDropdown.value) {
-  CURRENT_ACC_DAY = accDayDropdown.value;
-  loadAccommodationStats();
+if (accDayDropdown) {
+  CURRENT_ACC_DAY = normalizeDayValue(accDayDropdown.value);
+  if (CURRENT_ACC_DAY) {
+    loadAccommodationStats();
+  }
 }
+
 
   // 1️⃣ Load cached role instantly (no lag)
 const cachedRole = getCachedRole(user.email);
@@ -323,7 +337,7 @@ function setupDayFilter() {
   // Main dashboard day filter
   if (dayDropdown) {
     dayDropdown.addEventListener("change", () => {
-      CURRENT_DAY = dayDropdown.value || "";
+      CURRENT_DAY = normalizeDayValue(dayDropdown.value);
       loadDashboardStats();
     });
   }
@@ -331,7 +345,7 @@ function setupDayFilter() {
   // Accommodation stats day filter
   if (accDayDropdown) {
     accDayDropdown.addEventListener("change", () => {
-      CURRENT_ACC_DAY = accDayDropdown.value || "";
+      CURRENT_ACC_DAY = normalizeDayValue(accDayDropdown.value);
 
       if (!CURRENT_ACC_DAY) {
         accBoysSingle.textContent = "0 / 0";
@@ -345,25 +359,25 @@ function setupDayFilter() {
     });
   }
 
-  // Capacity control day dropdown
+  // Capacity control loader
   async function loadCapacityForFilter() {
-  const day = accControlDay.value;
-  if (!day) return;
+    const day = normalizeDayValue(accControlDay.value);
+    if (!day) return;
 
-  const gender = accGenderFilter.value; // boys / girls
-  const room = accRoomFilter.value;     // single / common
+    const gender = accGenderFilter.value;
+    const room = accRoomFilter.value;
 
-  const res = await fetch(`${API}?type=accommodationStats&day=${day}`);
-  const d = await res.json();
+    const res = await fetch(`${API}?type=accommodationStats&day=${day}`);
+    const d = await res.json();
 
-  accCapacityInput.value = d[gender][room].total || 0;
+    accCapacityInput.value = d?.[gender]?.[room]?.total || 0;
+  }
+
+  accControlDay.addEventListener("change", loadCapacityForFilter);
+  accGenderFilter.addEventListener("change", loadCapacityForFilter);
+  accRoomFilter.addEventListener("change", loadCapacityForFilter);
 }
 
-accControlDay.addEventListener("change", loadCapacityForFilter);
-accGenderFilter.addEventListener("change", loadCapacityForFilter);
-accRoomFilter.addEventListener("change", loadCapacityForFilter);
-
-}
 
 
 async function setupEventFilter() {
@@ -400,19 +414,18 @@ function updateCircle(circleId, used, total) {
 
 /* ================= STATS ================= */
 async function loadAccommodationStats() {
-  if (!CURRENT_ACC_DAY) return;
+  const day = normalizeDayValue(CURRENT_ACC_DAY);
+  if (!day) return;
 
   try {
-    const res = await fetch(`${API}?type=accommodationStats&day=${CURRENT_ACC_DAY}`);
+    const res = await fetch(`${API}?type=accommodationStats&day=${day}`);
     const d = await res.json();
 
-    // TEXT (optional if you still want)
     accBoysSingle.textContent = `${d.boys.single.used} / ${d.boys.single.total}`;
     accBoysCommon.textContent = `${d.boys.common.used} / ${d.boys.common.total}`;
     accGirlsSingle.textContent = `${d.girls.single.used} / ${d.girls.single.total}`;
     accGirlsCommon.textContent = `${d.girls.common.used} / ${d.girls.common.total}`;
 
-    // 🔵 UPDATE CIRCLES
     updateCircle("boysSingleCircle", d.boys.single.used, d.boys.single.total);
     updateCircle("boysCommonCircle", d.boys.common.used, d.boys.common.total);
     updateCircle("girlsSingleCircle", d.girls.single.used, d.girls.single.total);
