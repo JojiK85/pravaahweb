@@ -417,24 +417,42 @@ async function loadAccommodationStats() {
   const day = normalizeDayValue(CURRENT_ACC_DAY);
   if (!day) return;
 
+  // ⛑ SAFETY: DOM not present on this layout
+  if (
+    !accBoysSingle ||
+    !accBoysCommon ||
+    !accGirlsSingle ||
+    !accGirlsCommon
+  ) {
+    return;
+  }
+
   try {
     const res = await fetch(`${API}?type=accommodationStats&day=${day}`);
     const d = await res.json();
 
-    accBoysSingle.textContent = `${d.boys.single.used} / ${d.boys.single.total}`;
-    accBoysCommon.textContent = `${d.boys.common.used} / ${d.boys.common.total}`;
-    accGirlsSingle.textContent = `${d.girls.single.used} / ${d.girls.single.total}`;
-    accGirlsCommon.textContent = `${d.girls.common.used} / ${d.girls.common.total}`;
+    accBoysSingle.textContent =
+      `${d.boys.single.used} / ${d.boys.single.total}`;
+    accBoysCommon.textContent =
+      `${d.boys.common.used} / ${d.boys.common.total}`;
+    accGirlsSingle.textContent =
+      `${d.girls.single.used} / ${d.girls.single.total}`;
+    accGirlsCommon.textContent =
+      `${d.girls.common.used} / ${d.girls.common.total}`;
 
-    updateCircle("boysSingleCircle", d.boys.single.used, d.boys.single.total);
-    updateCircle("boysCommonCircle", d.boys.common.used, d.boys.common.total);
-    updateCircle("girlsSingleCircle", d.girls.single.used, d.girls.single.total);
-    updateCircle("girlsCommonCircle", d.girls.common.used, d.girls.common.total);
+    // Circles (only if SVG exists)
+    if (document.getElementById("boysSingleCircle")) {
+      updateCircle("boysSingleCircle", d.boys.single.used, d.boys.single.total);
+      updateCircle("boysCommonCircle", d.boys.common.used, d.boys.common.total);
+      updateCircle("girlsSingleCircle", d.girls.single.used, d.girls.single.total);
+      updateCircle("girlsCommonCircle", d.girls.common.used, d.girls.common.total);
+    }
 
   } catch (e) {
     console.error("Accommodation stats error", e);
   }
 }
+
 
 // ================= SAVE ACCOMMODATION CAPACITY =================
 if (saveAccCapacity) {
