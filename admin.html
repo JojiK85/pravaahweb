@@ -177,105 +177,134 @@ function normalizeEmail(e){
 function resolveState(){
   state = {};
 
-  // default OUTSIDE
+  // Default everyone OUTSIDE
   participants.forEach(p => {
     state[normalizeEmail(p.Email)] = "OUTSIDE";
   });
 
-  // apply logs (oldest → newest)
+  // Apply logs in chronological order (old → new)
   logs.slice().reverse().forEach(l => {
-    const email = normalizeEmail(l.Email || l.email);
-    if(!email) return;
+    const email = normalizeEmail(l.Email);
+    if (!email) return;
 
-    if(l.Action === "ENTRY") state[email] = "INSIDE";
-    if(l.Action === "EXIT")  state[email] = "OUTSIDE";
+    if (l.Action === "ENTRY") {
+      state[email] = "INSIDE";
+    }
+    if (l.Action === "EXIT") {
+      state[email] = "OUTSIDE";
+    }
   });
 }
+
 
 
 
 /* -------- RENDER -------- */
 function render(){
-  const fest=festStatus();
-  statusBox.className="status "+(fest.ok?"valid":"invalid");
-  statusBox.textContent=fest.text;
+  const fest = festStatus();
 
-  document.getElementById("passInfo").innerHTML=`
+  statusBox.className = "status " + (fest.ok ? "valid" : "invalid");
+  statusBox.textContent = fest.text;
+
+  document.getElementById("passInfo").innerHTML = `
     <b>Payment ID:</b> ${passData["Payment ID"]}<br>
     <b>Pass Type:</b> ${passData["Pass Type"]}<br>
-    <b>Selected Days:</b> ${passData["Selected Days"]||"—"}<br>
-    <b>StarNite:</b> ${passData["Starnite"]||"—"}
+    <b>Selected Days:</b> ${passData["Selected Days"] || "—"}<br>
+    <b>StarNite:</b> ${passData["Starnite"] || "—"}
   `;
 
-  document.getElementById("participantsBox").innerHTML=
-    "<h4>Select Participants</h4>"+
-    participants.map(p=>{
-      const s = state[normalizeEmail(p.Email)] || "OUTSIDE";
-      const disable=(s==="OUTSIDE"&&!fest.ok)?"disabled":"";
+  document.getElementById("participantsBox").innerHTML =
+    "<h4>Select Participants</h4>" +
+    participants.map(p => {
+      const email = normalizeEmail(p.Email);
+      const s = state[email] || "OUTSIDE";
+      const disable = (s === "OUTSIDE" && !fest.ok) ? "disabled" : "";
+
       return `
-      <div class="participant">
-        <input type="checkbox" ${disable}
-  data-name="${p.Name}"
-  data-email="${p.Email}"
-  data-phone="${p.Phone}"
-  data-college="${p.College}"
-  onchange="updateButtons()">
+        <div class="participant">
+          <input type="checkbox" ${disable}
+            data-name="${p.Name}"
+            data-email="${p.Email}"
+            data-phone="${p.Phone}"
+            data-college="${p.College}"
+            onchange="updateButtons()">
 
-        <span><b>${p.Name}</b><br>${p.Email}<br>
-        <small style="color:${s==="INSIDE"?"#ffb703":"#00ffcc"}">${s}</small>
-        </span>
-      </div>`;
+          <span>
+            <b>${p.Name}</b><br>
+            ${p.Email}<br>
+            <small style="color:${s === "INSIDE" ? "#ffb703" : "#00ffcc"}">
+              ${s}
+            </small>
+          </span>
+        </div>
+      `;
     }).join("");
-  updateButtons();
-renderLogs();   // ⬅ show history below participants
 
+  updateButtons();
+  renderLogs();
 }
+
 /* ============== RENDER LOG HISTORY (FILTERED FOR THIS PASS) ================= */
 function renderLogs(){
-  if(!logs || !logs.length){
-    logsList.innerHTML = `<p style="opacity:.6">No activity recorded yet.</p>`;
+  if (!logs || !logs.length) {
+    logsList.innerHTML =
+      `<p style="opacity:.6">No activity recorded yet.</p>`;
     return;
   }
 
   const emails = participants.map(p =>
-  normalizeEmail(p.Email)
-);
+    normalizeEmail(p.Email)
+  );
 
-const filtered = logs.filter(l =>
-  emails.includes(normalizeEmail(l.Email || l.email))
-);
-
+  const filtered = logs.filter(l =>
+    emails.includes(normalizeEmail(l.Email))
+  );
 
   document.getElementById("logsList").innerHTML =
-    filtered.map((l,i)=>`
-      <div style="padding:8px;border-bottom:1px solid rgba(0,255,255,.25);${i===0?'background:rgba(0,255,255,.08)':''}">
+    filtered.map((l, i) => `
+      <div style="
+        padding:8px;
+        border-bottom:1px solid rgba(0,255,255,.25);
+        ${i === 0 ? 'background:rgba(0,255,255,.08)' : ''}
+      ">
         <b>${l.Name}</b>
-        <span style="color:${l.Action==='ENTRY'?'#00ffcc':'#ff6b6b'}">(${l.Action})</span><br>
+        <span style="color:${l.Action === 'ENTRY' ? '#00ffcc' : '#ff6b6b'}">
+          (${l.Action})
+        </span><br>
 
         <small>📅 ${new Date(l.Timestamp).toLocaleString('en-IN',{hour12:true})}</small><br>
-        <small>🔹 Scanned By: ${l["Scanned By"] || 'Unknown'}</small>
+        <small>🔹 Scanned By: ${l["Scanned By"] || "Unknown"}</small>
       </div>
     `).join("");
 }
+
 /* -------- BUTTONS -------- */
 function updateButtons(){
-  const sel = [...document.querySelectorAll("input:checked")];
+  const selected = [...document.querySelectorAll("input:checked")];
+
   entryBtn.disabled = true;
-  exitBtn.disabled = true;
-  if(!sel.length) return;
+  exitBtn.disabled  = true;
+
+  if (!selected.length) return;
 
   const fest = festStatus();
 
-  const states = sel.map(c =>
+  const states = selected.map(c =>
     state[normalizeEmail(c.dataset.email)]
   );
 
   const allInside  = states.every(s => s === "INSIDE");
   const allOutside = states.every(s => s === "OUTSIDE");
 
-  if(allInside) exitBtn.disabled = false;
-  if(allOutside && fest.ok) entryBtn.disabled = false;
+  if (allInside) {
+    exitBtn.disabled = false;
+  }
+
+  if (allOutside && fest.ok) {
+    entryBtn.disabled = false;
+  }
 }
+
 
 
 /* -------- SUBMIT -------- */
