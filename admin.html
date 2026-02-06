@@ -91,7 +91,11 @@ body{
 <script>
 const API="/api/pravaah";
 const params=new URLSearchParams(location.search);
-const paymentId=params.get("paymentId");
+const rawPaymentId = params.get("paymentId");
+
+// 🔒 NORMALIZED PAYMENT ID (FINAL)
+const paymentId = String(rawPaymentId).trim();
+
 const scannerEmail=params.get("scanner");
 
 if(!paymentId){alert("Missing Payment ID");location.href="scan.html";}
