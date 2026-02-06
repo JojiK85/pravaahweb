@@ -168,13 +168,22 @@ loadData();
 
 /* -------- STATE -------- */
 function resolveState(){
-  state={};
-  participants.forEach(p=>state[p.Name]="OUTSIDE");
-  logs.slice().reverse().forEach(l=>{
-    if(l.Action==="ENTRY") state[l.Name]="INSIDE";
-    if(l.Action==="EXIT") state[l.Name]="OUTSIDE";
+  state = {};
+
+  // default everyone OUTSIDE (key by EMAIL)
+  participants.forEach(p => {
+    state[p.Email] = "OUTSIDE";
+  });
+
+  // apply logs (newest first)
+  logs.slice().reverse().forEach(l => {
+    if (!l.Email) return;
+
+    if (l.Action === "ENTRY") state[l.Email] = "INSIDE";
+    if (l.Action === "EXIT")  state[l.Email] = "OUTSIDE";
   });
 }
+
 
 /* -------- RENDER -------- */
 function render(){
@@ -192,7 +201,7 @@ function render(){
   document.getElementById("participantsBox").innerHTML=
     "<h4>Select Participants</h4>"+
     participants.map(p=>{
-      const s=state[p.Name];
+      const s = state[p.Email] || "OUTSIDE";
       const disable=(s==="OUTSIDE"&&!fest.ok)?"disabled":"";
       return `
       <div class="participant">
