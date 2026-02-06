@@ -199,24 +199,27 @@ function normalizeEmail(e){
 function resolveState(){
   state = {};
 
-  // Default everyone OUTSIDE
+  // everyone OUTSIDE initially
   participants.forEach(p => {
-    state[normalizeEmail(p.Email)] = "OUTSIDE";
+    const email = normalizeEmail(p.Email);
+    state[email] = "OUTSIDE";
   });
 
-  // Apply logs in chronological order (old → new)
+  // apply logs oldest → newest
   logs.slice().reverse().forEach(l => {
     const email = normalizeEmail(l.Email);
-    if (!email) return;
+    if (!state.hasOwnProperty(email)) return;
 
-    if (l.Action === "ENTRY") {
+    if (l.Action === "ENTRY" || l.Action === "AUTO_CARRY") {
       state[email] = "INSIDE";
     }
-    if (l.Action === "EXIT") {
+
+    if (l.Action === "EXIT" || l.Action === "AUTO_EXIT") {
       state[email] = "OUTSIDE";
     }
   });
 }
+
 
 
 
@@ -269,39 +272,60 @@ function render(){
 /* ============== RENDER LOG HISTORY (FILTERED FOR THIS PASS) ================= */
 function renderLogs(){
   if (!logs || !logs.length) {
-    logsList.innerHTML =
+    document.getElementById("logsList").innerHTML =
       `<p style="opacity:.6">No activity recorded yet.</p>`;
     return;
   }
 
-  const emails = participants.map(p =>
-    normalizeEmail(p.Email)
-  );
-
-  const filtered = logs.filter(l =>
-    emails.includes(normalizeEmail(l.Email))
-  );
-
   document.getElementById("logsList").innerHTML =
-    filtered.map((l, i) => `
+    logs.map((l, i) => `
       <div style="
         padding:8px;
         border-bottom:1px solid rgba(0,255,255,.25);
         ${i === 0 ? 'background:rgba(0,255,255,.08)' : ''}
       ">
         <b>${l.Name}</b>
-        <span style="color:${l.Action === 'ENTRY' ? '#00ffcc' : '#ff6b6b'}">
+        <span style="color:${
+          l.Action === 'ENTRY' || l.Action === 'AUTO_CARRY'
+            ? '#00ffcc'
+            : '#ff6b6b'
+        }">
           (${l.Action})
         </span><br>
 
         <small>📅 ${new Date(l.Timestamp).toLocaleString('en-IN',{hour12:true})}</small><br>
-        <small>🔹 Scanned By: ${l["Scanned By"] || "Unknown"}</small>
+        <small>🔹 Scanned By: ${l["Scanned By"] || "SYSTEM"}</small>
       </div>
     `).join("");
 }
 
+
 /* -------- BUTTONS -------- */
 function updateButtons(){
+  console.group("🧪 GATE DEBUG");
+console.log("Payment ID:", paymentId);
+
+console.log("Participants:");
+participants.forEach(p => {
+  console.log(
+    p.Email,
+    "→",
+    state[normalizeEmail(p.Email)]
+  );
+});
+
+console.log("Selected:");
+[...document.querySelectorAll("input:checked")].forEach(c => {
+  console.log(
+    c.dataset.email,
+    "→",
+    state[normalizeEmail(c.dataset.email)]
+  );
+});
+
+console.log("Raw Logs:", logs);
+console.groupEnd();
+
   const selected = [...document.querySelectorAll("input:checked")];
 
   entryBtn.disabled = true;
