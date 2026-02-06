@@ -166,6 +166,28 @@ console.log("Logs:", logs);
     statusBox.className="status invalid";
     statusBox.textContent="❌ "+e.message;
   }
+  console.log("=== PASS LOADED ===");
+console.log("Payment ID:", paymentId);
+
+console.log(
+  "Participants:",
+  participants.map(p => ({
+    name: p.Name,
+    email: p.Email,
+    state: state[normalizeEmail(p.Email)]
+  }))
+);
+
+console.log(
+  "Gate Logs:",
+  logs.map(l => ({
+    name: l.Name,
+    email: l.Email,
+    action: l.Action,
+    time: l.Timestamp
+  }))
+);
+
 }
 loadData();
 
