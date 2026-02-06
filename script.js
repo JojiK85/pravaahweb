@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
  
   { img: "StreetDanceBattle_gallery.jpg", name: "Street Battle", text: "Dance,Clash,Dominate.", time: "4:00 PM" ,locationLink:"https://maps.app.goo.gl/Kj77m4LAc68SfaXf8"},
 
-  { img: "StarNight_events.JPG", name: "Star Night", text: "Stars,Lights,Vibes.", time: "7:00 PM" ,locationLink:"https://maps.app.goo.gl/6mLvvmnVb1UTvo2G7"},
+  { img: "starnight_calendar.jpeg", name: "Star Night", text: "Stars,Lights,Vibes.", time: "7:00 PM" ,locationLink:"https://maps.app.goo.gl/6mLvvmnVb1UTvo2G7"},
   { img: "Screenshot 2026-01-24 010231.png", name: "DJ Night", text: "Beats,Bass,Blast.", time: "7:00 PM",locationLink:"https://maps.app.goo.gl/6mLvvmnVb1UTvo2G7" }
 ]
 
@@ -464,6 +464,7 @@ window.addEventListener("blur", () => {
 window.addEventListener("beforeunload", () => {
   stopYouTubeVideo();
 });
+
 
 
 
