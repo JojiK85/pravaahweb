@@ -66,6 +66,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   { img: "51hr flimmaking events.avif", name: "51-Hour Short Film", text: "Create,Shoot,Edit.", time: "8:00 AM" },
    { img: "monoct events.jpeg", name: "Monoact", text: "Solo story performance",time: "8:00 AM",locationLink:"https://maps.app.goo.gl/Kj77m4LAc68SfaXf8" },
+  
+  { img: "Innovation Expo_gallery.JPG", name: "Innovation Expo", text: "Future on display", time: "9:00 AM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
+  
   { img: "WEB HACKTHON.jpg", name: "Web Hackathon", text: "Build,Deploy,Innovate", time: "10:00 AM",locationLink:"https://maps.app.goo.gl/n6YXxLQmicNHihqi7" },
   { img: "data sceince event.jpg", name: "Science & Technology Quiz", text: "Where minds compete", time: "9:00 AM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
   { img: "Enigma_gallery.JPG", name: "Enigma – Round 1", text: "Crack the mystery", time: "10:00 AM" ,locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28"},
@@ -75,8 +78,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   { img: "Enigma_events.JPG", name: "Enigma – Round 2", text: "Crack the mystery", time: "2:00 PM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
 
-  { img: "Innovation Expo_gallery.JPG", name: "Innovation Expo", text: "Future on display", time: "2:00 PM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
-  
 
  
   { img: "RoboRace.jpg", name: "Robo Race", text: "Speed,Tech,Thrill.", time: "2:00 PM",locationLink:"https://maps.app.goo.gl/jDQyDv2pJuNpothj7"  },
@@ -463,6 +464,7 @@ window.addEventListener("blur", () => {
 window.addEventListener("beforeunload", () => {
   stopYouTubeVideo();
 });
+
 
 
 
