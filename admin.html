@@ -159,6 +159,9 @@ participants = p.map(r => ({
 logs = l || [];
 resolveState();
 render();
+    console.log("Participants:", participants.map(p => p.Email));
+console.log("Logs:", logs);
+
   }catch(e){
     statusBox.className="status invalid";
     statusBox.textContent="❌ "+e.message;
@@ -167,22 +170,28 @@ render();
 loadData();
 
 /* -------- STATE -------- */
+function normalizeEmail(e){
+  return (e || "").trim().toLowerCase();
+}
+
 function resolveState(){
   state = {};
 
-  // default everyone OUTSIDE (key by EMAIL)
+  // default OUTSIDE
   participants.forEach(p => {
-    state[p.Email] = "OUTSIDE";
+    state[normalizeEmail(p.Email)] = "OUTSIDE";
   });
 
-  // apply logs (newest first)
+  // apply logs (oldest → newest)
   logs.slice().reverse().forEach(l => {
-    if (!l.Email) return;
+    const email = normalizeEmail(l.Email || l.email);
+    if(!email) return;
 
-    if (l.Action === "ENTRY") state[l.Email] = "INSIDE";
-    if (l.Action === "EXIT")  state[l.Email] = "OUTSIDE";
+    if(l.Action === "ENTRY") state[email] = "INSIDE";
+    if(l.Action === "EXIT")  state[email] = "OUTSIDE";
   });
 }
+
 
 
 /* -------- RENDER -------- */
@@ -201,14 +210,17 @@ function render(){
   document.getElementById("participantsBox").innerHTML=
     "<h4>Select Participants</h4>"+
     participants.map(p=>{
-      const s = state[p.Email] || "OUTSIDE";
+      const s = state[normalizeEmail(p.Email)] || "OUTSIDE";
       const disable=(s==="OUTSIDE"&&!fest.ok)?"disabled":"";
       return `
       <div class="participant">
         <input type="checkbox" ${disable}
-          data-name="${p.Name}" data-state="${s}"
-          data-email="${p.Email}" data-phone="${p.Phone}"
-          data-college="${p.College}" onchange="updateButtons()">
+  data-name="${p.Name}"
+  data-email="${p.Email}"
+  data-phone="${p.Phone}"
+  data-college="${p.College}"
+  onchange="updateButtons()">
+
         <span><b>${p.Name}</b><br>${p.Email}<br>
         <small style="color:${s==="INSIDE"?"#ffb703":"#00ffcc"}">${s}</small>
         </span>
@@ -225,10 +237,14 @@ function renderLogs(){
     return;
   }
 
-  const emails = participants.map(p=>p.Email);
+  const emails = participants.map(p =>
+  normalizeEmail(p.Email)
+);
 
-  // logs already reversed by backend = newest first
-  const filtered = logs.filter(l => emails.includes(l.Email));
+const filtered = logs.filter(l =>
+  emails.includes(normalizeEmail(l.Email || l.email))
+);
+
 
   document.getElementById("logsList").innerHTML =
     filtered.map((l,i)=>`
@@ -243,15 +259,24 @@ function renderLogs(){
 }
 /* -------- BUTTONS -------- */
 function updateButtons(){
-  const sel=[...document.querySelectorAll("input:checked")];
-  entryBtn.disabled=true;exitBtn.disabled=true;
+  const sel = [...document.querySelectorAll("input:checked")];
+  entryBtn.disabled = true;
+  exitBtn.disabled = true;
   if(!sel.length) return;
-  const inside=sel.every(c=>c.dataset.state==="INSIDE");
-  const outside=sel.every(c=>c.dataset.state==="OUTSIDE");
-  const fest=festStatus();
-  if(inside) exitBtn.disabled=false;
-  if(outside&&fest.ok) entryBtn.disabled=false;
+
+  const fest = festStatus();
+
+  const states = sel.map(c =>
+    state[normalizeEmail(c.dataset.email)]
+  );
+
+  const allInside  = states.every(s => s === "INSIDE");
+  const allOutside = states.every(s => s === "OUTSIDE");
+
+  if(allInside) exitBtn.disabled = false;
+  if(allOutside && fest.ok) entryBtn.disabled = false;
 }
+
 
 /* -------- SUBMIT -------- */
 async function submitAction(action){
