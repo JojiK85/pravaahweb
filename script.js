@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
   { img: "data sceince event.jpg", name: "Science & Technology Quiz", text: "Where minds compete", time: "9:00 AM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
   { img: "Enigma_gallery.JPG", name: "Enigma – Round 1", text: "Crack the mystery", time: "10:00 AM" ,locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28"},
    { img: "blastoff event.jpg", name: "Blast Off", text: "Ignite,Launch,Celebrate.", time: "10:00 AM",locationLink:"https://maps.app.goo.gl/RUXkuHvS72VWrdku5" },
-    { img: "Guest Talk.JPG", name: "Guest Talk – 2", text: "Act,Express,Perform.", time: "12:00 PM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
+    { img: "Guest Talk.JPG", name: "Guest Talk – 2", text: "Act,Express,Perform.", time: "3:00 PM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
   { img: "B plan event.jpg", name: "B-Plan", text: "Pitch your startup", time: "2:00 PM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
 
   { img: "Enigma_events.JPG", name: "Enigma – Round 2", text: "Crack the mystery", time: "2:00 PM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
@@ -464,6 +464,7 @@ window.addEventListener("blur", () => {
 window.addEventListener("beforeunload", () => {
   stopYouTubeVideo();
 });
+
 
 
 
