@@ -94,21 +94,21 @@ document.addEventListener("DOMContentLoaded", () => {
  
   { img: "51hr flimmaking events.avif", name: "51-Hour Short Film", text: "Create,Shoot,Edit.", time: "8:00 AM" },
    
-  { img: "SoloDance_events.jpg", name: "Solo Dance", text: "Express through movement", time: "9:30 AM" ,locationLink:"https://maps.app.goo.gl/nxKumvFAEe4KybS26"},
+  { img: "SoloDance_events.jpg", name: "Solo Dance", text: "Express through movement", time: "9:00 AM" ,locationLink:"https://maps.app.goo.gl/nxKumvFAEe4KybS26"},
   { img: "edusphere.png", name: "Edusphere", text: "Learn,Explore,Grow.", time: "10:00 AM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
     { img: "trekkon event.jpg", name: "Trekkon", text: "Robots on track", time: "10:00 AM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
 
   { img: "ipl quiz_events (1).png", name: "IPL Auction – Round 1", text: "Bid,Strategize,Win.", time: "10:00 AM" ,locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28"},
     { img: "Guest Talk.JPG", name: "Guest Talk – 3", text: "Inspiring expert insights", time: "12:00 PM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
     { img: "group Dance_events.JPG", name: "Group Dance", text: "Unity in motion", time: "1:30 PM",locationLink:"https://maps.app.goo.gl/nxKumvFAEe4KybS26" },
-  { img: "ipl quiz_events (1).png", name: "IPL Auction – Round 2", text: "Bid,Strategize,Win.", time: "2:00 PM" ,locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28"},
+  { img: "ipl quiz_events (1).png", name: "IPL Auction – Round 2", text: "Bid,Strategize,Win.", time: "2:30 PM" ,locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28"},
 
  
  
-  { img: "StreetDanceBattle_gallery.jpg", name: "Street Battle", text: "Dance,Clash,Dominate.", time: "4:00 PM" ,locationLink:"https://maps.app.goo.gl/Kj77m4LAc68SfaXf8"},
+  { img: "StreetDanceBattle_gallery.jpg", name: "Street Battle", text: "Dance,Clash,Dominate.", time: "4:30 PM" ,locationLink:"https://maps.app.goo.gl/Kj77m4LAc68SfaXf8"},
 
   { img: "starnight_calendar.jpeg", name: "Star Night", text: "Stars,Lights,Vibes.", time: "7:00 PM" ,locationLink:"https://maps.app.goo.gl/6mLvvmnVb1UTvo2G7"},
-  { img: "Screenshot 2026-01-24 010231.png", name: "DJ Night", text: "Beats,Bass,Blast.", time: "7:00 PM",locationLink:"https://maps.app.goo.gl/6mLvvmnVb1UTvo2G7" }
+  { img: "Screenshot 2026-01-24 010231.png", name: "DJ Night", text: "Beats,Bass,Blast.", time: "9:00 PM",locationLink:"https://maps.app.goo.gl/6mLvvmnVb1UTvo2G7" }
 ]
 
 
@@ -464,6 +464,7 @@ window.addEventListener("blur", () => {
 window.addEventListener("beforeunload", () => {
   stopYouTubeVideo();
 });
+
 
 
 
