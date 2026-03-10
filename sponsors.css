@@ -54,16 +54,13 @@ body {
 /* =========================================================
    GRID (3 DESKTOP, 1 MOBILE)
 ========================================================= */
-
 .sponsor-grid {
   display: grid;
-
-  grid-template-columns: repeat(auto-fit, minmax(320px, 320px));
-
+  grid-template-columns: repeat(3, 320px); /* same 3 cards layout */
   gap: 36px;
-  padding: 0 20px;
 
-  justify-content: center;   /* ⭐ THIS CENTERS ITEMS */
+  justify-content: center; /* ⭐ centers the grid */
+  padding: 0 20px;
 }
 /* CATEGORY HEADINGS */
 .category-title {
@@ -311,6 +308,7 @@ footer {
 .become-sponsor-btn:active {
   transform: scale(0.98);
 }
+
 
 
 
