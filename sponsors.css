@@ -83,6 +83,11 @@ body {
 
   margin: 0 auto 40px auto;
 }
+.sponsor-grid,
+.sponsor-grid_gold{
+  padding-left: 16px;
+  padding-right: 16px;
+}
 /* CATEGORY HEADINGS */
 .category-title{
   text-align: center;
@@ -130,7 +135,9 @@ body {
 
   transition: transform 0.35s ease, box-shadow 0.35s ease;
 }
-
+.sponsor-card{
+  width:100%;
+}
 .sponsor-card:hover {
   transform: translateY(-6px) scale(1.03);
   box-shadow: 0 0 26px rgba(36,224,236,0.45);
@@ -347,6 +354,14 @@ footer {
   transform: scale(0.98);
 }
 
+@media (max-width: 768px){
+
+  .sponsor-grid,
+  .sponsor-grid_gold{
+    padding: 0 16px;
+  }
+
+}
 
 
 
