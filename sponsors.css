@@ -63,6 +63,16 @@ body {
   margin: 0 auto;
 }
 
+/* CATEGORY HEADINGS */
+.category-title {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #ffffff;
+  margin: 40px 0 20px;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
 /* =========================================================
    SPONSOR CARD
 ========================================================= */
@@ -299,6 +309,7 @@ footer {
 .become-sponsor-btn:active {
   transform: scale(0.98);
 }
+
 
 
 
