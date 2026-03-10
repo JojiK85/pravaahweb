@@ -54,20 +54,22 @@ body {
 /* =========================================================
    GRID (3 DESKTOP, 1 MOBILE)
 ========================================================= */
+
 .sponsor-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+
+  grid-template-columns: repeat(auto-fit, minmax(320px, 320px));
+
   gap: 36px;
   padding: 0 20px;
-  justify-items: center;
-  margin: 0 auto;
-}
 
+  justify-content: center;   /* ⭐ THIS CENTERS ITEMS */
+}
 /* CATEGORY HEADINGS */
 .category-title {
   text-align: center;
   font-size: 1.5rem;
-  color: #ffffff;
+   color: #24E0EC; 
   margin: 40px 0 20px;
   letter-spacing: 1px;
   font-weight: 600;
@@ -309,6 +311,7 @@ footer {
 .become-sponsor-btn:active {
   transform: scale(0.98);
 }
+
 
 
 
