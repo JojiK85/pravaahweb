@@ -62,6 +62,14 @@ body {
   justify-content: center; /* ⭐ centers the grid */
   padding: 0 20px;
 }
+.sponsor-grid_gold{
+  display: grid;
+  grid-template-columns: repeat(2, 320px); /* same 3 cards layout */
+  gap: 36px;
+
+  justify-content: center; /* ⭐ centers the grid */
+  padding: 0 20px;
+}
 /* CATEGORY HEADINGS */
 .category-title {
   text-align: center;
@@ -234,7 +242,7 @@ footer {
     padding-top: 80px;
   }
 
-  .sponsor-grid {
+  .sponsor-grid,sponsor-grid_gold {
     grid-template-columns: 1fr;
   }
 
@@ -308,6 +316,7 @@ footer {
 .become-sponsor-btn:active {
   transform: scale(0.98);
 }
+
 
 
 
