@@ -43,12 +43,23 @@ body {
 /* =========================================================
    TITLES
 ========================================================= */
-.section-title {
+.section-title{
   text-align: center;
   font-size: 2rem;
   color: #24E0EC;
-  margin-bottom: 22px; /* ⬇️ reduced */
-  text-shadow: 0 0 8px rgba(36,224,236,0.45);
+
+  display: inline-block;
+  padding: 10px 30px;
+
+  border: 1.5px solid #24E0EC;
+  border-radius: 12px;
+
+  background: rgba(36,224,236,0.08);
+
+  margin: 0 auto 35px auto;
+  display: block;
+
+  box-shadow: 0 0 10px rgba(36,224,236,0.35);
 }
 
 /* =========================================================
@@ -64,20 +75,38 @@ body {
 }
 .sponsor-grid_gold{
   display: grid;
-  grid-template-columns: repeat(2, 320px); /* same 3 cards layout */
+  grid-template-columns: repeat(2, 320px);
   gap: 36px;
 
-  justify-content: center; /* ⭐ centers the grid */
-  padding: 0 20px;
+  justify-content: center; 
+  align-items: center;
+
+  margin: 0 auto 40px auto;
 }
 /* CATEGORY HEADINGS */
-.category-title {
+.category-title{
   text-align: center;
-  font-size: 1.5rem;
-   color: #24E0EC; 
-  margin: 40px 0 20px;
-  letter-spacing: 1px;
-  font-weight: 600;
+  font-size: 1.35rem;
+
+  color: #8beaf0;
+
+  margin: 35px 0 25px;
+
+  letter-spacing: 2px;
+  text-transform: uppercase;
+
+  position: relative;
+}
+
+.category-title::after{
+  content: "";
+  width: 80px;
+  height: 2px;
+
+  background: #24E0EC;
+
+  display: block;
+  margin: 8px auto 0 auto;
 }
 
 /* =========================================================
@@ -242,10 +271,11 @@ footer {
     padding-top: 80px;
   }
 
-  .sponsor-grid,sponsor-grid_gold {
-    grid-template-columns: 1fr;
-  }
-
+ .sponsor-grid,
+.sponsor-grid_gold{
+  grid-template-columns: 1fr;
+  justify-items: center;
+}
   .sponsor-card {
     width: 90%;
     max-width: 380px;
@@ -316,6 +346,7 @@ footer {
 .become-sponsor-btn:active {
   transform: scale(0.98);
 }
+
 
 
 
